@@ -18,6 +18,7 @@ import {
   FormItem,
   Input,
   Message,
+  MessageBox,
   Dropdown,
   DropdownMenu,
   DropdownItem,
@@ -66,6 +67,7 @@ Vue
   .use(Drawer)
 
 Vue.prototype.$message = Message;
+Vue.prototype.$msgbox = MessageBox;
 
 Vue.config.productionTip = false
 

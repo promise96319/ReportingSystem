@@ -55,10 +55,15 @@
       - Accounts 筛选功能
       - Mapping 筛选功能
 
-  3月13日
+  - 3月13日
     - 下午2：20 ~ 6：00
       - 更新新增页面
         - 页面弹窗完善
         - Import 页面 上传功能完善
         - Mapping UI更改，逻辑更改
         - Accounting entries 筛选功能
+
+  - 3月14日
+    - 上午10点~12:00
+      - User management 页面
+      - icon修改

@@ -103,8 +103,8 @@
 				</el-col>
 				<el-col>
 					<el-row type="flex" justify="end" align="middle">
-						<el-button type="primary" class="action" icon="el-icon-circle-check" size="small">Save</el-button>
-					  <el-button type="warning" plain class="action" icon="el-icon-refresh" size="small">Reset</el-button>
+						<el-button type="success" class="action" icon="el-icon-success" size="small">Save</el-button>
+					  <el-button type="info" class="action" icon="el-icon-refresh" size="small">Reset</el-button>
 					</el-row>
 				</el-col>
 			</el-row>
