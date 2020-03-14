@@ -1,0 +1,26 @@
+
+$table_header_background_color: rgba($color: #409eff, $alpha: 1);
+$table_cell_background_color: rgba($color: #409eff, $alpha: 0.1);
+
+/deep/ .el-table__header {
+	.cell {
+		color: #fff !important;
+    font-weight: bold;
+    word-wrap: break-word;
+    word-break: normal;
+	}
+	th {
+		background-color: $table_header_background_color;
+		border-color: rgba($color: #fff, $alpha: 0.3);
+	}
+}
+
+/deep/ .el-table .cell {
+	word-wrap: break-word;
+	word-break: normal;
+}
+
+/deep/ .el-table tr.highlight-row {
+	background-color: $table_cell_background_color;
+	height: 20px;
+}

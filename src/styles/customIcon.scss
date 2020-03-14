@@ -1,0 +1,19 @@
+/* 自定义icon */
+.primary-icon {
+  .svg-icon {
+    stroke: #fff;
+    transform: translateX(-6px);
+  }
+}
+
+.plain-icon {
+  .svg-icon {
+    stroke: #303133;
+    transform: translateX(-6px);
+  }
+  &:hover, &:active, &:focus {
+		.svg-icon {
+			stroke: #409eff;
+		}
+	}
+}
