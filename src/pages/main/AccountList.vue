@@ -43,7 +43,7 @@
 				<el-table-column prop="isEnable" align="center" header-align="center">
 					<template slot="header" slot-scope="scope">
 						<div class="status" @click="isEditable=!isEditable">
-							<svg-icon :icon-class="isEditable ? 'unlock' : 'lock'"></svg-icon>Status
+							<svg-icon class="custom-svg" :icon-class="isEditable ? 'unlock-fill' : 'lock-fill'"></svg-icon>Status
 						</div>
 					</template>
 					<template slot-scope="scope">
@@ -226,7 +226,7 @@ export default {
 		color: #fff;
 		cursor: pointer;
 		.svg-icon {
-			stroke: #fff;
+			stroke: #000;
 			font-size: 18px;
 			margin-right: 6px;
 		}

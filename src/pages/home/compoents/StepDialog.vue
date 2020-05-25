@@ -43,7 +43,7 @@ export default {};
 <style lang="scss" scoped>
 .el-steps {
 	height: 400px;
-	width: 700px;
+	width: 640px;
 	margin: 0px auto 60px;
 
 	/deep/ .is-wait {
@@ -54,9 +54,10 @@ export default {};
 	}
 
 	/deep/ .el-step__description.is-wait {
+		line-height: 24px;
 		font-size: 18px;
 		color: #606266;
-		font-weight: 500;
+		font-weight: 400;
 		word-wrap: break-word;
 		word-break: normal;
 		margin: 4px 0 4px 16px;

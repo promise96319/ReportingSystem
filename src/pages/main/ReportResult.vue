@@ -209,6 +209,13 @@
 					</el-col>
 				</el-row>
 
+				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
+					<el-col class="label" :span="6">Iventory item:</el-col>
+					<el-col class="input" :span="18">
+						<el-input size="mini" clearable placeholder="Iventory item"></el-input>
+					</el-col>
+				</el-row>
+
 				<el-row class="action" :gutter="20" type="flex" justify="space-between" align="middle">
 					<el-col class="label" :span="6"></el-col>
 					<el-col class="input" :span="18">
@@ -253,7 +260,51 @@ export default {
 				exchangeRate: '1.32',
 				debit: '233',
 				credit: '2323',
-			}, {}, {}, {}, {}]
+			},{
+				date: '2020年3月2日',
+				voucherNo: '2323',
+				line: '2',
+				explanation: 'hello world',
+				accountNo: '2342.123',
+				accountDescription: '23sd',
+				currency: 'CN',
+				exchangeRate: '1.32',
+				debit: '233',
+				credit: '2323',
+			},{
+				date: '2020年3月2日',
+				voucherNo: '2323',
+				line: '2',
+				explanation: 'hello world',
+				accountNo: '2342.123',
+				accountDescription: '23sd',
+				currency: 'CN',
+				exchangeRate: '1.32',
+				debit: '233',
+				credit: '2323',
+			},{
+				date: '2020年3月2日',
+				voucherNo: '2323',
+				line: '2',
+				explanation: 'hello world',
+				accountNo: '2342.123',
+				accountDescription: '23sd',
+				currency: 'CN',
+				exchangeRate: '1.32',
+				debit: '233',
+				credit: '2323',
+			},{
+				date: '2020年3月2日',
+				voucherNo: '2323',
+				line: '2',
+				explanation: 'hello world',
+				accountNo: '2342.123',
+				accountDescription: '23sd',
+				currency: 'CN',
+				exchangeRate: '1.32',
+				debit: '233',
+				credit: '2323',
+			},]
 		};
 	},
 	components: {
