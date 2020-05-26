@@ -13,12 +13,14 @@
 		</SubHeader>
 
 		<div class="main">
-			<div class="module module1">
+			<div class="module module1" @click="showPeriodDialog(moduleOptions[0])">
+				<div class="tip">{{ moduleOptions[0] }}</div>
 				<div class="item1">Assets</div>
 				<div class="item2">Liabities</div>
 				<div class="item3">Equity</div>
 			</div>
-			<div class="module module2">
+			<div class="module module2" @click="showPeriodDialog(moduleOptions[1])">
+				<div class="tip">{{ moduleOptions[1] }}</div>
 				<div class="item1">
 					<div class="sales">Sales revenus</div>
 					<div class="margin">Margin</div>
@@ -26,17 +28,25 @@
 				<div class="item2">Expenses</div>
 				<div class="item3">Net income</div>
 			</div>
-			<div class="module module3">
+			<div class="module module3" @click="showPeriodDialog(moduleOptions[2])">
+				<div class="tip">{{ moduleOptions[2] }}</div>
 				<div class="item1">Operating activities</div>
 				<div class="item2">Investing activities</div>
 				<div class="item3">Finacing activities</div>
 				<div class="item4">Net Cash flow</div>
 			</div>
 			<div class="module module4">
+				<div class="tip">{{ moduleOptions[3] }}</div>
 				<el-row class="header" :gutter="10">
-					<el-col :span="12"><div>Account</div></el-col>
-					<el-col :span="6"><div>Debit</div></el-col>
-					<el-col :span="6"><div>Credit</div></el-col>
+					<el-col :span="12">
+						<div>Account</div>
+					</el-col>
+					<el-col :span="6">
+						<div>Debit</div>
+					</el-col>
+					<el-col :span="6">
+						<div>Credit</div>
+					</el-col>
 				</el-row>
 				<el-row v-for="(item, index) in accountOptions" :key="index" :gutter="10">
 					<el-col :span="12">
@@ -51,41 +61,103 @@
 				</el-row>
 			</div>
 			<div class="module module5">
+				<div class="tip">{{ moduleOptions[4] }}</div>
 				<div class="container">
 					<div class="header">Account Receivable</div>
 					<el-row :gutter="16">
-						<el-col :span="16"><div>Sell 500 items</div></el-col>
-						<el-col :span="8"><div>2000</div></el-col>
+						<el-col :span="16">
+							<div>Sell 500 items</div>
+						</el-col>
+						<el-col :span="8">
+							<div>2000</div>
+						</el-col>
 					</el-row>
 					<el-row :gutter="16">
-						<el-col :span="16"><div>Sell 200 items</div></el-col>
-						<el-col :span="8"><div>800</div></el-col>
+						<el-col :span="16">
+							<div>Sell 200 items</div>
+						</el-col>
+						<el-col :span="8">
+							<div>800</div>
+						</el-col>
 					</el-row>
 					<el-row :gutter="16">
-						<el-col :span="16"><div>Payment received</div></el-col>
-						<el-col :span="8"><div>-2000</div></el-col>
+						<el-col :span="16">
+							<div>Payment received</div>
+						</el-col>
+						<el-col :span="8">
+							<div>-2000</div>
+						</el-col>
 					</el-row>
 					<el-row :gutter="16">
-						<el-col :span="16"><div>Goods return 300</div></el-col>
-						<el-col :span="8"><div>-800</div></el-col>
+						<el-col :span="16">
+							<div>Goods return 300</div>
+						</el-col>
+						<el-col :span="8">
+							<div>-800</div>
+						</el-col>
 					</el-row>
 				</div>
 			</div>
 		</div>
 
-		<el-dialog title :visible.sync="isStepDialogShow" width="800px">
+		<el-dialog :visible.sync="isStepDialogShow" width="800px">
 			<StepDialog></StepDialog>
 		</el-dialog>
+
+		<el-dialog :title="currentTitle" :visible.sync="isPeriodDialogShow" width="400px" center>
+			<el-row :gutter="12" type="flex" align="middle">
+				<el-col :span="4">Period:</el-col>
+				<el-col :span="10">
+					<el-select v-model="currentYear" @change="selectYear">
+						<el-option
+							v-for="item in YEAR_OPTIONS"
+							:key="item"
+							:label="item"
+							:value="item"
+						></el-option>
+					</el-select>
+				</el-col>
+				<el-col :span="10">
+					<el-select v-model="currentMonth" value-key="value" @change="selectMonth">
+						<el-option
+							v-for="item in MONTH_OPTIONS"
+							:key="item.key"
+							:label="item.value"
+							:value="item"
+						></el-option>
+					</el-select>
+				</el-col>
+			</el-row>
+			<span slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="isPeriodDialogShow = false">Confirm</el-button>
+				<el-button @click="isPeriodDialogShow = false">Cancel</el-button>
+			</span>
+		</el-dialog>
+		
 	</div>
 </template>
 
 <script>
 import SubHeader from "@/components/SubHeader";
 import StepDialog from "./compoents/StepDialog";
+import { YEAR_OPTIONS, MONTH_OPTIONS } from '@/constant/dateOptions'
 export default {
 	data() {
 		return {
+			YEAR_OPTIONS,
+			MONTH_OPTIONS,
+
 			isStepDialogShow: false,
+			isPeriodDialogShow: false,
+			// 模块名称
+			moduleOptions: [
+				"Balance sheet",
+				"Profit & loss",
+				"Cash flow statement",
+				"Trial balance",
+				"General ledger"
+			],
+			// 模块4 选项数组
 			accountOptions: [
 				{
 					key: "",
@@ -115,12 +187,35 @@ export default {
 					key: "",
 					value: "Undistribuated profit"
 				}
-			]
+			],
+			// 当前选择模块标题
+			currentTitle: "",
+			// 当前选择模块 年
+			currentYear: "",
+			// 当前选择模块 月
+			currentMonth: {},
 		};
 	},
 	components: {
 		SubHeader,
 		StepDialog
+	},
+	methods: {
+		showPeriodDialog(title) {
+			this.currentTitle = title;
+			this.isPeriodDialogShow = true;
+		},
+		selectYear(e) {
+			this.currentYear = e
+		},
+		selectMonth(e) {
+			this.currentMonth = e
+		},
+	},
+	mounted() {
+		let today = new Date()
+		this.currentYear = today.getFullYear()
+		this.currentMonth = this.MONTH_OPTIONS[11 - today.getMonth()]
 	}
 };
 </script>
@@ -163,8 +258,30 @@ $gap: 10px;
 			box-shadow: 0px 9px 28px 8px rgba(0, 0, 0, 0.05);
 			transition: 0.5s;
 			cursor: pointer;
+			position: relative;
+			.tip {
+				position: absolute;
+				z-index: 99;
+				top: 0;
+				left: 0;
+				right: 0;
+				background-color: #fff;
+				color: #303133;
+				box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+				height: 0;
+				text-align: center;
+				line-height: 60px;
+				transition: all 0.2s;
+				overflow: hidden;
+				border-radius: 16px;
+				font-size: 20px;
+				font-weight: 500;
+			}
 			&:hover {
 				box-shadow: 0px 9px 28px 8px rgba(0, 0, 0, 0.16);
+				.tip {
+					height: 60px;
+				}
 			}
 		}
 		// 模块1样式
@@ -296,7 +413,6 @@ $gap: 10px;
 					height: 36px;
 					line-height: 36px;
 					border-radius: 18px;
-
 				}
 				.el-col:first-child div {
 					background-color: $color_blue;
