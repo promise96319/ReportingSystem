@@ -16,23 +16,37 @@
     <el-row class="forget-password">
       <el-button type="text" size="mini" @click="$router.push({ name: 'ForgetPassword' })">Forget Password?</el-button>
     </el-row>
-    <el-button type="primary" @click="login">Login</el-button>
+    <el-button type="primary" @click="login" :loading="isLogining">Login</el-button>
   </div>
 </template>
 
 <script>
+import api from '@/api'
+import { CHANGE_USER } from '@/store/modules/user'
+
 export default {
   data() {
     return {
       logoImg: require("@/assets/logo.png"),
       email: "",
-      password: ""
+      password: "",
+      isLogining: false,
     };
   },
   methods: {
-    login() {
-      this.$message.success('登录成功')
-      this.$router.push('/')
+    async login() {
+      if (this.email === '') { return this.$message.error('邮箱不能为空') }
+      if (this.password === '') { return this.$message.error('密码不能为空') }
+      if (!/[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/.test(this.email)) { return this.$message.error('邮箱格式错误') }
+
+      this.isLogining = true
+      const res = await api.login(this.email, this.password)
+      this.isLogining = false
+      if (res.data) {
+        this.$store.commit(CHANGE_USER, res.data.data)
+        this.$message.success('登录成功')
+        this.$router.push('/')
+      }
     }
   }
 };

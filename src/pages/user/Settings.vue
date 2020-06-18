@@ -4,17 +4,17 @@
 		<div class="main">
 			<div class="container">
 				<el-form :model="userInfo" label-width="170px" label-position="left">
-					<el-form-item label="Email address:">{{ userInfo.emailAddress }}</el-form-item>
+					<el-form-item label="Email address:">{{ email }}</el-form-item>
 					<el-form-item label="Password:">
-						<el-input v-model="userInfo.password" disabled show-password placeholder="Password">
-							<el-button class="lock" slot="append" @click="isPasswordEditable=!isPasswordEditable">
+						<el-input :value="password" disabled show-password placeholder="Password">
+							<el-button class="lock" slot="append" @click="togglePasswordEditor">
 								<svg-icon :icon-class="isPasswordEditable ? 'unlock' : 'lock'"></svg-icon>
 							</el-button>
 						</el-input>
 						<el-collapse-transition>
 							<div class="new-password" v-show="isPasswordEditable">
-								<el-input v-model="userInfo.password" show-password placeholder="New password"></el-input>
-								<el-input v-model="userInfo.password" show-password placeholder="Confirm new password"></el-input>
+								<el-input v-model="userInfo.newPassword" show-password placeholder="New password"></el-input>
+								<el-input v-model="userInfo.confirmPassword" show-password placeholder="Confirm new password"></el-input>
 							</div>
 						</el-collapse-transition>
 					</el-form-item>
@@ -53,18 +53,35 @@ export default {
 		return {
 			isPasswordEditable: false,
 			isAccountTypeEditable: false,
+
+			newPassword: '',
+			confirmPassword: '',
+
 			userInfo: {
-				emailAddress: "12438383@qq.com",
-				password: "hello world",
 				accountType: ""
 			},
 			accountTypes: ["CN", "EN", "AT"]
 		};
 	},
+	computed: {
+		email() {
+			return this.$store.getters.user.email
+		},
+		password() {
+			return this.$store.getters.user.password
+		}
+	},
 	components: {
 		SubHeader
 	},
-	created() {}
+	methods: {
+		togglePasswordEditor() {
+			if (!this.isisPasswordEditable) {
+				this.newPassword = this.confirmPassword = this.password
+			}
+			this.isPasswordEditable = !this.isPasswordEditable
+		}
+	}
 };
 </script>
 

@@ -129,17 +129,17 @@
 				</el-col>
 			</el-row>
 			<span slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="isPeriodDialogShow = false">Confirm</el-button>
+				<el-button type="primary" @click="goToReport">Confirm</el-button>
 				<el-button @click="isPeriodDialogShow = false">Cancel</el-button>
 			</span>
 		</el-dialog>
-		
+
 	</div>
 </template>
 
 <script>
 import SubHeader from "@/components/SubHeader";
-import StepDialog from "./compoents/StepDialog";
+import StepDialog from "./components/StepDialog";
 import { YEAR_OPTIONS, MONTH_OPTIONS } from '@/constant/dateOptions'
 export default {
 	data() {
@@ -211,6 +211,9 @@ export default {
 		selectMonth(e) {
 			this.currentMonth = e
 		},
+		goToReport() {
+			this.$router.push({ name: 'BalanceSheet' })
+		}
 	},
 	mounted() {
 		let today = new Date()

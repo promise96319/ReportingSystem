@@ -1,17 +1,17 @@
 <template>
-  <div class="balance-sheet">
-    
+  <div class="set-password">
+    set-password
   </div>
 </template>
 
 <script>
+import api from '@/api'
+
 export default {
 
 }
 </script>
 
-<style lang="scss" scoped>
-.balance-sheet {
+<style>
 
-}
 </style>

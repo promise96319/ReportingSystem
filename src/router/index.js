@@ -5,9 +5,11 @@ import BasicLayout from '@/components/BasicLayout'
 
 const Login = () => import('@/pages/login/Login')
 const ForgetPassword = () => import('@/pages/login/ForgetPassword')
+const SetPassword = () => import('@/pages/login/SetPassword')
 
 const Home = () => import('@/pages/home/Home')
 const Report = () => import('@/pages/home/Report')
+const BalanceSheet = () => import('@/pages/home/reports/BalanceSheet')
 
 const Profile = () => import('@/pages/user/Profile')
 const Settings = () => import('@/pages/user/Settings')
@@ -39,6 +41,11 @@ export default new Router({
       component: ForgetPassword
     },
     {
+      path: '/password/set',
+      name: 'SetPassword',
+      component: SetPassword
+    },
+    {
       path: '/',
       name: 'BasicLayout',
       component: BasicLayout,
@@ -52,6 +59,11 @@ export default new Router({
           path: '/report',
           name: 'Report',
           component: Report
+        },
+        {
+          path: '/report/balance-sheet',
+          name: 'BalanceSheet',
+          component: BalanceSheet,
         },
 
         {

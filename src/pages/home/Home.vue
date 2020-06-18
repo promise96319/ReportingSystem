@@ -23,7 +23,7 @@
 
 <script>
 import SubHeader from "@/components/SubHeader";
-import StepDialog from "./compoents/StepDialog";
+import StepDialog from "./components/StepDialog";
 
 export default {
 	data() {

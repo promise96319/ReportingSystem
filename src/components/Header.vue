@@ -32,7 +32,7 @@
               >
             </div>
 
-            <div @click="$router.push({ name: 'Login' })">
+            <div @click="logout">
               <el-dropdown-item icon="el-icon-remove-outline">
                 Logout</el-dropdown-item
               >
@@ -40,26 +40,66 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <div class="company-name">123's Company Name</div>
-      <img :src="logoImg" alt="" @click="()=>{$router.push('/')}"/>
+
+      <el-dropdown class="company-name" @command="chooseCompany">
+        <span class="el-dropdown-link">
+          {{ username }}'s {{ currentCompany.name }}<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item v-for="item in companyList" :key="item.id" :command="item">{{ item.name }}</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
       
-      <!-- <AsideBar class="side-bar" :active="active"></AsideBar> -->
+      <!-- <div class="company-name">123's Company Name</div> -->
+      <img :src="currentCompany.logo || logoImg" alt="" @click="() => { $router.push('/') }"/>
     </div>
   </div>
 </template>
 
 <script>
-// import AsideBar from "@/components/AsideBar";
+import { SET_CURRENT_COMPANY } from '@/store/modules/company'
+
 export default {
   props: ["active"],
+  inject: ['reload'],
   data() {
     return {
-      logoImg: require("@/assets/logo.gif")
+      logoImg: require("@/assets/logo.gif"),
     };
   },
-  components: {
+  computed: {
+    // 用户名
+    username() {
+      return this.$store.getters.user.username
+    },
+    // 公司列表
+    companyList() {
+      return this.$store.getters.companyList
+    },
+    // 用户当前选择的公司
+    currentCompany() {
+      return this.$store.getters.currentCompany
+    },
   },
-  methods: {}
+  // created() {
+  //   const currentCompany = this.$store.getters.currentCompany
+  //   // 没有公司信息时，获取公司信息
+  //   if (!currentCompany.id && currentCompany.id !== 0) {
+  //     this.getCompanyList()
+  //   }
+  // },
+  methods: {
+    logout() {
+      this.$store.dispatch('RemoteLogout').catch((err) => {
+        this.$message.error('登出失败，请刷新页面重试！')
+      })
+    },
+    chooseCompany(company) {
+      if (this.currentCompany.id === company.id) { return }
+      this.$store.commit('SET_CURRENT_COMPANY', company)
+      this.reload()
+    }
+  }
 };
 </script>
 
@@ -111,6 +151,8 @@ export default {
     .company-name {
       font-weight: 500;
       font-size: 20px;
+      cursor: pointer;
+      user-select: none;
     }
     .user-menu {
       position: relative;

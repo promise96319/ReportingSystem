@@ -7,24 +7,24 @@
 		</SubHeader>
 		<div class="main">
 			<div class="container">
-				<el-table :data="usersData" style="width: 100%" border>
+				<el-table :data="usersData" style="width: 100%" border v-loading="isGettingUserData">
 					<el-table-column prop="id" label="User ID" align="center" header-align="center"></el-table-column>
 					<!-- <el-table-column prop="username" label="User name" align="center" header-align="center"></el-table-column> -->
 					<el-table-column
-						prop="emailAddress"
+						prop="email"
 						label="Email address"
 						align="center"
 						header-align="center"
 					></el-table-column>
 					<el-table-column label="Password" align="center" header-align="center">
 						<template slot-scope="scope">
-							<span v-if="!scope.row.isEditable">{{ scope.row.password }}</span>
-							<el-input v-else v-model="scope.row.password" size="medium"></el-input>
+							<span v-if="!scope.row.isEditable">{{ scope.row.username }}</span>
+							<el-input v-else v-model="scope.row.username" size="medium"></el-input>
 						</template>
 					</el-table-column>
 					<el-table-column label="Action" align="center" header-align="center" width="350">
 						<template slot-scope="scope">
-							<span v-if="scope.row.type === 'admin'" class="admin">
+							<span v-if="scope.row.is_super_admin" class="admin">
                 <svg-icon icon-class="admin"></svg-icon>
                 Administrator
               </span>
@@ -79,45 +79,14 @@
 
 <script>
 import SubHeader from "@/components/SubHeader";
+import api from '@/api'
+
 export default {
 	data() {
 		return {
-			usersData: [
-				{
-					id: 1,
-					emailAddress: "address@qq.com",
-					password: "jajdjd",
-					type: "admin"
-				},
-				{
-					id: 2,
-					emailAddress: "address@qq.com",
-					password: "jajdjd",
-					type: "user",
-					isEditable: false
-				},
-				{
-					id: 1313,
-					emailAddress: "address@qq.com",
-					password: "jajdjd",
-					type: "user",
-					isEditable: false
-				},
-				{
-					id: 223,
-					emailAddress: "address@qq.com",
-					password: "jajdjd",
-					type: "user",
-					isEditable: false
-				},
-				{
-					id: 2424,
-					emailAddress: "address@qq.com",
-					password: "jajdjd",
-					type: "user",
-					isEditable: false
-				}
-			],
+			usersData: [],
+			isGettingUserData: false,
+
 			isInviteDialogShow: false,
 			newUserData: {
 				username: "",
@@ -128,21 +97,43 @@ export default {
 	},
 	components: {
 		SubHeader
-  },
+	},
+	computed: {
+		currentCompany() {
+			return this.$store.getters.currentCompany
+		}
+	},
+	created() {
+		this.getUserList()
+	},
   methods: {
+		async getUserList() {
+			if (!this.currentCompany || !this.currentCompany.id) { return }
+			
+			this.isGettingUserData = true
+			console.log(this.currentCompany.id);
+			
+			const res = await api.getUserList(this.currentCompany.id)
+			this.isGettingUserData = false
+			this.usersData = res.data.data
+		},
     inviteMember() {
       this.$msgbox.prompt('Please enter the email', 'Invite new member', {
           confirmButtonText: 'Confirm',
           cancelButtonText: 'Cancel',
           inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
           inputErrorMessage: 'Incorrect mailbox format'
-        }).then(({ value }) => {
+        }).then(async ({ value }) => {
+
+					const res = await api.inviteUser(this.currentCompany.id, value)
+					console.log(res);
+					
           this.$message({
             type: 'success',
             message: 'The invitation has been sent to the mailbox, please check it in time'
           });
         }).catch(() => {     
-        });
+        })
     },
     deleteMember(index) {
       const user = this.usersData[index]

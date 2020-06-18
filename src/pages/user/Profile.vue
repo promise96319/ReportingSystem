@@ -13,19 +13,20 @@
 					<el-form-item label="Company logo:">
 						<el-upload
 							class="avatar-uploader"
-							action="https://jsonplaceholder.typicode.com/posts/"
+							:action="URL.uploadCompanyLogo"
 							:show-file-list="false"
+							:on-success="uploadSuccessed"
 						>
 							<!-- :on-success="handleAvatarSuccess" -->
 							<!-- :before-upload="beforeAvatarUpload" -->
-							<img v-if="logoImg" :src="logoImg" class="avatar" />
+							<img v-if="companyProfile.logo" :src="companyProfile.logo" class="avatar" />
 							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 						</el-upload>
 					</el-form-item>
 
 					<el-form-item label="Company name:">
 						<el-input
-							v-model="companyProfile.companyName"
+							v-model="companyProfile.name"
 							:disabled="!isCompanyNameEditable"
 							placeholder="Company Name"
 						>
@@ -42,20 +43,20 @@
 					<el-form-item label="Contact address:">
 						<el-row class="gap">
 							<el-col :span="24">
-								<el-input v-model="companyProfile.contactAddress.street" placeholder="Street"></el-input>
+								<el-input v-model="companyProfile.address" placeholder="Street"></el-input>
 							</el-col>
 						</el-row>
 						<el-row :gutter="20" class="gap">
 							<el-col :span="12">
-								<el-input v-model="companyProfile.contactAddress.city" placeholder="City"></el-input>
+								<el-input v-model="companyProfile.address" placeholder="City"></el-input>
 							</el-col>
 							<el-col :span="12">
-								<el-input v-model="companyProfile.contactAddress.postalCode" placeholder="Postal code"></el-input>
+								<el-input v-model="companyProfile.postal_code" placeholder="Postal code"></el-input>
 							</el-col>
 						</el-row>
 						<el-row :gutter="20">
 							<el-col :span="12">
-								<el-select v-model="companyProfile.contactAddress.country" placeholder="Country">
+								<el-select v-model="companyProfile.address" placeholder="Country">
 									<el-option v-for="(item, index) in COUNTRIES" :key="index" :label="item" :value="item"></el-option>
 								</el-select>
 							</el-col>
@@ -72,7 +73,7 @@
 							type="textarea"
 							placeholder="Business scope"
 							rows="4"
-							v-model="companyProfile.businessScope"
+							v-model="companyProfile.business_scope"
 						></el-input>
 					</el-form-item>
 					<el-form-item>
@@ -80,10 +81,10 @@
 							<el-col :span="12">
 								<el-row type="flex" justify="space-between" :gutter="12">
 									<el-col :span="12">
-										<el-button type="primary" class="full-width">Confirm</el-button>
+										<el-button type="primary" class="full-width" @click="updateCompany" :loading="isUpdatingCompany">Confirm</el-button>
 									</el-col>
 									<el-col :span="12">
-										<el-button plain class="full-width">Cancel</el-button>
+										<el-button plain class="full-width" @click="()=>{$router.go(-1)}">Cancel</el-button>
 									</el-col>
 								</el-row>
 							</el-col>
@@ -99,31 +100,60 @@
 <script>
 import SubHeader from "@/components/SubHeader";
 import COUNTRIES from "@/constant/countries.js";
+import api from '@/api'
+import URL from '@/api/config'
+import { SET_CURRENT_COMPANY } from '@/store/modules/company'
 
 export default {
 	data() {
 		return {
 			COUNTRIES,
+			URL,
 
-			logoImg: "",
 			isCompanyNameEditable: false,
 			companyProfile: {
-				companyName: "Company Name",
-				contactAddress: {
-					street: "",
-					city: "",
-					postalCode: "",
-					country: ""
-				},
-				website: "",
-				businessScope: ""
-			}
+			},
+			isGettingCompanyData: false,
+			isUpdatingCompany: false,
 		};
+	},
+	computed: {
+		currentCompanyID() {
+			return this.$store.getters.currentCompany.id
+		}
 	},
 	components: {
 		SubHeader
 	},
-	created() {}
+	created() {
+		this.getCompanyDetail()
+	},
+	methods: {
+		async getCompanyDetail() {
+			console.log(this.currentCompanyID);
+			
+			if (!this.currentCompanyID) { return }
+			this.isGettingCompanyData = true
+			const res = await api.getCompanyDetail(this.currentCompanyID)
+			this.isGettingCompanyData = false
+			this.companyProfile = res.data.data
+		},
+		uploadSuccessed(res) {
+			this.companyProfile.logo = res.data.file_path
+		},
+		async updateCompany() {
+			if (this.companyProfile.name === '') { return this.$message.error('Company name is empty') }
+			if (this.companyProfile.address === '') { return this.$message.error('Address is empty') }
+			if (this.companyProfile.postal_code === '') { return this.$message.error('Postal code is empty') }
+			if (this.companyProfile.website === '') { return this.$message.error('Website is empty') }
+			if (this.companyProfile.business_scope === '') { return this.$message.error('Business scope is empty') }
+		
+			this.isUpdatingCompany = true
+			const res = await api.updateCompany(this.currentCompanyID, this.companyProfile)
+			this.isUpdatingCompany = false
+			this.$store.commit('SET_CURRENT_COMPANY',res.data.data)
+		},
+	}
 };
 </script>
 

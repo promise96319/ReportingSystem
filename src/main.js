@@ -34,6 +34,7 @@ import {
   Tooltip,
   Divider,
   Drawer,
+  Loading,
 } from "element-ui"
 
 import lang from 'element-ui/lib/locale/lang/en'
@@ -65,6 +66,9 @@ Vue
   .use(Tooltip)
   .use(Divider)
   .use(Drawer)
+  .use(Loading)
+
+Vue.use(Loading.directive)
 
 Vue.prototype.$message = Message;
 Vue.prototype.$msgbox = MessageBox;
