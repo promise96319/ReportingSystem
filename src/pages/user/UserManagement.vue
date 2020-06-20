@@ -9,84 +9,103 @@
 			<div class="container">
 				<el-table :data="usersData" style="width: 100%" border v-loading="isGettingUserData">
 					<el-table-column prop="id" label="User ID" align="center" header-align="center"></el-table-column>
-					<!-- <el-table-column prop="username" label="User name" align="center" header-align="center"></el-table-column> -->
+					<el-table-column prop="username" label="User name" align="center" header-align="center"></el-table-column>
 					<el-table-column prop="email" label="Email address" align="center" header-align="center"></el-table-column>
-					<el-table-column label="Password" align="center" header-align="center">
-						<template slot-scope="scope">
-							<span v-if="!scope.row.isEditable">{{ scope.row.username }}</span>
-							<el-input v-else v-model="scope.row.username" size="medium"></el-input>
-						</template>
-					</el-table-column>
-					<el-table-column label="Action" align="center" header-align="center" width="350">
+					<el-table-column label="Role" align="center" header-align="center">
 						<template slot-scope="scope">
 							<span v-if="scope.row.is_super_admin" class="admin">
 								<svg-icon icon-class="admin"></svg-icon>Administrator
 							</span>
-							<el-button
-								v-else-if="!scope.row.isEditable"
-								type="primary"
-								size="medium"
-								@click="scope.row.isEditable=true"
-							>
+							<div v-else @click="showEditRoleDialog(scope.row)" class="edit-role">
+								<span>{{ scope.row.role }}</span>
 								<i class="el-icon-edit-outline"></i>
-								Edit
-							</el-button>
-							<el-row v-else type="flex" justify="center" align="middle">
-								<el-button type="success" size="medium" @click="scope.row.isEditable=false">
-									<i class="el-icon-success"></i>
-									Save
+							</div>
+						</template>
+					</el-table-column>
+
+					<el-table-column label="Action" align="center" header-align="center" width="350">
+						<template slot-scope="scope">
+							<span v-if="scope.row.is_super_admin" class="admin">
+								<!-- <svg-icon icon-class="admin"></svg-icon>Administrator -->
+							</span>
+							<div v-else>
+								<el-button type="primary" size="medium" @click="showEditPasswordDialog(scope.row)">
+									<i class="el-icon-edit-outline"></i>
+									Edit
 								</el-button>
-								<el-button @click="scope.row.isEditable=false" type="info" plain size="medium">
-									<i class="el-icon-refresh-right"></i>
-									Cancel
-								</el-button>
-								<el-button type="danger" size="medium" @click="deleteMember(scope.$index)">
+
+								<el-button type="danger" size="medium" @click="deleteMember(scope.row)">
 									<i class="el-icon-delete"></i>
 									Delete
 								</el-button>
-							</el-row>
+							</div>
 						</template>
 					</el-table-column>
 				</el-table>
 			</div>
 		</div>
 
-		<!-- <el-dialog title="Invite new member" :visible.sync="isInviteDialogShow" label-position="left">
-			<el-form :model="newUserData">
-				<el-form-item label="User name" label-width="108px">
-					<el-input v-model="newUserData.username" autocomplete="off"></el-input>
+		<el-dialog title="Edit user data" :visible.sync="isDialogShow" width="400px">
+			<el-form :label-width="isEditPasswordShow ? '130px' : '60px'" label-position="left">
+				<el-form-item label="Email">{{ tmpUserData.email }}</el-form-item>
+
+				<el-form-item v-if="isEditPasswordShow" label="New password">
+					<el-input v-model="password" placeholder="Please enter new password" show-password clearable></el-input>
 				</el-form-item>
-				<el-form-item label="Email address" label-width="108px">
-					<el-input v-model="newUserData.emailAddress" autocomplete="off"></el-input>
+				<el-form-item v-if="isEditPasswordShow" label="Confirm password">
+					<el-input
+						v-model="confirmPassword"
+						placeholder="Please confirm new password"
+						show-password
+						clearable
+					></el-input>
 				</el-form-item>
-				<el-form-item label="Password" label-width="108px">
-					<el-input v-model="newUserData.password" show-password autocomplete="off"></el-input>
+
+				<el-form-item v-if="isEditRoleShow" label="Role" class="role">
+					<el-select v-model="role">
+						<el-option
+							v-for="item in [ROLE_ADMIN, ROLE_WRITE, ROLE_READ]"
+							:label="item"
+							:value="item"
+							:key="item"
+						></el-option>
+					</el-select>
+				</el-form-item>
+
+				<el-form-item>
+					<el-button type="primary" @click="confirmEdit">Confirm</el-button>
+					<el-button @click="cancelEdit">Cancel</el-button>
 				</el-form-item>
 			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="isInviteDialogShow = false">Cancel</el-button>
-				<el-button type="primary" @click="isInviteDialogShow = false">Invite</el-button>
-			</div>
-		</el-dialog>-->
+		</el-dialog>
 	</div>
 </template>
 
 <script>
 import SubHeader from "@/components/SubHeader";
 import api from "@/api";
+import { ROLE_ADMIN, ROLE_WRITE, ROLE_READ } from "@/constant/role";
 
 export default {
 	data() {
 		return {
+			ROLE_ADMIN,
+			ROLE_WRITE,
+			ROLE_READ,
+
 			usersData: [],
 			isGettingUserData: false,
 
-			isInviteDialogShow: false,
-			newUserData: {
-				username: "",
-				emailAddress: "",
-				password: ""
-			}
+			// 当前是在编辑password?
+			isEditPasswordShow: false,
+			// 当前是在编辑role?
+			isEditRoleShow: false,
+			isDialogShow: false,
+
+			tmpUserData: {},
+			password: "",
+			confirmPassword: "",
+			role: ""
 		};
 	},
 	components: {
@@ -129,16 +148,16 @@ export default {
 							message:
 								"The invitation has been sent to the mailbox, please check it in time"
 						});
+						this.getUserList()
 					}
 				})
 				.catch(() => {});
 		},
-		deleteMember(index) {
-			const user = this.usersData[index];
+		deleteMember(user) {
 			this.$msgbox
 				.confirm(
 					`Would you want to remove this user
-      (${user.emailAddress})?`,
+      (${user.email})?`,
 					"Notice",
 					{
 						confirmButtonText: "Confirm",
@@ -147,13 +166,85 @@ export default {
 						center: true
 					}
 				)
-				.then(() => {
-					this.$message({
-						type: "success",
-						message: "Delete success!"
-					});
+				.then(async () => {
+					const res = await api.deleteUser(this.currentCompany.id, user.id)
+					if (res.data.error_code === 0) {
+						this.$message.success('删除成功！')
+						this.getUserList()
+					}
 				})
 				.catch(() => {});
+		},
+		showEditPasswordDialog(user) {
+			this.tmpUserData = user;
+			this.isEditRoleShow = false;
+			this.isDialogShow = this.isEditPasswordShow = true;
+		},
+		showEditRoleDialog(user) {
+			this.tmpUserData = user;
+			this.role = user.role;
+			this.isEditPasswordShow = false;
+			this.isDialogShow = this.isEditRoleShow = true;
+		},
+		cancelEdit() {
+			this.isDialogShow = false;
+		},
+		confirmEdit() {
+			if (this.isEditPasswordShow) {
+				if (this.password === "") {
+					this.$message.error("Password is Empty");
+					return false;
+				}
+
+				if (this.password.length < 6) {
+					this.$message.error("Password must be at last 6 character");
+					return false;
+				}
+
+				if (this.confirmPassword === "") {
+					this.$message.error("Please confirm your password");
+					return false;
+				}
+
+				if (this.confirmPassword !== this.password) {
+					this.$message.error("Password is not the same");
+					return;
+				}
+
+				this.updatePassword();
+			}
+
+			if (this.isEditRoleShow) {
+				if (this.role === this.tmpUserData.role) {
+					this.isDialogShow = false;
+					return;
+				}
+				this.updateRole();
+			}
+		},
+		async updatePassword() {
+			const res = await api.updatePassword(
+				this.tmpUserData.id,
+				this.password,
+				null,
+				this.currentCompany.id
+			);
+			if (res.data.error_code === 0) {
+				this.isDialogShow = false;
+				this.$message.success("用户密码更改成功！");
+			}
+		},
+		async updateRole() {
+			const res = await api.updateRole(
+				this.currentCompany.id,
+				this.tmpUserData.id,
+				this.role
+			);
+			if (res.data.error_code === 0) {
+				this.isDialogShow = false;
+				this.$message.success("用户权限更新成功！");
+				this.getUserList();
+			}
 		}
 	}
 };
@@ -189,7 +280,18 @@ export default {
 				color: #409eff;
 				font-weight: 500;
 			}
+
+			.edit-role {
+				cursor: pointer;
+				i {
+					color: #409eff;
+				}
+			}
 		}
 	}
+}
+
+.role .el-select {
+	width: 100%;
 }
 </style>

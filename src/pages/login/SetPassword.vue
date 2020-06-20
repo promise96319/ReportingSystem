@@ -8,12 +8,14 @@
 			v-model="password"
 			placeholder="Please enter your password"
 			prefix-icon="el-icon-key"
+      show-password
 			clearable
 		></el-input>
 		<el-input
 			v-model="confirmPassword"
 			placeholder="Please confirm your password"
 			show-password
+      clearable
 			prefix-icon="el-icon-key"
 		></el-input>
 		<el-button type="primary" @click="resetPassword" :loading="isResetingPassword">Confirm</el-button>
@@ -111,7 +113,7 @@ export default {
 };
 </script>
 
-<style scope lang="scss">
+<style scoped lang="scss">
 .title {
   text-align: left;
   color: #606266;

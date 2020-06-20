@@ -84,3 +84,32 @@ export const updatePassword = (userId, password, oldPassword, companyId) => {
   })
 }
 
+/**
+ * 更新公司下用户权限
+ * @param {Number} companyId 公司id
+ * @param {Number} userId 用户id
+ * @param {String} role 用户角色 admin/write/read
+ */
+export const updateRole = (companyId, userId, role) => {
+  return request({
+    method: 'patch',
+    url: `${URL.updateRole}/${companyId}/user/${userId}`,
+    data: {
+      role
+    }
+  })
+}
+
+/**
+ * 删除公司下用户
+ * @param {Number} companyId 公司id
+ * @param {Number} userId 用户id
+ */
+export const deleteUser = (companyId, userId) => {
+  return request({
+    method: 'delete',
+    url: `${URL.updateRole}/${companyId}/user/${userId}`,
+  })
+}
+
+
