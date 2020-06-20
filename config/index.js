@@ -4,7 +4,8 @@
 
 const path = require('path')
 
-const HOST = 'http://47.110.132.204:5000'
+// const HOST = 'http://47.110.132.204:5000'
+const HOST = 'http://106.13.82.152:5000'
 
 module.exports = {
   dev: {
@@ -67,7 +68,7 @@ module.exports = {
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
     // npm install --save-dev compression-webpack-plugin
-    productionGzip: false,
+    productionGzip: true,
     productionGzipExtensions: ['js', 'css'],
 
     // Run the build command with an extra argument to

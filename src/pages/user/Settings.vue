@@ -6,18 +6,29 @@
 				<el-form :model="userInfo" label-width="170px" label-position="left">
 					<el-form-item label="Email address:">{{ email }}</el-form-item>
 					<el-form-item label="Password:">
-						<el-input :value="password" disabled show-password placeholder="Password">
+						<el-input v-model="oldPassword" :disabled="!isPasswordEditable" show-password placeholder="Old password">
 							<el-button class="lock" slot="append" @click="togglePasswordEditor">
 								<svg-icon :icon-class="isPasswordEditable ? 'unlock' : 'lock'"></svg-icon>
 							</el-button>
 						</el-input>
 						<el-collapse-transition>
 							<div class="new-password" v-show="isPasswordEditable">
-								<el-input v-model="userInfo.newPassword" show-password placeholder="New password"></el-input>
-								<el-input v-model="userInfo.confirmPassword" show-password placeholder="Confirm new password"></el-input>
+								<el-input v-model="newPassword" show-password placeholder="New password"></el-input>
+								<el-input v-model="confirmPassword" show-password placeholder="Confirm new password"></el-input>
 							</div>
 						</el-collapse-transition>
 					</el-form-item>
+					<el-form-item>
+						<el-row type="flex" justify="space-between" :gutter="12">
+							<el-col :span="12">
+								<el-button :disabled="!isPasswordEditable" type="primary" class="full-width" @click="updatePassword">Confirm</el-button>
+							</el-col>
+							<el-col :span="12">
+								<el-button plain  class="full-width" @click="()=>{$router.go(-1)}">Cancel</el-button>
+							</el-col>
+						</el-row>
+					</el-form-item>
+					<el-form-item></el-form-item>
 					<el-form-item label="Chat of accounts type:">
 						<el-select
 							v-model="userInfo.accountType"
@@ -33,10 +44,10 @@
 					<el-form-item>
 						<el-row type="flex" justify="space-between" :gutter="12">
 							<el-col :span="12">
-								<el-button type="primary" class="full-width">Confirm</el-button>
+								<el-button :disabled="!isAccountTypeEditable" type="primary" class="full-width" @click="updateAccountType">Confirm</el-button>
 							</el-col>
 							<el-col :span="12">
-								<el-button plain  class="full-width">Cancel</el-button>
+								<el-button plain class="full-width" @click="()=>{$router.go(-1)}">Cancel</el-button>
 							</el-col>
 						</el-row>
 					</el-form-item>
@@ -48,17 +59,20 @@
 
 <script>
 import SubHeader from "@/components/SubHeader";
+import api from '@/api'
+
 export default {
 	data() {
 		return {
 			isPasswordEditable: false,
 			isAccountTypeEditable: false,
 
+			oldPassword: '',
 			newPassword: '',
 			confirmPassword: '',
 
 			userInfo: {
-				accountType: ""
+				accountType: ''
 			},
 			accountTypes: ["CN", "EN", "AT"]
 		};
@@ -67,19 +81,29 @@ export default {
 		email() {
 			return this.$store.getters.user.email
 		},
-		password() {
-			return this.$store.getters.user.password
-		}
 	},
 	components: {
 		SubHeader
 	},
 	methods: {
 		togglePasswordEditor() {
-			if (!this.isisPasswordEditable) {
-				this.newPassword = this.confirmPassword = this.password
-			}
 			this.isPasswordEditable = !this.isPasswordEditable
+		},
+		async updatePassword() {
+			if (this.oldPassword === '') { return this.$message.error('Old password is Empty') }
+			if (this.newPassword === '') { return this.$message.error('New password is Empty') }
+			if (this.newPassword.length < 6) { return this.$message.error('New password must be at last 6 character') }
+			if (this.confirmPassword === '') { return this.$message.error('Please confirm your new password') }
+			if (this.newPassword !== this.confirmPassword) { return this.$message.error('Please confirm your new password') }
+
+			const userId = this.$store.getters.user.id
+			const res = await api.updatePassword(userId, this.newPassword, this.oldPassword)
+			if (res.data.error_code === 0) {
+				this.$message.success('密码修改成功！')
+			}
+		},
+		async updateAccountType() {
+
 		}
 	}
 };

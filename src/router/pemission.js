@@ -18,7 +18,7 @@ const getCompanyInfo = async (callback) => {
 
   // 否则请求公司列表
   const res = await api.getCompanyList()
-  if (res.data && res.data.data) {
+  if (res.data.error_code === 0) {
     const { companies } = res.data.data
     store.commit('SET_COMPANY_LIST', companies)
     if (companies.length === 0) { 
@@ -48,11 +48,19 @@ router.beforeEach((to, from, next) => {
 
   store.commit(TOGGLE_SIDEBAR, to.meta.isSideBar)
 
+  // 不需要检查是否有登录信息（和登录信息毫无关系）
+  const NO_PERMISSSION = ['SetPassword', 'ForgetPassword']
+  // 不需要登录信息的页面（如果登录了则不会进入该页面）
   const NOT_CHECK_PERMISSION = ['Login']
 
   // 如果有用户信息，如果去不需要登录的界面则调回首页
   // 如果没有用户信息，且是去登录页，则直接去
   // 否则获取用户信息，如果没有获取，跳会登录页
+
+  if (NO_PERMISSSION.includes(to.name)) {
+    next()
+    return
+  }
 
   let user = store.getters.user
   let isUserExisted = user && (user.id || user.id === 0)

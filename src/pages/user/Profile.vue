@@ -43,12 +43,12 @@
 					<el-form-item label="Contact address:">
 						<el-row class="gap">
 							<el-col :span="24">
-								<el-input v-model="companyProfile.address" placeholder="Street"></el-input>
+								<el-input v-model="street" placeholder="Street"></el-input>
 							</el-col>
 						</el-row>
 						<el-row :gutter="20" class="gap">
 							<el-col :span="12">
-								<el-input v-model="companyProfile.address" placeholder="City"></el-input>
+								<el-input v-model="city" placeholder="City"></el-input>
 							</el-col>
 							<el-col :span="12">
 								<el-input v-model="companyProfile.postal_code" placeholder="Postal code"></el-input>
@@ -56,7 +56,7 @@
 						</el-row>
 						<el-row :gutter="20">
 							<el-col :span="12">
-								<el-select v-model="companyProfile.address" placeholder="Country">
+								<el-select v-model="country" placeholder="Country">
 									<el-option v-for="(item, index) in COUNTRIES" :key="index" :label="item" :value="item"></el-option>
 								</el-select>
 							</el-col>
@@ -104,6 +104,9 @@ import api from '@/api'
 import URL from '@/api/config'
 import { SET_CURRENT_COMPANY } from '@/store/modules/company'
 
+// 国家，城市，街道 分隔符-> 国家$$$城市$$$街道
+const ADDRESS_DELIMITER = '$$$'
+
 export default {
 	data() {
 		return {
@@ -113,6 +116,10 @@ export default {
 			isCompanyNameEditable: false,
 			companyProfile: {
 			},
+			country: '',
+			city: '',
+			street: '',
+
 			isGettingCompanyData: false,
 			isUpdatingCompany: false,
 		};
@@ -130,28 +137,42 @@ export default {
 	},
 	methods: {
 		async getCompanyDetail() {
-			console.log(this.currentCompanyID);
-			
 			if (!this.currentCompanyID) { return }
 			this.isGettingCompanyData = true
 			const res = await api.getCompanyDetail(this.currentCompanyID)
 			this.isGettingCompanyData = false
-			this.companyProfile = res.data.data
+			if (res.data.error_code === 0) {
+				const data = res.data.data
+				this.companyProfile = data
+				const { address } = data
+				// 国家$$$城市$$$街道
+				let addressArr = address.split(ADDRESS_DELIMITER)
+				this.country = addressArr[0] || ''
+				this.city = addressArr[1] || ''
+				this.street = addressArr[2] || ''
+			}
 		},
 		uploadSuccessed(res) {
 			this.companyProfile.logo = res.data.file_path
 		},
 		async updateCompany() {
 			if (this.companyProfile.name === '') { return this.$message.error('Company name is empty') }
-			if (this.companyProfile.address === '') { return this.$message.error('Address is empty') }
+			if (this.country === '') { return this.$message.error('Country is empty') }
+			if (this.city === '') { return this.$message.error('City is empty') }
+			if (this.street === '') { return this.$message.error('Street is empty') }
 			if (this.companyProfile.postal_code === '') { return this.$message.error('Postal code is empty') }
 			if (this.companyProfile.website === '') { return this.$message.error('Website is empty') }
 			if (this.companyProfile.business_scope === '') { return this.$message.error('Business scope is empty') }
+
+			this.companyProfile.address = [this.country, this.city, this.street].join(ADDRESS_DELIMITER)
 		
 			this.isUpdatingCompany = true
 			const res = await api.updateCompany(this.currentCompanyID, this.companyProfile)
 			this.isUpdatingCompany = false
-			this.$store.commit('SET_CURRENT_COMPANY',res.data.data)
+			if (res.data.error_code === 0) {
+				this.$store.commit('SET_CURRENT_COMPANY', res.data.data)
+				this.$message.success('更新成功!')
+			}
 		},
 	}
 };

@@ -2,6 +2,7 @@ import api from '@/api'
 import tokenManager from '@/tools/tokenManager'
 import { Message } from 'element-ui'
 import router from '@/router/index'
+import { SET_COMPANY_LIST, SET_CURRENT_COMPANY } from './company'
 
 export const CHANGE_USER = 'CHANGE_USER'
 export const LOGOUT = 'LOGOUT'
@@ -52,6 +53,8 @@ const user = {
           .then((res) => {
             if (res.data.error_code === 0) {
               commit(CHANGE_USER, {})
+              commit(SET_COMPANY_LIST, [])
+              commit(SET_CURRENT_COMPANY, {})
               router.push({ name: 'Login' })
               Message.success('登出成功')
               resolve()
@@ -62,7 +65,9 @@ const user = {
             }
           })
           .catch(() => {
-            // 本地登出
+            // 本地登出, 清除状态
+            commit(SET_COMPANY_LIST, [])
+            commit(SET_CURRENT_COMPANY, {})
             commit(LOGOUT)
             reject()
           })

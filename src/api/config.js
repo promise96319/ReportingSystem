@@ -13,6 +13,9 @@ const user = {
 const userManager = {
   getUserList: `${URL}/company`,
   inviteUser: `${URL}/user/invitation`,
+  checkEmail: `${URL}/user/email`,
+  register: `${URL}/user/register`,
+  updatePassword: `${URL}/user`,
 }
 
 const company = {

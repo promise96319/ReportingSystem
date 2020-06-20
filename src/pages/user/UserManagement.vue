@@ -10,12 +10,7 @@
 				<el-table :data="usersData" style="width: 100%" border v-loading="isGettingUserData">
 					<el-table-column prop="id" label="User ID" align="center" header-align="center"></el-table-column>
 					<!-- <el-table-column prop="username" label="User name" align="center" header-align="center"></el-table-column> -->
-					<el-table-column
-						prop="email"
-						label="Email address"
-						align="center"
-						header-align="center"
-					></el-table-column>
+					<el-table-column prop="email" label="Email address" align="center" header-align="center"></el-table-column>
 					<el-table-column label="Password" align="center" header-align="center">
 						<template slot-scope="scope">
 							<span v-if="!scope.row.isEditable">{{ scope.row.username }}</span>
@@ -25,9 +20,8 @@
 					<el-table-column label="Action" align="center" header-align="center" width="350">
 						<template slot-scope="scope">
 							<span v-if="scope.row.is_super_admin" class="admin">
-                <svg-icon icon-class="admin"></svg-icon>
-                Administrator
-              </span>
+								<svg-icon icon-class="admin"></svg-icon>Administrator
+							</span>
 							<el-button
 								v-else-if="!scope.row.isEditable"
 								type="primary"
@@ -73,13 +67,13 @@
 				<el-button @click="isInviteDialogShow = false">Cancel</el-button>
 				<el-button type="primary" @click="isInviteDialogShow = false">Invite</el-button>
 			</div>
-		</el-dialog> -->
+		</el-dialog>-->
 	</div>
 </template>
 
 <script>
 import SubHeader from "@/components/SubHeader";
-import api from '@/api'
+import api from "@/api";
 
 export default {
 	data() {
@@ -100,58 +94,68 @@ export default {
 	},
 	computed: {
 		currentCompany() {
-			return this.$store.getters.currentCompany
+			return this.$store.getters.currentCompany;
 		}
 	},
 	created() {
-		this.getUserList()
+		this.getUserList();
 	},
-  methods: {
+	methods: {
 		async getUserList() {
-			if (!this.currentCompany || !this.currentCompany.id) { return }
-			
-			this.isGettingUserData = true
-			console.log(this.currentCompany.id);
-			
-			const res = await api.getUserList(this.currentCompany.id)
-			this.isGettingUserData = false
-			this.usersData = res.data.data
-		},
-    inviteMember() {
-      this.$msgbox.prompt('Please enter the email', 'Invite new member', {
-          confirmButtonText: 'Confirm',
-          cancelButtonText: 'Cancel',
-          inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-          inputErrorMessage: 'Incorrect mailbox format'
-        }).then(async ({ value }) => {
+			if (!this.currentCompany || !this.currentCompany.id) {
+				return;
+			}
 
-					const res = await api.inviteUser(this.currentCompany.id, value)
-					console.log(res);
-					
-          this.$message({
-            type: 'success',
-            message: 'The invitation has been sent to the mailbox, please check it in time'
-          });
-        }).catch(() => {     
-        })
-    },
-    deleteMember(index) {
-      const user = this.usersData[index]
-      this.$msgbox.confirm(`Would you want to remove this user
-      (${user.emailAddress})?`, 'Notice', {
-          confirmButtonText: 'Confirm',
-          cancelButtonText: 'Cancel',
-          type: 'warning',
-          center: true
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: 'Delete success!'
-          });
-        }).catch(() => {
-        });
-    }
-  }
+			this.isGettingUserData = true;
+			const res = await api.getUserList(this.currentCompany.id);
+			this.isGettingUserData = false;
+			if (res.data.error_code === 0) {
+				this.usersData = res.data.data;
+			}
+		},
+		inviteMember() {
+			this.$msgbox
+				.prompt("Please enter the email", "Invite new member", {
+					confirmButtonText: "Confirm",
+					cancelButtonText: "Cancel",
+					inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+					inputErrorMessage: "Incorrect mailbox format"
+				})
+				.then(async ({ value }) => {
+					const res = await api.inviteUser(this.currentCompany.id, value);
+					if (res.data.error_code === 0) {
+						this.$message({
+							type: "success",
+							message:
+								"The invitation has been sent to the mailbox, please check it in time"
+						});
+					}
+				})
+				.catch(() => {});
+		},
+		deleteMember(index) {
+			const user = this.usersData[index];
+			this.$msgbox
+				.confirm(
+					`Would you want to remove this user
+      (${user.emailAddress})?`,
+					"Notice",
+					{
+						confirmButtonText: "Confirm",
+						cancelButtonText: "Cancel",
+						type: "warning",
+						center: true
+					}
+				)
+				.then(() => {
+					this.$message({
+						type: "success",
+						message: "Delete success!"
+					});
+				})
+				.catch(() => {});
+		}
+	}
 };
 </script>
 
@@ -183,7 +187,7 @@ export default {
 
 			.admin {
 				color: #409eff;
-        font-weight: 500;
+				font-weight: 500;
 			}
 		}
 	}
