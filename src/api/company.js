@@ -6,8 +6,8 @@ import URL from './config'
  */
 export const getCompanyList = () => {
   return request({
-    url: URL.getCompanyList,
     method: 'get',
+    url: URL.getCompanyList
   })
 }
 
@@ -50,12 +50,12 @@ export const addCompany = (data) => {
 /**
  * 更新公司信息
  * @param {Number} id 公司ID
- * @param {对象} data 公司详情 
+ * @param {对象} data 公司详情
  */
 export const updateCompany = (id, data) => {
   return request({
     method: 'patch',
     url: `${URL.updateCompany}/${id}`,
-    data,
+    data
   })
 }

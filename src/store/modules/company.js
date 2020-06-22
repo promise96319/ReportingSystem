@@ -6,7 +6,9 @@ export const SET_CURRENT_COMPANY = 'SET_CURRENT_COMPANY'
 
 const company = {
   state: {
+    // 当前用户公司列表
     companyList: [],
+    // 当前用户选择的当前公司
     currentCompany: {},
   },
   mutations: {

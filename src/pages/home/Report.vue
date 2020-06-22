@@ -7,19 +7,30 @@
 				plain
 				@click="$router.push({ name: 'Home' })"
 			>Dashboard</el-button>
-			<el-button size="medium" class="primary-icon" type="primary" @click="isStepDialogShow=true">
+			<el-button
+				size="medium"
+				class="primary-icon"
+				type="primary"
+				@click="isStepDialogShow=true"
+			>
 				<svg-icon icon-class="plus-square"></svg-icon>New data
 			</el-button>
 		</SubHeader>
 
 		<div class="main">
-			<div class="module module1" @click="showPeriodDialog(moduleOptions[0])">
+			<div
+				class="module module1"
+				@click="showPeriodDialog(moduleOptions[0])"
+			>
 				<div class="tip">{{ moduleOptions[0] }}</div>
 				<div class="item1">Assets</div>
 				<div class="item2">Liabities</div>
 				<div class="item3">Equity</div>
 			</div>
-			<div class="module module2" @click="showPeriodDialog(moduleOptions[1])">
+			<div
+				class="module module2"
+				@click="showPeriodDialog(moduleOptions[1])"
+			>
 				<div class="tip">{{ moduleOptions[1] }}</div>
 				<div class="item1">
 					<div class="sales">Sales revenus</div>
@@ -28,7 +39,10 @@
 				<div class="item2">Expenses</div>
 				<div class="item3">Net income</div>
 			</div>
-			<div class="module module3" @click="showPeriodDialog(moduleOptions[2])">
+			<div
+				class="module module3"
+				@click="showPeriodDialog(moduleOptions[2])"
+			>
 				<div class="tip">{{ moduleOptions[2] }}</div>
 				<div class="item1">Operating activities</div>
 				<div class="item2">Investing activities</div>
@@ -37,7 +51,10 @@
 			</div>
 			<div class="module module4">
 				<div class="tip">{{ moduleOptions[3] }}</div>
-				<el-row class="header" :gutter="10">
+				<el-row
+					class="header"
+					:gutter="10"
+				>
 					<el-col :span="12">
 						<div>Account</div>
 					</el-col>
@@ -48,7 +65,11 @@
 						<div>Credit</div>
 					</el-col>
 				</el-row>
-				<el-row v-for="(item, index) in accountOptions" :key="index" :gutter="10">
+				<el-row
+					v-for="(item, index) in accountOptions"
+					:key="index"
+					:gutter="10"
+				>
 					<el-col :span="12">
 						<div>{{ item.value }}</div>
 					</el-col>
@@ -100,15 +121,30 @@
 			</div>
 		</div>
 
-		<el-dialog :visible.sync="isStepDialogShow" width="800px">
+		<el-dialog
+			:visible.sync="isStepDialogShow"
+			width="800px"
+		>
 			<StepDialog></StepDialog>
 		</el-dialog>
 
-		<el-dialog :title="currentTitle" :visible.sync="isPeriodDialogShow" width="400px" center>
-			<el-row :gutter="12" type="flex" align="middle">
+		<el-dialog
+			:title="currentTitle"
+			:visible.sync="isPeriodDialogShow"
+			width="400px"
+			center
+		>
+			<el-row
+				:gutter="12"
+				type="flex"
+				align="middle"
+			>
 				<el-col :span="4">Period:</el-col>
 				<el-col :span="10">
-					<el-select v-model="currentYear" @change="selectYear">
+					<el-select
+						v-model="currentYear"
+						@change="selectYear"
+					>
 						<el-option
 							v-for="item in YEAR_OPTIONS"
 							:key="item"
@@ -118,7 +154,11 @@
 					</el-select>
 				</el-col>
 				<el-col :span="10">
-					<el-select v-model="currentMonth" value-key="value" @change="selectMonth">
+					<el-select
+						v-model="currentMonth"
+						value-key="value"
+						@change="selectMonth"
+					>
 						<el-option
 							v-for="item in MONTH_OPTIONS"
 							:key="item.key"
@@ -128,18 +168,23 @@
 					</el-select>
 				</el-col>
 			</el-row>
-			<span slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="goToReport">Confirm</el-button>
+			<span
+				slot="footer"
+				class="dialog-footer"
+			>
+				<el-button
+					type="primary"
+					@click="goToReport"
+				>Confirm</el-button>
 				<el-button @click="isPeriodDialogShow = false">Cancel</el-button>
 			</span>
 		</el-dialog>
-
 	</div>
 </template>
 
 <script>
-import SubHeader from "@/components/SubHeader";
-import StepDialog from "./components/StepDialog";
+import SubHeader from '@/components/SubHeader'
+import StepDialog from './components/StepDialog'
 import { YEAR_OPTIONS, MONTH_OPTIONS } from '@/constant/dateOptions'
 export default {
 	data() {
@@ -151,50 +196,50 @@ export default {
 			isPeriodDialogShow: false,
 			// 模块名称
 			moduleOptions: [
-				"Balance sheet",
-				"Profit & loss",
-				"Cash flow statement",
-				"Trial balance",
-				"General ledger"
+				'Balance sheet',
+				'Profit & loss',
+				'Cash flow statement',
+				'Trial balance',
+				'General ledger'
 			],
 			// 模块4 选项数组
 			accountOptions: [
 				{
-					key: "",
-					value: "Cash"
+					key: '',
+					value: 'Cash'
 				},
 				{
-					key: "",
-					value: "Bank"
+					key: '',
+					value: 'Bank'
 				},
 				{
-					key: "",
-					value: "Account receivable"
+					key: '',
+					value: 'Account receivable'
 				},
 				{
-					key: "",
-					value: "Account payable"
+					key: '',
+					value: 'Account payable'
 				},
 				{
-					key: "",
-					value: "Tax payable"
+					key: '',
+					value: 'Tax payable'
 				},
 				{
-					key: "",
-					value: "Capital"
+					key: '',
+					value: 'Capital'
 				},
 				{
-					key: "",
-					value: "Undistribuated profit"
+					key: '',
+					value: 'Undistribuated profit'
 				}
 			],
 			// 当前选择模块标题
-			currentTitle: "",
+			currentTitle: '',
 			// 当前选择模块 年
-			currentYear: "",
+			currentYear: '',
 			// 当前选择模块 月
-			currentMonth: {},
-		};
+			currentMonth: {}
+		}
 	},
 	components: {
 		SubHeader,
@@ -202,8 +247,8 @@ export default {
 	},
 	methods: {
 		showPeriodDialog(title) {
-			this.currentTitle = title;
-			this.isPeriodDialogShow = true;
+			this.currentTitle = title
+			this.isPeriodDialogShow = true
 		},
 		selectYear(e) {
 			this.currentYear = e
@@ -216,11 +261,11 @@ export default {
 		}
 	},
 	mounted() {
-		let today = new Date()
+		const today = new Date()
 		this.currentYear = today.getFullYear()
 		this.currentMonth = this.MONTH_OPTIONS[11 - today.getMonth()]
 	}
-};
+}
 </script>
 
 <style lang="scss" scoped>

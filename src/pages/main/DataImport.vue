@@ -34,7 +34,10 @@
 				Batch: 2020 July Batch03
 			</div>
 
-			<importedDataTable v-if="importedData.length > 0" :imported-data="importedData"></importedDataTable>
+			<importedDataTable
+				v-if="importedData.length > 0"
+				:imported-data="importedData"
+			></importedDataTable>
 		</div>
 
 		<el-dialog
@@ -44,20 +47,26 @@
 			class="upload-confirm"
 		>
 			<div class="file-list">
-				<i class="el-icon-document"></i> File: 
+				<i class="el-icon-document"></i> File:
 				{{ currentFile.name }}
 			</div>
 			<div slot="footer">
-				<el-button type="primary" @click="isUploadConfirmDialogShow=false">Confirm</el-button>
-				<el-button plain @click="isUploadConfirmDialogShow=false">Cancel</el-button>
+				<el-button
+					type="primary"
+					@click="isUploadConfirmDialogShow=false"
+				>Confirm</el-button>
+				<el-button
+					plain
+					@click="isUploadConfirmDialogShow=false"
+				>Cancel</el-button>
 			</div>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
-import SubHeader from "@/components/SubHeader";
-import importedDataTable from "./components/ImportedDataTable";
+import SubHeader from '@/components/SubHeader'
+import importedDataTable from './components/ImportedDataTable'
 
 export default {
 	data() {
@@ -66,217 +75,217 @@ export default {
 			currentFile: '',
 			importedData: [
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
-				},
-
-				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
-				},
-				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
+				},
+
+				{
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				},
 				{
-					createTime: "2020-1-2",
-					voucher: "e23",
-					voucherNumber: "2432",
-					enclosureNumber: "123",
-					order: "23",
-					description: "jkakdlwe",
-					subjectNumber: "2313.23",
-					subjectName: "飞机费",
-					debtorAmount: "2342",
-					lenderAmount: "234",
-					client: "silence"
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
+				},
+				{
+					createTime: '2020-1-2',
+					voucher: 'e23',
+					voucherNumber: '2432',
+					enclosureNumber: '123',
+					order: '23',
+					description: 'jkakdlwe',
+					subjectNumber: '2313.23',
+					subjectName: '飞机费',
+					debtorAmount: '2342',
+					lenderAmount: '234',
+					client: 'silence'
 				}
 			]
-		};
+		}
 	},
 	components: {
 		SubHeader,
@@ -284,14 +293,14 @@ export default {
 	},
 	methods: {
 		uploadSuccess() {
-			console.log("success");
+			console.log('success')
 		},
 		fileChange(e, list) {
 			this.currentFile = e
 			this.isUploadConfirmDialogShow = true
 		}
 	}
-};
+}
 </script>
 
 <style scoped lang="scss">
@@ -317,6 +326,5 @@ export default {
 }
 
 .file-list .svg-icon {
-
 }
 </style>

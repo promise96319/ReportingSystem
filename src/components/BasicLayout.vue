@@ -3,7 +3,10 @@
 		<Header></Header>
 		<SideBar></SideBar>
 		<div class="container">
-			<transition name="fade-transform" mode="out-in">
+			<transition
+				name="fade-transform"
+				mode="out-in"
+			>
 				<router-view />
 			</transition>
 		</div>
@@ -11,15 +14,15 @@
 </template>
 
 <script>
-import Header from "@/components/Header";
-import SideBar from "@/components/SideBar";
+import Header from '@/components/Header'
+import SideBar from '@/components/SideBar'
 
 export default {
 	components: {
 		Header,
 		SideBar
 	}
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -29,5 +32,4 @@ export default {
 		background-color: #feffff;
 	}
 }
-
 </style>

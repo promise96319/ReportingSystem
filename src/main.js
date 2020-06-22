@@ -3,8 +3,8 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import './router/pemission'
 import store from './store'
-import pemission from '@/router/pemission'
 import '@/icons'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 import 'element-ui/lib/theme-chalk/base.css'
@@ -35,14 +35,13 @@ import {
   Divider,
   Drawer,
   Loading,
-} from "element-ui"
+} from 'element-ui'
 
 import lang from 'element-ui/lib/locale/lang/en'
 import locale from 'element-ui/lib/locale'
 locale.use(lang)
 Vue.component(DatePicker.name, DatePicker)
 Vue.component(CollapseTransition.name, CollapseTransition)
-
 
 Vue
   .use(Button)
@@ -70,8 +69,8 @@ Vue
 
 Vue.use(Loading.directive)
 
-Vue.prototype.$message = Message;
-Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$message = Message
+Vue.prototype.$msgbox = MessageBox
 
 Vue.config.productionTip = false
 

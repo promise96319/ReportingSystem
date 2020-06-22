@@ -11,31 +11,39 @@
 				size="medium"
 				class="primary-icon"
 				type="primary"
-				@click="isStepDialogShow=true"
-			><svg-icon icon-class="plus-square"></svg-icon>New data</el-button>
+				@click="isStepDialogShow = true"
+			>
+				<svg-icon icon-class="plus-square"></svg-icon>New data
+			</el-button>
 		</SubHeader>
-		<div class="main"></div>
-		<el-dialog :visible.sync="isStepDialogShow" width="800px">
+
+		<div class="main">
+		</div>
+
+		<el-dialog
+			:visible.sync="isStepDialogShow"
+			width="800px"
+		>
 			<StepDialog></StepDialog>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
-import SubHeader from "@/components/SubHeader";
-import StepDialog from "./components/StepDialog";
+import SubHeader from '@/components/SubHeader'
+import StepDialog from './components/StepDialog'
 
 export default {
 	data() {
 		return {
 			isStepDialogShow: false
-		};
+		}
 	},
 	components: {
 		SubHeader,
 		StepDialog
 	}
-};
+}
 </script>
 
 <style lang="scss" scoped>

@@ -6,19 +6,41 @@
 					slot="description"
 					class="description"
 				>Import new data of accounting entries prepared with another bookkeeping software</div>
-				<svg-icon class="step-icon" icon-class="upload" slot="icon"></svg-icon>
+				<svg-icon
+					class="step-icon"
+					icon-class="upload"
+					slot="icon"
+				></svg-icon>
 			</el-step>
-			<el-step title="Step 2" description="Update the chart of accounts based on the imported data">
-				<svg-icon class="step-icon" icon-class="edit" slot="icon"></svg-icon>
+			<el-step
+				title="Step 2"
+				description="Update the chart of accounts based on the imported data"
+			>
+				<svg-icon
+					class="step-icon"
+					icon-class="edit"
+					slot="icon"
+				></svg-icon>
 			</el-step>
 			<el-step
 				title="Step 3"
 				description="Update the mapping table and make sure that all the accounts from the imported data are matched with the foreign accounts"
 			>
-				<svg-icon class="step-icon" icon-class="repeat" slot="icon"></svg-icon>
+				<svg-icon
+					class="step-icon"
+					icon-class="repeat"
+					slot="icon"
+				></svg-icon>
 			</el-step>
-			<el-step title="Step 4" description="Get the dashboard and the financial reports updated">
-				<svg-icon class="step-icon" icon-class="file" slot="icon"></svg-icon>
+			<el-step
+				title="Step 4"
+				description="Get the dashboard and the financial reports updated"
+			>
+				<svg-icon
+					class="step-icon"
+					icon-class="file"
+					slot="icon"
+				></svg-icon>
 			</el-step>
 		</el-steps>
 
@@ -37,7 +59,7 @@
 </template>
 
 <script>
-export default {};
+export default {}
 </script>
 
 <style lang="scss" scoped>
@@ -80,9 +102,9 @@ export default {};
 	}
 }
 .started {
-  text-align: center;
-  .el-button {
-    width: 200px;
-  }
+	text-align: center;
+	.el-button {
+		width: 200px;
+	}
 }
 </style>

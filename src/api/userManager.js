@@ -8,7 +8,7 @@ import URL from './config'
 export const getUserList = (id) => {
   return request({
     method: 'get',
-    url: `${URL.getUserList}/${id}/user`,
+    url: `${URL.getUserList}/${id}/user`
   })
 }
 
@@ -44,8 +44,8 @@ export const checkEmail = (token) => {
 
 /**
  * 通过邮箱token，和用户设定的 password 进行注册
- * @param {*} token 
- * @param {*} password 
+ * @param {*} token
+ * @param {*} password
  */
 export const register = (token, password) => {
   return request({
@@ -53,7 +53,7 @@ export const register = (token, password) => {
     url: URL.register,
     data: {
       token,
-      password,
+      password
     }
   })
 }
@@ -62,13 +62,13 @@ export const register = (token, password) => {
  * 更新用户密码
  * 1. 管理员修改非管理员用户密码时不需要传 oldPassword，但需要传 companyId
  * 2. 用户自己更改密码时需要传 old_password
- * @param {*} userId 
- * @param {*} password 
- * @param {*} oldPassword 
- * @param {*} companyId 
+ * @param {*} userId
+ * @param {*} password
+ * @param {*} oldPassword
+ * @param {*} companyId
  */
 export const updatePassword = (userId, password, oldPassword, companyId) => {
-  let data = { password }
+  const data = { password }
   if (typeof oldPassword !== undefined) {
     data.old_password = oldPassword
   }
@@ -80,7 +80,7 @@ export const updatePassword = (userId, password, oldPassword, companyId) => {
   return request({
     method: 'patch',
     url: `${URL.updatePassword}/${userId}`,
-    data,
+    data
   })
 }
 
@@ -108,8 +108,6 @@ export const updateRole = (companyId, userId, role) => {
 export const deleteUser = (companyId, userId) => {
   return request({
     method: 'delete',
-    url: `${URL.updateRole}/${companyId}/user/${userId}`,
+    url: `${URL.updateRole}/${companyId}/user/${userId}`
   })
 }
-
-

@@ -9,6 +9,7 @@ export const LOGOUT = 'LOGOUT'
 
 const user = {
   state: {
+    // 用户信息
     user: {}
   },
   mutations: {

@@ -20,7 +20,7 @@ const getCompanyInfo = async (callback) => {
   const res = await api.getCompanyList()
   if (res.data.error_code === 0) {
     const { companies } = res.data.data
-    store.commit('SET_COMPANY_LIST', companies)
+    store.commit(SET_COMPANY_LIST, companies)
     if (companies.length === 0) { 
       console.log('异常错误：该用户没有绑定任何公司！')
       callback(false)
@@ -28,7 +28,7 @@ const getCompanyInfo = async (callback) => {
     }
     // 如果公司只有一个的话，默认这个公司就是当前公司
     if (companies.length === 1) {
-      store.commit('SET_CURRENT_COMPANY', companies[0])
+      store.commit(SET_CURRENT_COMPANY, companies[0])
       callback(true)
       return
     } 
@@ -36,7 +36,7 @@ const getCompanyInfo = async (callback) => {
     // 如果本地有设置公司ID的话，则请求该ID，否则，请求第一个公司信息
     const companyID = localStorage.getItem(CURRENT_COMPANY_ID)
     let currentCompany = companies.find((item) => { return item.id == companyID })
-    store.commit('SET_CURRENT_COMPANY', currentCompany ? currentCompany : companies[0])
+    store.commit(SET_CURRENT_COMPANY, currentCompany ? currentCompany : companies[0])
     callback(true)
   }
   callback(false)
@@ -45,7 +45,6 @@ const getCompanyInfo = async (callback) => {
 // Router pemission
 // If login is false, redirect to Login page
 router.beforeEach((to, from, next) => {
-
   store.commit(TOGGLE_SIDEBAR, to.meta.isSideBar)
 
   // 不需要检查是否有登录信息（和登录信息毫无关系）
@@ -56,7 +55,6 @@ router.beforeEach((to, from, next) => {
   // 如果有用户信息，如果去不需要登录的界面则调回首页
   // 如果没有用户信息，且是去登录页，则直接去
   // 否则获取用户信息，如果没有获取，跳会登录页
-
   if (NO_PERMISSSION.includes(to.name)) {
     next()
     return
@@ -70,7 +68,7 @@ router.beforeEach((to, from, next) => {
       next('/')
       return
     }
-    getCompanyInfo((isEnded) => {
+    getCompanyInfo(() => {
       next()
     })
     return
@@ -82,13 +80,13 @@ router.beforeEach((to, from, next) => {
   }
 
   store.dispatch('GetUserInfo')
-    .then((res) => {
+    .then(() => {
       // 获取用户信息成功
       getCompanyInfo((isEnded) => {
         next()
       })
     })
-    .catch((err) => {
+    .catch(() => {
       // 获取用户信息失败
       next({ name: 'Login' })
     })

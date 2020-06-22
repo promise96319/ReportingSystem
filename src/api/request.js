@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
-import store from '@/store'
 // import { LOGOUT } from '@/store/modules/user'
 
 // create an axios instance
 const request = axios.create({
+  // eslint-disable-next-line no-undef
   baseURL: process.env.BASE_API, // api 的 base_url
   timeout: 10000 // request timeout
 })

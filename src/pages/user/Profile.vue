@@ -19,8 +19,15 @@
 						>
 							<!-- :on-success="handleAvatarSuccess" -->
 							<!-- :before-upload="beforeAvatarUpload" -->
-							<img v-if="companyProfile.logo" :src="companyProfile.logo" class="avatar" />
-							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+							<img
+								v-if="companyProfile.logo"
+								:src="companyProfile.logo"
+								class="avatar"
+							/>
+							<i
+								v-else
+								class="el-icon-plus avatar-uploader-icon"
+							></i>
 						</el-upload>
 					</el-form-item>
 
@@ -43,21 +50,41 @@
 					<el-form-item label="Contact address:">
 						<el-row class="gap">
 							<el-col :span="24">
-								<el-input v-model="street" placeholder="Street"></el-input>
+								<el-input
+									v-model="street"
+									placeholder="Street"
+								></el-input>
 							</el-col>
 						</el-row>
-						<el-row :gutter="20" class="gap">
+						<el-row
+							:gutter="20"
+							class="gap"
+						>
 							<el-col :span="12">
-								<el-input v-model="city" placeholder="City"></el-input>
+								<el-input
+									v-model="city"
+									placeholder="City"
+								></el-input>
 							</el-col>
 							<el-col :span="12">
-								<el-input v-model="companyProfile.postal_code" placeholder="Postal code"></el-input>
+								<el-input
+									v-model="companyProfile.postal_code"
+									placeholder="Postal code"
+								></el-input>
 							</el-col>
 						</el-row>
 						<el-row :gutter="20">
 							<el-col :span="12">
-								<el-select v-model="country" placeholder="Country">
-									<el-option v-for="(item, index) in COUNTRIES" :key="index" :label="item" :value="item"></el-option>
+								<el-select
+									v-model="country"
+									placeholder="Country"
+								>
+									<el-option
+										v-for="(item, index) in COUNTRIES"
+										:key="index"
+										:label="item"
+										:value="item"
+									></el-option>
 								</el-select>
 							</el-col>
 							<el-col :span="12"></el-col>
@@ -65,7 +92,10 @@
 					</el-form-item>
 
 					<el-form-item label="Website:">
-						<el-input v-model="companyProfile.website" placeholder="Example: www.example.com"></el-input>
+						<el-input
+							v-model="companyProfile.website"
+							placeholder="Example: www.example.com"
+						></el-input>
 					</el-form-item>
 
 					<el-form-item label="Business scope:">
@@ -79,12 +109,25 @@
 					<el-form-item>
 						<el-row :gutter="20">
 							<el-col :span="12">
-								<el-row type="flex" justify="space-between" :gutter="12">
+								<el-row
+									type="flex"
+									justify="space-between"
+									:gutter="12"
+								>
 									<el-col :span="12">
-										<el-button type="primary" class="full-width" @click="updateCompany" :loading="isUpdatingCompany">Confirm</el-button>
+										<el-button
+											type="primary"
+											class="full-width"
+											@click="updateCompany"
+											:loading="isUpdatingCompany"
+										>Confirm</el-button>
 									</el-col>
 									<el-col :span="12">
-										<el-button plain class="full-width" @click="()=>{$router.go(-1)}">Cancel</el-button>
+										<el-button
+											plain
+											class="full-width"
+											@click="()=>{$router.go(-1)}"
+										>Cancel</el-button>
 									</el-col>
 								</el-row>
 							</el-col>
@@ -98,8 +141,8 @@
 </template>
 
 <script>
-import SubHeader from "@/components/SubHeader";
-import COUNTRIES from "@/constant/countries.js";
+import SubHeader from '@/components/SubHeader'
+import COUNTRIES from '@/constant/countries.js'
 import api from '@/api'
 import URL from '@/api/config'
 import { SET_CURRENT_COMPANY } from '@/store/modules/company'
@@ -114,15 +157,14 @@ export default {
 			URL,
 
 			isCompanyNameEditable: false,
-			companyProfile: {
-			},
+			companyProfile: {},
 			country: '',
 			city: '',
 			street: '',
 
 			isGettingCompanyData: false,
-			isUpdatingCompany: false,
-		};
+			isUpdatingCompany: false
+		}
 	},
 	computed: {
 		currentCompanyID() {
@@ -137,7 +179,9 @@ export default {
 	},
 	methods: {
 		async getCompanyDetail() {
-			if (!this.currentCompanyID) { return }
+			if (!this.currentCompanyID) {
+				return
+			}
 			this.isGettingCompanyData = true
 			const res = await api.getCompanyDetail(this.currentCompanyID)
 			this.isGettingCompanyData = false
@@ -156,26 +200,45 @@ export default {
 			this.companyProfile.logo = res.data.file_path
 		},
 		async updateCompany() {
-			if (this.companyProfile.name === '') { return this.$message.error('Company name is empty') }
-			if (this.country === '') { return this.$message.error('Country is empty') }
-			if (this.city === '') { return this.$message.error('City is empty') }
-			if (this.street === '') { return this.$message.error('Street is empty') }
-			if (this.companyProfile.postal_code === '') { return this.$message.error('Postal code is empty') }
-			if (this.companyProfile.website === '') { return this.$message.error('Website is empty') }
-			if (this.companyProfile.business_scope === '') { return this.$message.error('Business scope is empty') }
+			if (this.companyProfile.name === '') {
+				return this.$message.error('Company name is empty')
+			}
+			if (this.country === '') {
+				return this.$message.error('Country is empty')
+			}
+			if (this.city === '') {
+				return this.$message.error('City is empty')
+			}
+			if (this.street === '') {
+				return this.$message.error('Street is empty')
+			}
+			if (this.companyProfile.postal_code === '') {
+				return this.$message.error('Postal code is empty')
+			}
+			if (this.companyProfile.website === '') {
+				return this.$message.error('Website is empty')
+			}
+			if (this.companyProfile.business_scope === '') {
+				return this.$message.error('Business scope is empty')
+			}
 
-			this.companyProfile.address = [this.country, this.city, this.street].join(ADDRESS_DELIMITER)
-		
+			this.companyProfile.address = [this.country, this.city, this.street].join(
+				ADDRESS_DELIMITER
+			)
+
 			this.isUpdatingCompany = true
-			const res = await api.updateCompany(this.currentCompanyID, this.companyProfile)
+			const res = await api.updateCompany(
+				this.currentCompanyID,
+				this.companyProfile
+			)
 			this.isUpdatingCompany = false
 			if (res.data.error_code === 0) {
 				this.$store.commit('SET_CURRENT_COMPANY', res.data.data)
 				this.$message.success('更新成功!')
 			}
-		},
+		}
 	}
-};
+}
 </script>
 
 <style scoped lang="scss">

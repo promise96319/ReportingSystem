@@ -3,8 +3,8 @@ import URL from './config'
 
 /**
  * 用户登录
- * @param {邮箱} email 
- * @param {密码} password 
+ * @param {邮箱} email
+ * @param {密码} password
  */
 export const login = (email, password) => {
   return request({
@@ -12,7 +12,7 @@ export const login = (email, password) => {
     url: URL.login,
     data: {
       email,
-      password,
+      password
     }
   })
 }
@@ -36,6 +36,3 @@ export const logout = () => {
     url: URL.logout
   })
 }
-
-
-

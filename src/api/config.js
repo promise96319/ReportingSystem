@@ -30,13 +30,16 @@ const company = {
 
 const account = {
   getAccountList:     `${URL}/company`,        // 获取会计科目列表
-  updateAccountList:  `${URL}/company`,        // 更新会计科目列表
+  addAccount:         `${URL}/company`,        // 新增 Account
+  updateAccount:      `${URL}/company`,        // 更新会计科目列表
+  getAccountType:     `${URL}/accounts_type`,  // 查询 Account Type
 }
 
 export default {
   ...user,
   ...userManager,
   ...company,
+  ...account,
 }
 
 
