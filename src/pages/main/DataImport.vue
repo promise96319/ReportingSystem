@@ -15,6 +15,7 @@
 				class="upload-content"
 				drag
 				:action="URL.uploadBatch + '/' + currentCompany.id"
+				:data="{ is_analyze: true }"
 				:auto-upload="false"
 				:multiple="false"
 				accept=".xls, xml, xlt, .xlsx"

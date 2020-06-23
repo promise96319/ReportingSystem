@@ -12,7 +12,7 @@
 				@command="chooseCompany"
 			>
 				<span class="el-dropdown-link">
-					{{ username }}'s {{ currentCompany.name }}<i class="el-icon-arrow-down el-icon--right"></i>
+					{{ username || email }}'s {{ currentCompany.name }}<i class="el-icon-arrow-down el-icon--right"></i>
 				</span>
 				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item
@@ -73,6 +73,9 @@ export default {
 		}
 	},
 	computed: {
+		email() {
+			return this.$store.getters.user.email
+		},
 		// 用户名
 		username() {
 			return this.$store.getters.user.username

@@ -28,7 +28,7 @@ export default [
     value: '科目代码'
   },
   {
-    key: 'account_no',
+    key: 'account_description',
     value: '科目名称'
   },
   {

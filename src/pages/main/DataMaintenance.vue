@@ -35,6 +35,7 @@
 				size="medium"
 				placeholder="Batch"
 				value-key="id"
+				@change="queryBatch"
 			>
 				<el-option
 					v-for="batch in batchOptions"
@@ -44,14 +45,14 @@
 				></el-option>
 			</el-select>
 
-			<el-button
+			<!-- <el-button
 				type="primary"
-				size="medium"s
+				size="medium"
 				class="filter primary-icon"
 				@click="queryBatch"
 			>
 				<svg-icon icon-class="filter"></svg-icon>Filter
-			</el-button>
+			</el-button> -->
 			<el-button
 				type="danger"
 				size="medium"
@@ -190,7 +191,7 @@ export default {
 				return
 			}
 			const { batch } = res.data.data
-			this.batchOptions = batch
+			this.batchOptions = batch.reverse()
 			if (this.batchOptions.length > 0) {
 				let batch = { number: -1 }
 

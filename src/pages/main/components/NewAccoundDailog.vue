@@ -6,6 +6,7 @@
 		<el-form-item label="Type of account:">
 			<el-select
 				v-model="accountType"
+				@change="setDefaultTypeName"
 				value-key="no"
 			>
 				<el-option
@@ -22,16 +23,16 @@
 				type="flex"
 				justify="space-between"
 			>
-				<el-col :span="11">
+				<el-col :span="12">
 					<el-input
 						v-model="accountType.no"
 						disabled
 					></el-input>
 				</el-col>
-				<el-col :span="1">
+				<!-- <el-col :span="1">
 					.
-				</el-col>
-				<el-col :span="11">
+				</el-col> -->
+				<el-col :span="12">
 					<el-input v-model="no" clearable placeholder="Account No."></el-input>
 				</el-col>
 			</el-row>
@@ -98,12 +99,18 @@ export default {
 		this.getAccountType()
 	},
 	methods: {
+		setDefaultTypeName() {
+			if (typeof this.accountType.default !== 'undefined') {
+				this.name = this.accountType.default
+			}
+		},
 		async getAccountType() {
 			const res = await api.getAccountType(this.currentType)
 			if (res.data.error_code === 0) {
 				this.accountTypes = res.data.data
 				if (this.accountTypes.length > 0) {
 					this.accountType = this.accountTypes[0]
+					this.setDefaultTypeName()
 				}
 			}
 		},
@@ -118,7 +125,8 @@ export default {
 				return
 			}
 
-			if (isNaN(parseInt(this.no))) {
+			let str = this.no.replace('.', '')
+			if (isNaN(parseInt(str))) {
 				this.$message.error('Account No. is invalid')
 				return
 			}
@@ -129,7 +137,7 @@ export default {
 			}
 
 			const data = {
-				no: this.accountType.no + '.' + this.no,
+				no: this.accountType.no + this.no,
 				name: this.name,
 				type_no: this.accountType.no,
 				type_name: this.accountType.name

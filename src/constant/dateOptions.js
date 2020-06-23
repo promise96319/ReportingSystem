@@ -1,7 +1,7 @@
 export const YEAR_OPTIONS = (() => {
   let today = new Date().getFullYear()
-  //1970 ~ today
-  let startDay = 1970
+  //2020 ~ today
+  let startDay = 2020
   let arr = []
   for (let i = startDay; i <= today; i ++) {
     arr.push(i)

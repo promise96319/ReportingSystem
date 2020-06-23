@@ -49,12 +49,12 @@ export const getBatch = (companyId, year, month) => {
  * @param {*} batchId  批次id
  * @param {*} isAnalyze 返回结果是否对凭证名称字段进行解析。不传或传空字符串时为False，其他情况均为True
  */
-export const queryBatch = (companyId, batchId, isAnalyze = false) => {
+export const queryBatch = (companyId, batchId, isAnalyze = true) => {
   return request({
     method: 'get',
     url: `${URL.queryBatch}/${companyId}/batch/${batchId}`,
     params: {
-      isAnalyze
+      is_analyze: isAnalyze
     }
   })
 }
