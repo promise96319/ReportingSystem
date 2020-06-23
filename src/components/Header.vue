@@ -1,6 +1,28 @@
 <template>
 	<div class="header">
 		<div class="container">
+			<img
+				:src="currentCompany.logo || logoImg"
+				alt=""
+				@click="() => { $router.push('/') }"
+			/>
+
+			<el-dropdown
+				class="company-name"
+				@command="chooseCompany"
+			>
+				<span class="el-dropdown-link">
+					{{ username }}'s {{ currentCompany.name }}<i class="el-icon-arrow-down el-icon--right"></i>
+				</span>
+				<el-dropdown-menu slot="dropdown">
+					<el-dropdown-item
+						v-for="item in companyList"
+						:key="item.id"
+						:command="item"
+					>{{ item.name }}</el-dropdown-item>
+				</el-dropdown-menu>
+			</el-dropdown>
+
 			<div class="user-menu">
 				<el-dropdown>
 					<span class="el-dropdown-link">
@@ -35,29 +57,6 @@
 					</el-dropdown-menu>
 				</el-dropdown>
 			</div>
-
-			<el-dropdown
-				class="company-name"
-				@command="chooseCompany"
-			>
-				<span class="el-dropdown-link">
-					{{ username }}'s {{ currentCompany.name }}<i class="el-icon-arrow-down el-icon--right"></i>
-				</span>
-				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item
-						v-for="item in companyList"
-						:key="item.id"
-						:command="item"
-					>{{ item.name }}</el-dropdown-item>
-				</el-dropdown-menu>
-			</el-dropdown>
-
-			<!-- <div class="company-name">123's Company Name</div> -->
-			<img
-				:src="currentCompany.logo || logoImg"
-				alt=""
-				@click="() => { $router.push('/') }"
-			/>
 		</div>
 	</div>
 </template>
@@ -87,13 +86,6 @@ export default {
 			return this.$store.getters.currentCompany
 		}
 	},
-	// created() {
-	//   const currentCompany = this.$store.getters.currentCompany
-	//   // 没有公司信息时，获取公司信息
-	//   if (!currentCompany.id && currentCompany.id !== 0) {
-	//     this.getCompanyList()
-	//   }
-	// },
 	methods: {
 		logout() {
 			this.$store.dispatch('RemoteLogout').catch(err => {
@@ -104,7 +96,7 @@ export default {
 			if (this.currentCompany.id === company.id) {
 				return
 			}
-			this.$store.commit('SET_CURRENT_COMPANY', company)
+			this.$store.commit(SET_CURRENT_COMPANY, company)
 			this.reload()
 		}
 	}
@@ -137,20 +129,17 @@ export default {
 			width: 60px;
 			height: 60px;
 			font-size: 28px;
+			margin-right: 16px;
 			position: relative;
 			i {
-				transform: translateX(-15px);
+				transform: translateX(4px);
 				margin-top: -10px;
-				// color: #303133!important;
 				color: #409eff !important;
 			}
-			// &:hover i {
-			//   color: #409EFF!important;
-			// }
 		}
 		img {
 			margin-top: 14px;
-			margin-right: 30px;
+			margin-left: 16px;
 			height: 32px;
 			line-height: 60px;
 			border-radius: 4px;
@@ -167,12 +156,9 @@ export default {
 			.el-dropdown {
 				height: 50px;
 			}
-			.el-avatar {
-				margin: 10px 16px 0 0;
-			}
 			i {
 				position: absolute;
-				right: 0;
+				right: 20px;
 				top: 26px;
 				size: 16px;
 				color: #606266;

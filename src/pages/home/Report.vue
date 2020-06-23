@@ -74,10 +74,12 @@
 						<div>{{ item.value }}</div>
 					</el-col>
 					<el-col :span="6">
-						<div>{{ index * 100 }}</div>
+						<div v-if="index < 3">{{ item.number }}</div>
+						<div v-else>0</div>
 					</el-col>
 					<el-col :span="6">
-						<div>{{ index * 100 }}</div>
+						<div v-if="index >= 3">{{ item.number }}</div>
+						<div v-else>0</div>
 					</el-col>
 				</el-row>
 			</div>
@@ -206,31 +208,38 @@ export default {
 			accountOptions: [
 				{
 					key: '',
-					value: 'Cash'
+					value: 'Cash',
+					number: 100
 				},
 				{
 					key: '',
-					value: 'Bank'
+					value: 'Bank',
+					number: 200
 				},
 				{
 					key: '',
-					value: 'Account receivable'
+					value: 'Account receivable',
+					number: 300
 				},
 				{
 					key: '',
-					value: 'Account payable'
+					value: 'Account payable',
+					number: 200
 				},
 				{
 					key: '',
-					value: 'Tax payable'
+					value: 'Tax payable',
+					number: 100
 				},
 				{
 					key: '',
-					value: 'Capital'
+					value: 'Capital',
+					number: 200
 				},
 				{
 					key: '',
-					value: 'Undistribuated profit'
+					value: 'Undistribuated profit',
+					number: 100
 				}
 			],
 			// 当前选择模块标题

@@ -145,7 +145,7 @@ import SubHeader from '@/components/SubHeader'
 import COUNTRIES from '@/constant/countries.js'
 import api from '@/api'
 import URL from '@/api/config'
-import { SET_CURRENT_COMPANY } from '@/store/modules/company'
+import { SET_CURRENT_COMPANY, SET_COMPANY_LIST } from '@/store/modules/company'
 
 // 国家，城市，街道 分隔符-> 国家$$$城市$$$街道
 const ADDRESS_DELIMITER = '$$$'
@@ -233,8 +233,15 @@ export default {
 			)
 			this.isUpdatingCompany = false
 			if (res.data.error_code === 0) {
-				this.$store.commit('SET_CURRENT_COMPANY', res.data.data)
+				this.$store.commit(SET_CURRENT_COMPANY, res.data.data)
 				this.$message.success('更新成功!')
+				// 重新获取company list
+				// 否则请求公司列表
+				const result = await api.getCompanyList()
+				if (result.data.error_code === 0) {
+					const { companies } = result.data.data
+					this.$store.commit(SET_COMPANY_LIST, companies)
+				}
 			}
 		}
 	}
