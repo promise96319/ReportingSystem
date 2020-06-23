@@ -35,11 +35,19 @@ const account = {
   getAccountType:     `${URL}/accounts_type`,  // 查询 Account Type
 }
 
+const batch = {
+  uploadBatch:        `${URL}/batch/company`,  // 上传 batch
+  getBatch:           `${URL}/batch/company`,  // 根据 年月获取 batch 批次
+  queryBatch:         `${URL}/batch/company`,  // 根据 batch_id 获取batch
+  deleteBatch:        `${URL}/batch/company`,  // 获取batch
+}
+
 export default {
   ...user,
   ...userManager,
   ...company,
   ...account,
+  ...batch,
 }
 
 

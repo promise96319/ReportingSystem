@@ -1,46 +1,46 @@
 export default [
   {
-    key: 'createTime',
+    key: 'date',
     value: '日期'
   },
   {
-    key: 'voucher',
+    key: 'voucher_word',
     value: '凭证字'
   },
   {
-    key: 'voucherNumber',
+    key: 'voucher_no',
     value: '凭证号'
   },
   {
-    key: 'enclosureNumber',
+    key: 'attachment_amount',
     value: '附件数'
   },
   {
-    key: 'order',
+    key: 'line',
     value: '分录序号'
   },
   {
-    key: 'description',
+    key: 'explanation',
     value: '摘要'
   },
   {
-    key: 'subjectNumber',
+    key: 'account_no',
     value: '科目代码'
   },
   {
-    key: 'subjectName',
+    key: 'account_no',
     value: '科目名称'
   },
   {
-    key: 'debtorAmount',
+    key: 'debit_amount',
     value: '借方金额'
   },
   {
-    key: 'lenderAmount',
+    key: 'credit_amount',
     value: '贷方金额'
   },
   {
-    key: 'client',
+    key: 'customer',
     value: '客户'
   },
   {
@@ -48,51 +48,51 @@ export default [
     value: '供应商'
   },
   {
-    key: '',
+    key: 'employee',
     value: '职员'
   },
   {
-    key: '',
+    key: 'project',
     value: '项目'
   },
   {
-    key: '',
+    key: 'department',
     value: '部门'
   },
   {
-    key: '',
+    key: 'inventory_item',
     value: '存货'
   },
   {
-    key: '',
+    key: 'is_limited',
     value: '是否限定'
   },
   {
-    key: '',
+    key: 'accounting_category',
     value: '自定义辅助核算类别'
   },
   {
-    key: '',
+    key: 'accounting_code',
     value: '自定义辅助核算编码'
   },
   {
-    key: '',
+    key: 'number',
     value: '数量'
   },
   {
-    key: '',
+    key: 'unit_price',
     value: '单价'
   },
   {
-    key: '',
+    key: 'currency_amount',
     value: '原币金额'
   },
   {
-    key: '',
+    key: 'currency',
     value: '币别'
   },
   {
-    key: '',
+    key: 'exchange_rate',
     value: '汇率'
   }
 ]
