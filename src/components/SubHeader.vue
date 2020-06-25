@@ -4,6 +4,7 @@
 			<el-button v-if="isBack" class="back" type="text" icon="el-icon-back" @click="$router.go(-1)">Back</el-button>
 			<el-divider v-if="isBack" direction="vertical"></el-divider>
       <div class="title">{{ title }}</div>
+			<slot name="left"></slot>
 		</el-row>
 		<el-row type="flex" justify="end" align="middle">
 			<slot></slot>
@@ -21,7 +22,7 @@ export default {
 		title: {
 			type: String,
 			required: true
-		}
+		},
 	}
 };
 </script>

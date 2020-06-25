@@ -1,247 +1,222 @@
 <template>
-	<div class="accounting-entries">
-		<SubHeader title="Accounting entries">
-			<el-button plain size="medium" class="plain-icon">
-				<svg-icon icon-class="export"></svg-icon>Export
-			</el-button>
-			<el-button type="primary" size="medium" @click="isFilterDrawerShow=true" class="primary-icon">
-				<svg-icon icon-class="filter"></svg-icon>Filter
-			</el-button>
-		</SubHeader>
-		<div class="main">
-			<el-table
-				:data="accountingEntriesData"
-				border
-				style="width: 100%"
-				:row-class-name="tableRowClassName"
-			>
-				<el-table-column
-					v-for="(item, index) in accountingEntriesKey"
-					:key="index"
-					:prop="item.key"
-					:label="item.value"
-					align="center"
-					header-align="center"
-				></el-table-column>
-			</el-table>
-		</div>
+  <div class="accounting-entries">
+    <SubHeader title="Accounting entries">
+      <el-button class="plain-icon" plain size="medium">
+        <svg-icon icon-class="export"></svg-icon>Export
+      </el-button>
+      <el-button @click="isFilterDrawerShow=true" class="primary-icon" size="medium" type="primary">
+        <svg-icon icon-class="filter"></svg-icon>Filter
+      </el-button>
+    </SubHeader>
+    <div class="main">
+      <el-table v-loading="isGettingEntries" :data="accountingEntriesData" :row-class-name="tableRowClassName" border>
+        <el-table-column
+          :key="index"
+          :label="item.value"
+          :prop="item.key"
+					width="120px"
+          align="center"
+          header-align="center"
+          v-for="(item, index) in accountingEntriesKey"
+        ></el-table-column>
+      </el-table>
+    </div>
 
-		<el-drawer :visible.sync="isFilterDrawerShow" :with-header="false">
-			<div class="filter-container">
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Accounts:</el-col>
-					<el-col class="input" :span="18">
-						<el-row :gutter="12" type="flex" justify="space-between" align="middle">
-							<el-col :span="4" class="from">From</el-col>
-							<el-col :span="20">
-								<el-input size="mini" placeholder="Accounts"></el-input>
-							</el-col>
-						</el-row>
-					</el-col>
-				</el-row>
+    <el-drawer :visible.sync="isFilterDrawerShow" :with-header="false">
+      <div class="filter-container">
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Accounts:</el-col>
+          <el-col :span="18" class="input">
+            <el-row :gutter="12" align="middle" justify="space-between" type="flex">
+              <el-col :span="4" class="from">From</el-col>
+              <el-col :span="20">
+                <el-input placeholder="Accounts" size="mini"></el-input>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6"></el-col>
-					<el-col class="input" :span="18">
-						<el-row :gutter="12" type="flex" justify="space-between" align="middle">
-							<el-col :span="4" class="from">To</el-col>
-							<el-col :span="20">
-								<el-input size="mini" placeholder="Accounts"></el-input>
-							</el-col>
-						</el-row>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label"></el-col>
+          <el-col :span="18" class="input">
+            <el-row :gutter="12" align="middle" justify="space-between" type="flex">
+              <el-col :span="4" class="from">To</el-col>
+              <el-col :span="20">
+                <el-input placeholder="Accounts" size="mini"></el-input>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Vendors:</el-col>
-					<el-col class="input" :span="18">
-						<el-input size="mini" placeholder="Vendors"></el-input>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Vendors:</el-col>
+          <el-col :span="18" class="input">
+            <el-input placeholder="Vendors" size="mini"></el-input>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Customers:</el-col>
-					<el-col class="input" :span="18">
-						<el-input size="mini" placeholder="Customers"></el-input>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Customers:</el-col>
+          <el-col :span="18" class="input">
+            <el-input placeholder="Customers" size="mini"></el-input>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Period:</el-col>
-					<el-col class="input" :span="18">
-						<el-row :gutter="20">
-							<el-col :span="12">
-								<el-row :gutter="12" type="flex" justify="space-between" align="middle">
-									<el-col :span="4">
-										From
-									</el-col>
-									<el-col :span="18">
-										 <el-date-picker
-											align="right"
-											type="date"
-											size="mini"
-											placeholder="Start date">
-										</el-date-picker>
-									</el-col>
-								</el-row>
-							</el-col>
-							<el-col :span="12">
-								<el-row :gutter="12" type="flex" justify="space-between" align="middle">
-									<el-col :offset="1" :span="3">
-										To
-									</el-col>
-									<el-col :span="18">
-										 <el-date-picker
-											align="right"
-											type="date"
-											size="mini"
-											placeholder="End date">
-										</el-date-picker>
-									</el-col>
-								</el-row>
-							</el-col>
-						</el-row>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Period:</el-col>
+          <el-col :span="18" class="input">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
+                  <el-col :span="4">From</el-col>
+                  <el-col :span="18">
+                    <el-date-picker align="right" placeholder="Start date" size="mini" type="date"></el-date-picker>
+                  </el-col>
+                </el-row>
+              </el-col>
+              <el-col :span="12">
+                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
+                  <el-col :offset="1" :span="3">To</el-col>
+                  <el-col :span="18">
+                    <el-date-picker align="right" placeholder="End date" size="mini" type="date"></el-date-picker>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Explanation:</el-col>
-					<el-col class="input" :span="18">
-						<el-input size="mini" placeholder="Explanation"></el-input>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Explanation:</el-col>
+          <el-col :span="18" class="input">
+            <el-input placeholder="Explanation" size="mini"></el-input>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Voucher No.:</el-col>
-					<el-col class="input" :span="18">
-						<el-row :gutter="20">
-							<el-col :span="12">
-								<el-row :gutter="12" type="flex" justify="space-between" align="middle">
-									<el-col :span="4">
-										From
-									</el-col>
-									<el-col :span="18">
-										<el-input size="mini" placeholder="Start No."></el-input>
-									</el-col>
-								</el-row>
-							</el-col>
-							<el-col :span="12">
-								<el-row :gutter="12" type="flex" justify="space-between" align="middle">
-									<el-col :offset="1" :span="3">
-										To
-									</el-col>
-									<el-col :span="18">
-										<el-input size="mini" placeholder="End No."></el-input>
-									</el-col>
-								</el-row>
-							</el-col>
-						</el-row>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Voucher No.:</el-col>
+          <el-col :span="18" class="input">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
+                  <el-col :span="4">From</el-col>
+                  <el-col :span="18">
+                    <el-input placeholder="Start No." size="mini"></el-input>
+                  </el-col>
+                </el-row>
+              </el-col>
+              <el-col :span="12">
+                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
+                  <el-col :offset="1" :span="3">To</el-col>
+                  <el-col :span="18">
+                    <el-input placeholder="End No." size="mini"></el-input>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Currency:</el-col>
-					<el-col class="input" :span="18">
-						<el-select size="mini" placeholder="Currency" value=""></el-select>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Currency:</el-col>
+          <el-col :span="18" class="input">
+            <el-select placeholder="Currency" size="mini" value></el-select>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Currency amount:</el-col>
-					<el-col class="input" :span="18">
-						<el-row :gutter="20">
-							<el-col :span="12">
-								<el-row :gutter="12" type="flex" justify="space-between" align="middle">
-									<el-col :span="4">
-										From
-									</el-col>
-									<el-col :span="18">
-										<el-input size="mini" type="number" placeholder="Min amount"></el-input>
-									</el-col>
-								</el-row>
-							</el-col>
-							<el-col :span="12">
-								<el-row :gutter="12" type="flex" justify="space-between" align="middle">
-									<el-col :offset="1" :span="3">
-										To
-									</el-col>
-									<el-col :span="18">
-										<el-input size="mini" type="number" placeholder="Max amount"></el-input>
-									</el-col>
-								</el-row>
-							</el-col>
-						</el-row>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Currency amount:</el-col>
+          <el-col :span="18" class="input">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
+                  <el-col :span="4">From</el-col>
+                  <el-col :span="18">
+                    <el-input placeholder="Min amount" size="mini" type="number"></el-input>
+                  </el-col>
+                </el-row>
+              </el-col>
+              <el-col :span="12">
+                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
+                  <el-col :offset="1" :span="3">To</el-col>
+                  <el-col :span="18">
+                    <el-input placeholder="Max amount" size="mini" type="number"></el-input>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Department:</el-col>
-					<el-col class="input" :span="18">
-						<el-input size="mini" clearable placeholder="Department"></el-input>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Department:</el-col>
+          <el-col :span="18" class="input">
+            <el-input clearable placeholder="Department" size="mini"></el-input>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Employee:</el-col>
-					<el-col class="input" :span="18">
-						<el-input size="mini" clearable placeholder="Employee"></el-input>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Employee:</el-col>
+          <el-col :span="18" class="input">
+            <el-input clearable placeholder="Employee" size="mini"></el-input>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Other third party:</el-col>
-					<el-col class="input" :span="18">
-						<el-input size="mini" clearable placeholder="Other third party"></el-input>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Other third party:</el-col>
+          <el-col :span="18" class="input">
+            <el-input clearable placeholder="Other third party" size="mini"></el-input>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Project:</el-col>
-					<el-col class="input" :span="18">
-						<el-input size="mini" clearable placeholder="Project"></el-input>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Project:</el-col>
+          <el-col :span="18" class="input">
+            <el-input clearable placeholder="Project" size="mini"></el-input>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Invoice No.:</el-col>
-					<el-col class="input" :span="18">
-						<el-input size="mini" clearable placeholder="Invoice No."></el-input>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Invoice No.:</el-col>
+          <el-col :span="18" class="input">
+            <el-input clearable placeholder="Invoice No." size="mini"></el-input>
+          </el-col>
+        </el-row>
 
-				<el-row :gutter="20" class="search-item" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6">Iventory item:</el-col>
-					<el-col class="input" :span="18">
-						<el-input size="mini" clearable placeholder="Iventory item"></el-input>
-					</el-col>
-				</el-row>
+        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
+          <el-col :span="6" class="label">Iventory item:</el-col>
+          <el-col :span="18" class="input">
+            <el-input clearable placeholder="Iventory item" size="mini"></el-input>
+          </el-col>
+        </el-row>
 
-				<el-row class="action" :gutter="20" type="flex" justify="space-between" align="middle">
-					<el-col class="label" :span="6"></el-col>
-					<el-col class="input" :span="18">
-						<el-row type="flex" :gutter="20">
-						<el-col :span="12">
-							<el-button type="primary" class="full-width primary-icon">
-								<svg-icon icon-class="filter"></svg-icon>
-								Filter</el-button>
-						</el-col>
-						<el-col :span="12">
-							<el-button plain class="full-width">
-								<i class="el-icon-refresh"></i>
-								Reset</el-button>
-						</el-col>
-					</el-row>
-					</el-col>
-				</el-row>
-
-			</div>
-		</el-drawer>
-	</div>
+        <el-row :gutter="20" align="middle" class="action" justify="space-between" type="flex">
+          <el-col :span="6" class="label"></el-col>
+          <el-col :span="18" class="input">
+            <el-row :gutter="20" type="flex">
+              <el-col :span="12">
+                <el-button class="full-width primary-icon" type="primary">
+                  <svg-icon icon-class="filter"></svg-icon>Filter
+                </el-button>
+              </el-col>
+              <el-col :span="12">
+                <el-button class="full-width" plain>
+                  <i class="el-icon-refresh"></i>
+                  Reset
+                </el-button>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+      </div>
+    </el-drawer>
+  </div>
 </template>
 
 <script>
-import SubHeader from "@/components/SubHeader";
-import accountingEntriesKey from "@/constant/accountingEntriesKey";
+import SubHeader from '@/components/SubHeader'
+import accountingEntriesKey from '@/constant/accountingEntriesKey'
+import api from '@/api'
 
 export default {
 	data() {
@@ -249,76 +224,41 @@ export default {
 			accountingEntriesKey,
 
 			isFilterDrawerShow: false,
-			accountingEntriesData: [{
-				date: '2020年3月2日',
-				voucherNo: '2323',
-				line: '2',
-				explanation: 'hello world',
-				accountNo: '2342.123',
-				accountDescription: '23sd',
-				currency: 'CN',
-				exchangeRate: '1.32',
-				debit: '233',
-				credit: '2323',
-			},{
-				date: '2020年3月2日',
-				voucherNo: '2323',
-				line: '2',
-				explanation: 'hello world',
-				accountNo: '2342.123',
-				accountDescription: '23sd',
-				currency: 'CN',
-				exchangeRate: '1.32',
-				debit: '233',
-				credit: '2323',
-			},{
-				date: '2020年3月2日',
-				voucherNo: '2323',
-				line: '2',
-				explanation: 'hello world',
-				accountNo: '2342.123',
-				accountDescription: '23sd',
-				currency: 'CN',
-				exchangeRate: '1.32',
-				debit: '233',
-				credit: '2323',
-			},{
-				date: '2020年3月2日',
-				voucherNo: '2323',
-				line: '2',
-				explanation: 'hello world',
-				accountNo: '2342.123',
-				accountDescription: '23sd',
-				currency: 'CN',
-				exchangeRate: '1.32',
-				debit: '233',
-				credit: '2323',
-			},{
-				date: '2020年3月2日',
-				voucherNo: '2323',
-				line: '2',
-				explanation: 'hello world',
-				accountNo: '2342.123',
-				accountDescription: '23sd',
-				currency: 'CN',
-				exchangeRate: '1.32',
-				debit: '233',
-				credit: '2323',
-			},]
-		};
+			accountingEntriesData: [],
+			isGettingEntries: false,
+		}
 	},
 	components: {
 		SubHeader
 	},
+	computed: {
+		currentCompany() {
+			return this.$store.getters.currentCompany
+		},
+		currentType() {
+			return this.$store.getters.currentType
+		}
+	},
+	created() {
+		this.getEntries()
+	},
 	methods: {
-		tableRowClassName({ row, rowIndex }) {
+		tableRowClassName({ rowIndex }) {
 			if (rowIndex % 2 !== 0) {
-				return "highlight-row";
+				return 'highlight-row'
 			}
-			return "";
+			return ''
+		},
+		async getEntries() {
+			this.isGettingEntries = true
+			const res = await api.getEntries(this.currentCompany.id, this.currentType)
+			this.isGettingEntries = false
+			if (res.data.error_code === 0) {
+				this.accountingEntriesData = res.data.data
+			}
 		}
 	}
-};
+}
 </script>
 
 <style scoped lang="scss">
@@ -328,7 +268,7 @@ export default {
 	}
 	.main {
 		padding: 30px;
-		@import "../../styles/customTable.scss";
+		@import '../../styles/customTable.scss';
 		/deep/ .el-table__header .cell {
 			font-size: 16px;
 		}

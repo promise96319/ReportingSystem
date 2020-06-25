@@ -52,7 +52,7 @@ export const getBatch = (companyId, year, month) => {
 export const queryBatch = (companyId, batchId, isAnalyze = true) => {
   return request({
     method: 'get',
-    url: `${URL.queryBatch}/${companyId}/batch/${batchId}`,
+    url: `${URL.queryBatch}/${batchId}`,
     params: {
       is_analyze: isAnalyze
     }
@@ -67,6 +67,6 @@ export const queryBatch = (companyId, batchId, isAnalyze = true) => {
 export const deleteBatch = (companyId, batchId) => {
   return request({
     method: 'delete',
-    url: `${URL.queryBatch}/${companyId}/batch/${batchId}`
+    url: `${URL.deleteBatch}/${batchId}`,
   })
 }

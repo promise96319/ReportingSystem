@@ -1,5 +1,5 @@
 import { CURRENT_ACCOUNT_TYPE } from '@/constant/storageKey'
-import { EN } from '@/constant/accountType'
+import { CN } from '@/constant/accountType'
 
 export const CHANGE_TYPE = 'CHANGE_TYPE'
 
@@ -13,7 +13,7 @@ const account = {
       if (state.currentType === '') {
         // 如果页面第一次渲染，则去本地取用户选择的类型
         let type = localStorage.getItem(CURRENT_ACCOUNT_TYPE)
-        return type || EN
+        return type || CN
       } else {
         return state.currentType
       }

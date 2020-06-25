@@ -14,7 +14,7 @@
 				ref="upload"
 				class="upload-content"
 				drag
-				:action="URL.uploadBatch + '/' + currentCompany.id"
+				:action="`${URL.uploadBatch}/${currentCompany.id}?region=${this.currentType}`"
 				:data="{ is_analyze: true }"
 				:auto-upload="false"
 				:multiple="false"
@@ -96,6 +96,9 @@ export default {
 	computed: {
 		currentCompany() {
 			return this.$store.getters.currentCompany
+		},
+		currentType() {
+			return this.$store.getters.currentType
 		}
 	},
 	components: {
@@ -165,8 +168,5 @@ export default {
 			}
 		}
 	}
-}
-
-.file-list .svg-icon {
 }
 </style>

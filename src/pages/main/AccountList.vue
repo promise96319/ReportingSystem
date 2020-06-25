@@ -1,136 +1,105 @@
 <template>
-	<div class="accounts">
-		<SubHeader title="Accounts">
-			<el-button
-				type="primary"
-				size="medium"
-				class="primary-icon"
-				@click="isAddAccountDialogShow=true"
-			>
-				<svg-icon icon-class="plus-square"></svg-icon>New account
-			</el-button>
-		</SubHeader>
+  <div class="accounts">
+    <SubHeader title="Accounts">
+      <el-button
+        @click="isAddAccountDialogShow = true"
+        class="primary-icon"
+        size="medium"
+        type="primary"
+      >
+        <svg-icon icon-class="plus-square"></svg-icon>New account
+      </el-button>
+    </SubHeader>
 
-		<div class="main">
-			<el-table
-				:data="filterAccountList"
-				border
-				style="width: 100%"
-				:row-class-name="tableRowClassName"
-				size="medium"
-				v-loading="isGettingAccountList"
-			>
-				<el-table-column
-					v-for="(item, index) in [
-            { key: 'no', value: 'Account No.' },
-            { key: 'name', value: 'Account Name' },
-            { key: 'type_name', value: 'Account Type' },
-          ]"
-					:key="index"
-					:prop="item.key"
-					:label="item.value"
-					align="center"
-					header-align="center"
-				>
-					<template slot-scope="scope">
-						<template v-if="scope.$index === 0">
-							<el-input
-								:placeholder="item.value"
-								size="small"
-								class="search"
-								clearable
-								v-model="filterCondition[item.key]"
-							>
-								<!-- <el-button
+    <div class="main">
+      <el-table
+        :data="filterAccountList"
+        :row-class-name="tableRowClassName"
+        border
+        size="medium"
+        style="width: 100%"
+        v-loading="isGettingAccountList"
+      >
+        <el-table-column
+          :key="index"
+          :label="item.value"
+          :prop="item.key"
+          align="center"
+          header-align="center"
+          v-for="(item, index) in [
+						{ key: 'no', value: 'Account No.' },
+						{ key: 'name', value: 'Account Name' },
+						{ key: 'type_name', value: 'Account Type' }
+					]"
+        >
+          <template slot-scope="scope">
+            <template v-if="scope.$index === 0">
+              <el-input
+                :placeholder="item.value"
+                class="search"
+                clearable
+                size="small"
+                v-model="filterCondition[item.key]"
+              >
+                <!-- <el-button
 									slot="append"
 									icon="el-icon-search"
-								></el-button> -->
-							</el-input>
-						</template>
-						<template v-else>{{ scope.row[item.key] }}</template>
-					</template>
-				</el-table-column>
-				<el-table-column
-					prop="isEnable"
-					align="center"
-					header-align="center"
-				>
-					<template
-						slot="header"
-						slot-scope="scope"
-					>
-						<div
-							class="status"
-							@click="isEditable=!isEditable"
-						>
-							<svg-icon
-								class="custom-svg"
-								:icon-class="isEditable ? 'unlock-fill' : 'lock-fill'"
-							></svg-icon>Status
-						</div>
-					</template>
-					<template slot-scope="scope">
-						<template v-if="scope.$index === 0">
-							<el-select
-								size="small"
-								class="search"
-								v-model="filterCondition.is_active"
-							>
-								<el-option
-									v-for="item in activeOptions"
-									:key="item"
-									:value="item"
-								></el-option>
-							</el-select>
-						</template>
-						<template v-else>
-							<el-button
-								v-if="scope.row.is_active"
-								type="text"
-								:class="[isEditable ? '' : 'disable']"
-								@click="toggleStatus(scope.row)"
-								:loading="scope.row.no === currentUpdatingAccount.no"
-							>Enable</el-button>
-							<el-button
-								v-else
-								type="text"
-								:class="[isEditable ? '' : 'disable', 'danger']"
-								@click="toggleStatus(scope.row)"
-								:loading="scope.row.no === currentUpdatingAccount.no"
-							>Disable</el-button>
-						</template>
-					</template>
-				</el-table-column>
-			</el-table>
-		</div>
+                ></el-button>-->
+              </el-input>
+            </template>
+            <template v-else>{{ scope.row[item.key] }}</template>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" header-align="center" prop="isEnable">
+          <template slot="header" slot-scope="scope">
+            <div @click="isEditable = !isEditable" class="status">
+              <svg-icon :icon-class="isEditable ? 'unlock-fill' : 'lock-fill'" class="custom-svg"></svg-icon>Status
+            </div>
+          </template>
+          <template slot-scope="scope">
+            <template v-if="scope.$index === 0">
+              <el-select class="search" size="small" v-model="filterCondition.is_active">
+                <el-option :key="item" :value="item" v-for="item in activeOptions"></el-option>
+              </el-select>
+            </template>
+            <template v-else>
+              <el-button
+                :class="[isEditable ? '' : 'disable']"
+                :loading="scope.row.no === currentUpdatingAccount.no"
+                @click="toggleStatus(scope.row)"
+                type="text"
+                v-if="scope.row.is_active"
+              >Enable</el-button>
+              <el-button
+                :class="[isEditable ? '' : 'disable', 'danger']"
+                :loading="scope.row.no === currentUpdatingAccount.no"
+                @click="toggleStatus(scope.row)"
+                type="text"
+                v-else
+              >Disable</el-button>
+            </template>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
-		<el-dialog
-			title="Add account"
-			:visible.sync="isAddAccountDialogShow"
-			width="540px"
-			class="new-account"
-		>
-			<NewAccoundDailog @hideDialog="hideDialog($event)"></NewAccoundDailog>
-		</el-dialog>
+    <el-dialog
+      :visible.sync="isAddAccountDialogShow"
+      class="new-account"
+      title="Add account"
+      width="540px"
+    >
+      <NewAccoundDailog @hideDialog="hideDialog($event)"></NewAccoundDailog>
+    </el-dialog>
 
-		<el-dialog
-			title="Status"
-			:visible.sync="isStatusDialogShow"
-			width="540px"
-		>
-			Editing is currently disabled. Do you want to unlock it?
-			<div slot="footer">
-				<el-button
-					type="primary"
-					@click="unlockStatus"
-				>Unlock</el-button>
-				<el-button
-					plian
-					@click="isStatusDialogShow=false"
-				>Cancel</el-button>
-			</div>
-		</el-dialog>
-	</div>
+    <el-dialog :visible.sync="isStatusDialogShow" title="Status" width="540px">
+      Editing is currently disabled. Do you want to unlock it?
+      <div slot="footer">
+        <el-button @click="unlockStatus" type="primary">Unlock</el-button>
+        <el-button @click="isStatusDialogShow = false" plian>Cancel</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -156,7 +125,7 @@ export default {
 				name: '',
 				type_name: '',
 				// 取值 All | Enable | Disable
-				is_active: 'All',
+				is_active: 'All'
 			}
 		}
 	},
@@ -173,12 +142,15 @@ export default {
 		},
 		filterAccountList() {
 			const { no, name, type_name, is_active } = this.filterCondition
-			let activeFilter = is_active === 'Enable' ? true : is_active === 'Disable' ? false : ''
-			let filterArr = this.accountList.filter((item) => {
-				return item.no.indexOf(no) !== -1 
-					&& item.name.indexOf(name) !== -1
-					&& item.type_name.indexOf(type_name) !== -1
-					&& (is_active === 'All' || item.is_active === activeFilter)
+			let activeFilter =
+				is_active === 'Enable' ? true : is_active === 'Disable' ? false : ''
+			let filterArr = this.accountList.filter(item => {
+				return (
+					item.no.indexOf(no) !== -1 &&
+					item.name.indexOf(name) !== -1 &&
+					item.type_name.indexOf(type_name) !== -1 &&
+					(is_active === 'All' || item.is_active === activeFilter)
+				)
 			})
 			filterArr.unshift({}) // 第一行为搜索栏，每次需空出来
 			return filterArr
@@ -190,12 +162,14 @@ export default {
 	methods: {
 		async getAccountList() {
 			this.isGettingAccountList = true
-			const res = await api.getAccountList(this.currentCompany.id, this.currentType)
+			const res = await api.getAccountList(
+				this.currentCompany.id,
+				this.currentType
+			)
 			this.isGettingAccountList = false
 			if (res.data.error_code === 0) {
 				this.accountList = res.data.data
 			}
-			
 		},
 		tableRowClassName({ rowIndex }) {
 			let className = ''
@@ -216,12 +190,18 @@ export default {
 				this.isStatusDialogShow = true
 				return
 			}
-			if (this.isUpdatingAccount === true) { return }
+			if (this.isUpdatingAccount === true) {
+				return
+			}
 			let newAccount = JSON.parse(JSON.stringify(account))
 			newAccount.is_active = !newAccount.is_active
 			this.isUpdatingAccount = true
 			this.currentUpdatingAccount = account
-			const res = await api.updateAccount(this.currentCompany.id, this.currentType, newAccount)
+			const res = await api.updateAccount(
+				this.currentCompany.id,
+				this.currentType,
+				newAccount
+			)
 			this.currentUpdatingAccount = {}
 			this.isUpdatingAccount = false
 			if (res.data.error_code === 0) {

@@ -1,410 +1,582 @@
 <template>
-	<div class="mapping">
-		<SubHeader title="Mapping">
-			<div class="status">Mapping Status:</div>
-			<el-select v-model="mappingStatus" size="medium" placeholder="Batch">
-				<el-option v-for="status in ['Matched', 'To be matched']" :key="status" :value="status"></el-option>
-			</el-select>
-		</SubHeader>
-		<div class="main" v-show="mappingStatus === 'Matched'">
-			<el-table :data="matchedData" style="width: 100%">
-				<el-table-column label="Imported Accounts" header-align="center">
-					<el-table-column
-						v-for="(item, index) in [
-							{ key: 'accountNo', value: 'Account No.' },
-							{ key: 'accountName', value: 'Account Name' }	
-            ]"
-						:key="index"
-						:prop="item.key"
-						:label="item.value"
-						header-align="center"
-						align="center"
-					>
-						<template slot-scope="scope">
-							<template v-if="scope.$index === 0">
-								<el-input :placeholder="item.value" size="small" class="search">
-									<el-button slot="append" icon="el-icon-search"></el-button>
-								</el-input>
-							</template>
-							<template v-else>{{ scope.row[item.key] }}</template>
-						</template>
-					</el-table-column>
-				</el-table-column>
-				<el-table-column label="Chart of accounts CN" header-align="center">
-					<el-table-column
-						prop="toAccountType"
-						label="Type of account"
-						header-align="center"
-						align="center"
-					>
-						<template slot-scope="scope">
-							<template v-if="scope.$index === 0">
-								<el-select size="small" class="search" value="All">
-									<el-option key="all" value="All"></el-option>
-									<el-option key="cn" value="CN"></el-option>
-									<el-option key="en" value="EN"></el-option>
-								</el-select>
-							</template>
-							<template v-else>{{ scope.row.toAccountType }}</template>
-						</template>
-					</el-table-column>
-					<el-table-column
-						v-for="(item, index) in [
-							{ key: 'toAccountNo', value: 'Account No.' },
-							{ key: 'toAccountName', value: 'Account Name' }	
-            ]"
-						:key="index"
-						:prop="item.key"
-						:label="item.value"
-						header-align="center"
-						align="center"
-					>
-						<template slot-scope="scope">
-							<template v-if="scope.$index === 0">
-								<el-input :placeholder="item.value" size="small" class="search">
-									<el-button slot="append" icon="el-icon-search"></el-button>
-								</el-input>
-							</template>
-							<template v-else>{{ scope.row[item.key] }}</template>
-						</template>
-					</el-table-column>
-				</el-table-column>
-				<el-table-column align="center" header-align="center">
-					<template slot="header" slot-scope="scope">
-						<div class="status" @click="isEditable=!isEditable">
-							<svg-icon :icon-class="isEditable ? 'unlock-fill' : 'lock-fill'"></svg-icon>Action
-						</div>
-					</template>
-					<template slot-scope="scope" v-if="scope.$index !== 0">
-						<el-button
-							:type="isEditable ? 'primary' : 'info'"
-							plain
-							:class="[isEditable ? '' : 'disable', 'action']"
-							size="small"
-							icon="el-icon-edit-outline"
-							@click="toggleStatus(scope.$index)"
-						>Edit</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
-		</div>
+  <div class="mapping">
+    <SubHeader title="Mapping">
+      <el-row align="middle" class="left" slot="left" type="flex">
+        <el-divider direction="vertical"></el-divider>
+        <div class="status">Mapping Status:</div>
+        <el-select placeholder="Batch" size="medium" v-model="mappingStatus">
+          <el-option :key="status" :value="status" v-for="status in [MATCHED, TO_BE_MATCHED]"></el-option>
+        </el-select>
+        <el-button
+          @click="isAddAccountDialogShow = !isAddAccountDialogShow"
+          class="filter primary-icon"
+          size="small"
+          type="primary"
+        >
+          <svg-icon icon-class="plus-square"></svg-icon>New Account
+        </el-button>
+      </el-row>
 
-		<div class="main un-matched" v-show="mappingStatus === 'To be matched'">
-			<el-row type="flex" justify="space-between" align="middle" class="action-bar">
-				<el-col>
-					<el-button
-						type="primary"
-						size="small"
-						class="filter primary-icon"
-						@click="isAddAccountDialogShow=!isAddAccountDialogShow"
-					>
-						<svg-icon icon-class="plus-square"></svg-icon>New Account
-					</el-button>
-				</el-col>
-				<el-col>
-					<el-row type="flex" justify="end" align="middle">
-						<el-button type="success" class="action" icon="el-icon-success" size="small">Save</el-button>
-					  <el-button type="info" class="action" icon="el-icon-refresh" size="small">Reset</el-button>
-					</el-row>
-				</el-col>
-			</el-row>
-			<el-table :data="toBeMatchedData" style="width: 100%">
-				<el-table-column label="Imported Accounts" header-align="center">
-					<el-table-column
-						v-for="(item, index) in [
-							{ key: 'accountNo', value: 'Account No.' },
-							{ key: 'accountName', value: 'Account Name' }	
-            ]"
-						:key="index"
-						:prop="item.key"
-						:label="item.value"
-						header-align="center"
-						align="center"
-					>
-						<template slot-scope="scope">
-							<template v-if="scope.$index === 0">
-								<el-input :placeholder="item.value" size="small" class="search">
-									<el-button slot="append" icon="el-icon-search"></el-button>
-								</el-input>
-							</template>
-							<template v-else>{{ scope.row[item.key] }}</template>
-						</template>
-					</el-table-column>
-				</el-table-column>
-				<el-table-column label="Chart of accounts CN" header-align="center">
-					<el-table-column label="Type of account" header-align="center" align="center">
-						<template slot-scope="scope">
-							<template v-if="scope.$index === 0">
-								<el-select size="small" class="search" value="All">
-									<el-option key="all" value="All"></el-option>
-									<el-option key="cn" value="CN"></el-option>
-									<el-option key="en" value="EN"></el-option>
-								</el-select>
-							</template>
-							<template v-else>
-								<el-select v-model="scope.row.toAccountType" placeholder="Account Name" size="small">
-									<el-option v-for="i in 10" :key="i" :value="i"></el-option>
-								</el-select>
-							</template>
-						</template>
-					</el-table-column>
-					<el-table-column
-						v-for="(item, index) in [
-							{ key: 'toAccountNo', value: 'Account No.' },
-							{ key: 'toAccountName', value: 'Account Name' }	
-            ]"
-						:key="index"
-						:prop="item.key"
-						:label="item.value"
-						header-align="center"
-						align="center"
-					>
-						<template slot-scope="scope">
-							<template v-if="scope.$index === 0">
-								<el-input :placeholder="item.value" size="small" class="search">
-									<el-button slot="append" icon="el-icon-search"></el-button>
-								</el-input>
-							</template>
-							<template v-else>
-								<el-select v-model="scope.row[item.key]" placeholder="Account Name" size="small">
-									<el-option v-for="i in 10" :key="i" :value="i"></el-option>
-								</el-select>
-							</template>
-						</template>
-					</el-table-column>
-				</el-table-column>
-				<!-- <el-table-column align="center" header-align="center" label="Action">
-					<template slot-scope="scope" v-if="scope.$index !== 0">
-						<el-button type="primary" class="action" icon="el-icon-circle-check" size="small">Save</el-button>
-						<el-button type="warning" plain class="action" icon="el-icon-refresh" size="small">Reset</el-button>
-					</template>
-				</el-table-column>-->
-			</el-table>
-		</div>
+      <el-row
+        align="middle"
+        class="action-bar"
+        justify="end"
+        type="flex"
+        v-show="mappingStatus === TO_BE_MATCHED"
+      >
+        <el-col>
+          <el-row align="middle" justify="end" type="flex">
+            <el-button
+              @click="uploadMappingList"
+              class="action"
+              icon="el-icon-success"
+              size="medium"
+              type="success"
+            >Save</el-button>
+            <el-button
+              @click="clearToBeMatchedData"
+              class="action"
+              icon="el-icon-refresh"
+              size="medium"
+              type="info"
+            >Reset</el-button>
+          </el-row>
+        </el-col>
+      </el-row>
+    </SubHeader>
+    <div class="main" v-show="mappingStatus === MATCHED">
+      <el-table :data="filterMatched" style="width: 100%">
+        <el-table-column header-align="center" label="Imported Accounts">
+          <el-table-column align="center" header-align="center" label="Account No.">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0">
+                <el-input
+                  class="search"
+                  placeholder="Account No."
+                  size="small"
+                  v-model="filterMatchedNo"
+                ></el-input>
+              </template>
+              <template v-else>{{ scope.row.account_no }}</template>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" header-align="center" label="Account Name">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0">
+                <el-input
+                  class="search"
+                  placeholder="Account Name"
+                  size="small"
+                  v-model="filterMatchedName"
+                ></el-input>
+              </template>
+              <template v-else>{{ scope.row.account_name }}</template>
+            </template>
+          </el-table-column>
+        </el-table-column>
 
-		<el-dialog
-			title="Add account"
-			:visible.sync="isAddAccountDialogShow"
-			width="540px"
-			class="new-account"
-		>
-			<NewAccoundDailog></NewAccoundDailog>
-		</el-dialog>
+        <el-table-column header-align="center" label="Chart of accounts CN">
+          <el-table-column align="center" header-align="center" label="Type of account">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0">
+                <el-input
+                  class="search"
+                  placeholder="Type of account"
+                  size="small"
+                  v-model="filterMatchedAccountType"
+                ></el-input>
+              </template>
+              <template v-else>{{ scope.row.accountType.no + ' ' + scope.row.accountType.name }}</template>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" header-align="center" label="Account No.">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0">
+                <el-input
+                  class="search"
+                  placeholder="Account No."
+                  size="small"
+                  v-model="filterMatchedAccountNo"
+                ></el-input>
+              </template>
+              <template v-else>{{ scope.row.matched_account_no }}</template>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" header-align="center" label="Account Name">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0">
+                <el-input
+                  class="search"
+                  placeholder="Account Name"
+                  size="small"
+                  v-model="filterMatchedAccountName"
+                ></el-input>
+              </template>
+              <template v-else>{{ scope.row.matched_account_name }}</template>
+            </template>
+          </el-table-column>
+        </el-table-column>
 
-		<el-dialog title="Status" :visible.sync="isStatusDialogShow" width="540px">
-			Editing is currently disabled. Do you want to unlock it?
-			<div slot="footer">
-				<el-button type="primary" @click="unlockStatus">Unlock</el-button>
-				<el-button plian @click="isStatusDialogShow=false">Cancel</el-button>
-			</div>
-		</el-dialog>
+        <el-table-column align="center" header-align="center">
+          <template slot="header" slot-scope="scope">
+            <div @click="isEditable = !isEditable" class="status">
+              <svg-icon :icon-class="isEditable ? 'unlock-fill' : 'lock-fill'"></svg-icon>Action
+            </div>
+          </template>
+          <template slot-scope="scope" v-if="scope.$index !== 0">
+            <el-button
+              :class="[isEditable ? '' : 'disable', 'action']"
+              :type="isEditable ? 'primary' : 'info'"
+              @click="editAccount(scope.row)"
+              icon="el-icon-edit-outline"
+              plain
+              size="small"
+            >Edit</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
-		<el-dialog
-			:visible.sync="isEditAccountDialogShow"
-			width="540px"
-			class="edit-account"
-		>
-			<div class="title">Imported accounts</div>
-			<el-form class="form1" :model="currentAccount" label-width="130px" label-position="left">
-			<el-form-item label="Account No.:">
-					{{ currentAccount.accountNo }}
-				</el-form-item>
-				<el-form-item label="Account Name:">
-					{{ currentAccount.accountName }}
-				</el-form-item>
-			</el-form>
-			<div class="title editable">Chart of accounts CN</div>
-			<el-form :model="currentAccount" label-width="130px" label-position="left">
-				<el-form-item label="Type of account:">
-					<el-select v-model="currentAccount.toAccountType">
-						<el-option v-for="type in ['CN', 'EN']" :key="type" :value="type"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="Account No.:">
-					<el-input v-model="currentAccount.toAccountNo"></el-input>
-				</el-form-item>
-				<el-form-item label="Account Name:">
-					<el-input v-model="currentAccount.toAccountName"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-row type="flex" justify="space-between" :gutter="12">
-						<el-col :span="12">
-							<el-button type="primary" class="full-width" @click="isEditAccountDialogShow=false">Save</el-button>
-						</el-col>
-						<el-col :span="12">
-							<el-button plain class="full-width" @click="isEditAccountDialogShow=false">Cancel</el-button>
-						</el-col>
-					</el-row>
-				</el-form-item>
-			</el-form>
-		</el-dialog>
-	</div>
+    <div class="main un-matched" v-show="mappingStatus === TO_BE_MATCHED">
+      <el-table :data="filterToBeMatched" style="width: 100%">
+        <el-table-column header-align="center" label="Imported Accounts">
+          <el-table-column align="center" header-align="center" label="Account No.">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0">
+                <el-input class="search" placeholder="Account No." size="small" v-model="filterNo"></el-input>
+              </template>
+              <template v-else>{{ scope.row.account_no }}</template>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" header-align="center" label="Account Name">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0">
+                <el-input
+                  class="search"
+                  placeholder="Account Name"
+                  size="small"
+                  v-model="filterName"
+                >
+                  <!-- <el-button icon="el-icon-search" slot="append"></el-button> -->
+                </el-input>
+              </template>
+              <template v-else>{{ scope.row.account_name }}</template>
+            </template>
+          </el-table-column>
+        </el-table-column>
+
+        <el-table-column header-align="center" label="Chart of accounts CN">
+          <el-table-column align="center" header-align="center" label="Type of account">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0"></template>
+              <template v-else>
+                <el-select
+                  @change="chooseAccountType(scope.row)"
+                  placeholder="Type of account"
+                  size="small"
+                  v-model="scope.row.accountType"
+                  value-key="no"
+                >
+                  <el-option
+                    :key="item.no"
+                    :label="item.no + '  ' + item.name"
+                    :value="item"
+                    v-for="item in accountTypes"
+                  ></el-option>
+                </el-select>
+              </template>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" header-align="center" label="Account No.">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0">
+                <!-- <el-input :placeholder="item.value" class="search" size="small">
+                  <el-button icon="el-icon-search" slot="append"></el-button>
+                </el-input>-->
+              </template>
+              <template v-else>
+                <el-input
+                  clearable
+                  placeholder="Account No."
+                  v-model="scope.row.matched_account_no"
+                ></el-input>
+              </template>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" header-align="center" label="Account Name">
+            <template slot-scope="scope">
+              <template v-if="scope.$index === 0">
+                <!-- <el-input :placeholder="item.value" class="search" size="small">
+                  <el-button icon="el-icon-search" slot="append"></el-button>
+                </el-input>-->
+              </template>
+              <template v-else>
+                <el-input
+                  clearable
+                  placeholder="Account Name"
+                  v-model="scope.row.matched_account_name"
+                ></el-input>
+              </template>
+            </template>
+          </el-table-column>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <el-dialog
+      :visible.sync="isAddAccountDialogShow"
+      class="new-account"
+      title="Add account"
+      width="540px"
+    >
+      <NewAccoundDailog @hideDialog="hideDialog($event)"></NewAccoundDailog>
+    </el-dialog>
+
+    <el-dialog :visible.sync="isStatusDialogShow" title="Status" width="540px">
+      Editing is currently disabled. Do you want to unlock it?
+      <div slot="footer">
+        <el-button @click="unlockStatus" type="primary">Unlock</el-button>
+        <el-button @click="isStatusDialogShow = false" plian>Cancel</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog :visible.sync="isEditAccountDialogShow" class="edit-account" width="540px">
+      <div class="title">Imported accounts</div>
+      <el-form class="form1" label-position="left" label-width="130px">
+        <el-form-item label="Account No.:">{{ currentEditAccount.account_no }}</el-form-item>
+        <el-form-item label="Account Name:">{{ currentEditAccount.account_name }}</el-form-item>
+      </el-form>
+      <div class="title editable">Chart of accounts CN</div>
+      <el-form label-position="left" label-width="130px">
+        <el-form-item label="Type of account:">
+          <el-select
+            v-model="currentEditAccount.accountType"
+            value-key="no"
+						placeholder="Type of account"
+          >
+            <el-option
+              :key="item.no"
+              :label="item.no + '  ' + item.name"
+              :value="item"
+              v-for="item in accountTypes"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Account No.:">
+					<el-select
+            v-model="currentEditAccount.account"
+            value-key="no"
+						placeholder="Account No."
+          >
+            <el-option
+              :key="item.no + item.name"
+              :label="item.no"
+              :value="item"
+              v-for="item in filterAccountList"
+            ></el-option>
+          </el-select>
+          <!-- <el-input v-model="currentEditAccount.matched_account_no"></el-input> -->
+        </el-form-item>
+        <el-form-item label="Account Name:">
+          <el-input v-model="currentEditAccount.account.name" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item>
+          <el-row :gutter="12" justify="space-between" type="flex">
+            <el-col :span="12">
+              <el-button
+                :loading="isUpdatingMapping"
+                @click="updateMapping"
+                class="full-width"
+                type="primary"
+              >Save</el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button @click="isEditAccountDialogShow = false" class="full-width" plain>Cancel</el-button>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
-import SubHeader from "@/components/SubHeader";
-import NewAccoundDailog from "./components/NewAccoundDailog";
+import SubHeader from '@/components/SubHeader'
+import NewAccoundDailog from './components/NewAccoundDailog'
+import api from '@/api'
+import { FR } from '@/constant/accountType'
+
+const MATCHED = 'Matched'
+const TO_BE_MATCHED = 'To be matched'
 
 export default {
 	data() {
 		return {
+			MATCHED,
+			TO_BE_MATCHED,
+
 			isAddAccountDialogShow: false,
 			isEditAccountDialogShow: false,
 			isStatusDialogShow: false,
 			isEditable: false,
-			mappingStatus: "To be matched",
-			currentAccount: {},
-			matchedData: [
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
 
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
+			mappingStatus: TO_BE_MATCHED,
+			matchedData: [],
+			toBeMatchedData: [],
 
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "CN",
-					toAccountNo: "2398.23",
-					toAccountName: "engliish"
-				}
-			],
-			toBeMatchedData: [
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "hh",
-					toAccountNo: "",
-					toAccountName: ""
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "",
-					toAccountNo: "",
-					toAccountName: ""
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "",
-					toAccountNo: "",
-					toAccountName: ""
-				},
-				{
-					accountNo: "2332.20",
-					accountName: "飞机配",
-					toAccountType: "",
-					toAccountNo: "",
-					toAccountName: ""
-				}
-			]
-		};
+			// 该语言下的 account type [{ no: 1, name: '22'}]
+			accountTypes: [],
+			// 该语言下的 account no [{ no, name }]
+			accountList: [],
+			// to be matched 下的过滤项
+			filterNo: '',
+			filterName: '',
+			// matched 下的过滤项
+			filterMatchedNo: '',
+			filterMatchedName: '',
+			filterMatchedAccountType: '',
+			filterMatchedAccountNo: '',
+			filterMatchedAccountName: '',
+			// 当前编辑 mapping 的内容
+			currentEditAccount: {
+				// { no: '', name: '' } 
+				accountType: {},
+				// { no: '', name: '' } 
+				account: {},
+			},
+
+			isGettingMappingList: false,
+			isUpdatingMapping: false,
+			isSavingMapping: false
+		}
+	},
+	computed: {
+		currentCompany() {
+			return this.$store.getters.currentCompany
+		},
+		currentType() {
+			return this.$store.getters.currentType
+		},
+		filterToBeMatched() {
+			const result = this.toBeMatchedData.filter(item => {
+				return (
+					item.account_no.indexOf(this.filterNo) !== -1 &&
+					item.account_name.indexOf(this.filterName) !== -1
+				)
+			})
+			result.unshift({})
+			return result
+		},
+		filterMatched() {
+			const result = this.matchedData.filter(item => {
+				const accountType = item.accountType || { no: '', name: '' }
+				return (
+					item.account_no.includes(this.filterMatchedNo) &&
+					item.account_name.includes(this.filterMatchedName) &&
+					item.matched_account_no.includes(this.filterMatchedAccountNo) &&
+					item.matched_account_name.includes(this.filterMatchedAccountName) &&
+					(accountType.no + '  ' + accountType.name).includes(
+						this.filterMatchedAccountType
+					)
+				)
+			})
+			result.unshift({})
+			return result
+		},
+		filterAccountList() {
+			return this.accountList.filter((item) => {
+				return item.no.includes(this.currentEditAccount.accountType.no)
+			})
+		}
 	},
 	components: {
 		SubHeader,
 		NewAccoundDailog
 	},
+	created() {
+		this.getAccountType()
+		this.getAccountList()
+		this.getMappingList()
+	},
 	methods: {
 		unlockStatus() {
-			this.isEditable = true;
-			this.isStatusDialogShow = false;
+			this.isEditable = true
+			this.isStatusDialogShow = false
 		},
-		toggleStatus(index) {
+		editAccount(account) {
 			if (!this.isEditable) {
-				this.isStatusDialogShow = true;
-				return;
+				this.isStatusDialogShow = true
+				return
 			}
-			this.isEditAccountDialogShow = true;
-			this.currentAccount = this.matchedData[index];
+			this.isEditAccountDialogShow = true
+			this.currentEditAccount = {
+				account_no: account.account_no,
+				account_name: account.account_name,
+				accountType: account.accountType,
+				account: {
+					no: account.matched_account_no,
+					name: account.matched_account_name
+				}
+			}
+		},
+		hideDialog(isAdded) {
+			this.isAddAccountDialogShow = false
+			if (isAdded) {
+				this.getMappingList()
+			}
+		},
+		// 获取Account列表
+		async getAccountList() {
+			const res = await api.getAccountList(
+				this.currentCompany.id,
+				this.currentType
+			)
+			if (res.data.error_code === 0) {
+				this.accountList = res.data.data
+			}
+		},
+		// 获取当前语言下所有 account type
+		async getAccountType() {
+			const res = await api.getAccountType(this.currentType)
+			if (res.data.error_code === 0) {
+				this.accountTypes = res.data.data
+			}
+		},
+		// 获取已匹配和未匹配的列表
+		// isUpdatingMatched 为 true 表示是未匹配项变成了匹配项，需要更新 matched 数据
+		async getMappingList(shouldUpdateToBeMatched = true) {
+			this.isGettingMappingList = false
+			const res = await api.getMappingList(
+				this.currentCompany.id,
+				this.currentType
+			)
+			this.isGettingMappingList = true
+			if (res.data.error_code === 0) {
+				const { matched, to_be_matched } = res.data.data
+				// 获取相关 accountType
+				this.matchedData = matched.map(item => {
+					// CN 语言下 第一个小数点前是account type
+					// FR 语言下 大部分三位算一类，部分四位算一类（6开头）
+					let accountType = this.accountTypes.find(type => {
+						if (this.currentType === FR) {
+							return type.no.slice(0, 3) === item.matched_account_no.slice(0, 3)
+						} else {
+							return type.no.split('.')[0] === item.matched_account_no.split('.')[0]
+						}
+					})
+					item.accountType = typeof accountType === 'undefined' ? { no: '', name: '' } : accountType
+					return item
+				})
+				// 添加三个属性
+				if (shouldUpdateToBeMatched) {
+					this.toBeMatchedData = to_be_matched.map(item => {
+						item.accountType = { no: '', name: '', default: '' }
+						item.matched_account_no = ''
+						item.matched_account_name = ''
+						return item
+					})
+				}
+			}
+		},
+		// 选择 Account Type，自动设置相应的Account No. Account Name
+		chooseAccountType(mapping) {
+			const index = this.toBeMatchedData.findIndex(item => {
+				return mapping.account_no === item.account_no
+			})
+			this.toBeMatchedData[index].matched_account_no = mapping.accountType.no
+			this.toBeMatchedData[index].matched_account_name =
+				mapping.accountType.name
+		},
+		// 上传匹配列表
+		async uploadMappingList() {
+			const filterMappingList = this.toBeMatchedData.filter(item => {
+				return (
+					item.matched_account_no !== '' && item.matched_account_name !== ''
+				)
+			})
+			const mapping_list = filterMappingList.map(item => {
+				return {
+					account_no: item.account_no,
+					account_name: item.account_name,
+					matched_account_no: item.matched_account_no,
+					matched_account_name: item.matched_account_name
+				}
+			})
+			if (mapping_list.length === 0) {
+				return
+			}
+			this.isSavingMapping = false
+			const res = await api.uploadMappingList(
+				this.currentCompany.id,
+				this.currentType,
+				mapping_list
+			)
+			this.isSavingMapping = true
+			if (res.data.error_code === 0) {
+				this.$message.success('保存成功')
+				// todo 保存成功后的回调
+				this.getMappingList(false)
+				this.toBeMatchedData = this.toBeMatchedData.filter(item => {
+					return (
+						item.matched_account_no === '' || item.matched_account_name === ''
+					)
+				})
+			}
+		},
+		// 清除未匹配项编辑的内容
+		clearToBeMatchedData() {
+			this.toBeMatchedData.forEach(item => {
+				item.accountType = {}
+				item.matched_account_no = ''
+				item.matched_account_name = ''
+			})
+		},
+		// 更新mapping
+		async updateMapping() {
+			const mapping = {
+				account_no: this.currentEditAccount.account_no,
+				matched_account_no: this.currentEditAccount.account.no,
+				matched_account_name: this.currentEditAccount.account.name
+			}
+			this.isUpdatingMapping = true
+			const res = await api.updateMappingList(
+				this.currentCompany.id,
+				this.currentType,
+				mapping
+			)
+			this.isUpdatingMapping = false
+
+			if (res.data.error_code === 0) {
+				this.isEditAccountDialogShow = false
+				this.getMappingList()
+				this.$message.success('更新成功')
+			}
 		}
 	}
-};
+}
 </script>
 
 <style scoped lang="scss">
 .mapping {
-	.el-select {
-		margin: 0 0 0 8px;
+	.left {
+		margin-left: 20px;
+		.status {
+			margin-left: 20px;
+		}
+		.el-select {
+			margin: 0 20px 0 8px;
+		}
 	}
 	.main {
 		padding: 30px;
-		&.un-matched {
-			padding-top: 10px;
+		.action-bar .action.el-button {
+			width: 100px;
 		}
-		.action-bar {
-			margin-bottom: 10px;
-			.action.el-button {
-				width: 100px;
-			}
-		}
-		@import "../../styles/customTable.scss";
+		@import '../../styles/customTable.scss';
 		.search {
 			margin: 6px 0;
 			&.el-input,
