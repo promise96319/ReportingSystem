@@ -177,6 +177,7 @@
                   size="small"
                   v-model="scope.row.accountType"
                   value-key="no"
+									clearable
                 >
                   <el-option
                     :key="item.no"
@@ -197,11 +198,20 @@
                 </el-input>-->
               </template>
               <template v-else>
-                <el-input
+                <!-- <el-input
                   clearable
                   placeholder="Account No."
                   v-model="scope.row.matched_account_no"
-                ></el-input>
+                ></el-input>-->
+
+                <el-select placeholder="Account No." v-model="scope.row.matched_account_no" @change="chooseAccountNo($event, scope.row)">
+                  <el-option
+                    :key="item.no + item.name + index"
+                    :label="item.no"
+                    :value="item.no"
+                    v-for="(item, index) in scope.row.accountList"
+                  ></el-option>
+                </el-select>
               </template>
             </template>
           </el-table-column>
@@ -216,6 +226,7 @@
               <template v-else>
                 <el-input
                   clearable
+                  disabled
                   placeholder="Account Name"
                   v-model="scope.row.matched_account_name"
                 ></el-input>
@@ -253,9 +264,9 @@
       <el-form label-position="left" label-width="130px">
         <el-form-item label="Type of account:">
           <el-select
+            placeholder="Type of account"
             v-model="currentEditAccount.accountType"
             value-key="no"
-						placeholder="Type of account"
           >
             <el-option
               :key="item.no"
@@ -266,11 +277,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Account No.:">
-					<el-select
-            v-model="currentEditAccount.account"
-            value-key="no"
-						placeholder="Account No."
-          >
+          <el-select placeholder="Account No." v-model="currentEditAccount.account" value-key="no">
             <el-option
               :key="item.no + item.name"
               :label="item.no"
@@ -281,7 +288,7 @@
           <!-- <el-input v-model="currentEditAccount.matched_account_no"></el-input> -->
         </el-form-item>
         <el-form-item label="Account Name:">
-          <el-input v-model="currentEditAccount.account.name" disabled></el-input>
+          <el-input disabled v-model="currentEditAccount.account.name"></el-input>
         </el-form-item>
 
         <el-form-item>
@@ -343,10 +350,10 @@ export default {
 			filterMatchedAccountName: '',
 			// 当前编辑 mapping 的内容
 			currentEditAccount: {
-				// { no: '', name: '' } 
+				// { no: '', name: '' }
 				accountType: {},
-				// { no: '', name: '' } 
-				account: {},
+				// { no: '', name: '' }
+				account: {}
 			},
 
 			isGettingMappingList: false,
@@ -388,7 +395,7 @@ export default {
 			return result
 		},
 		filterAccountList() {
-			return this.accountList.filter((item) => {
+			return this.accountList.filter(item => {
 				return item.no.includes(this.currentEditAccount.accountType.no)
 			})
 		}
@@ -465,10 +472,15 @@ export default {
 						if (this.currentType === FR) {
 							return type.no.slice(0, 3) === item.matched_account_no.slice(0, 3)
 						} else {
-							return type.no.split('.')[0] === item.matched_account_no.split('.')[0]
+							return (
+								type.no.split('.')[0] === item.matched_account_no.split('.')[0]
+							)
 						}
 					})
-					item.accountType = typeof accountType === 'undefined' ? { no: '', name: '' } : accountType
+					item.accountType =
+						typeof accountType === 'undefined'
+							? { no: '', name: '' }
+							: accountType
 					return item
 				})
 				// 添加三个属性
@@ -477,6 +489,7 @@ export default {
 						item.accountType = { no: '', name: '', default: '' }
 						item.matched_account_no = ''
 						item.matched_account_name = ''
+						item.accountList = this.accountList
 						return item
 					})
 				}
@@ -484,12 +497,23 @@ export default {
 		},
 		// 选择 Account Type，自动设置相应的Account No. Account Name
 		chooseAccountType(mapping) {
-			const index = this.toBeMatchedData.findIndex(item => {
-				return mapping.account_no === item.account_no
+			mapping.accountList = this.accountList.filter((item) => {
+				return item.no.includes(mapping.accountType.no)
 			})
-			this.toBeMatchedData[index].matched_account_no = mapping.accountType.no
-			this.toBeMatchedData[index].matched_account_name =
-				mapping.accountType.name
+			// const index = this.toBeMatchedData.findIndex(item => {
+			// 	return mapping.account_no === item.account_no
+			// })
+			// this.toBeMatchedData[index].matched_account_no = mapping.accountType.no
+			// this.toBeMatchedData[index].matched_account_name =
+			// 	mapping.accountType.name
+		},
+		chooseAccountNo(no, row) {
+			let account = this.accountList.find((item) => {
+				return item.no === no
+			})
+			if (account) {
+				row.matched_account_name = account.name
+			}
 		},
 		// 上传匹配列表
 		async uploadMappingList() {

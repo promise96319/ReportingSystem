@@ -1,7 +1,13 @@
 <template>
   <div class="accounting-entries">
     <SubHeader title="Accounting entries">
-      <el-button class="plain-icon" plain size="medium">
+      <el-button
+        :loading="isExportingToExcel"
+        @click="exportToExcel"
+        class="plain-icon"
+        plain
+        size="medium"
+      >
         <svg-icon icon-class="export"></svg-icon>Export
       </el-button>
       <el-button @click="isFilterDrawerShow=true" class="primary-icon" size="medium" type="primary">
@@ -99,7 +105,7 @@
           <el-col :span="18" class="input">
             <div class="el-input el-input--mini el-input--suffix">
               <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',') }}</span>
+                <span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
                 <span class="placeholder" v-else>{{ item.label }}</span>
               </div>
             </div>
@@ -158,7 +164,7 @@
           <el-col :span="18" class="input">
             <div class="el-input el-input--mini el-input--suffix">
               <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',') }}</span>
+                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',  ') }}</span>
                 <span class="placeholder" v-else>{{ item.label }}</span>
               </div>
             </div>
@@ -215,7 +221,7 @@
           <el-col :span="18" class="input">
             <div class="el-input el-input--mini el-input--suffix">
               <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',') }}</span>
+                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',  ') }}</span>
                 <span class="placeholder" v-else>{{ item.label }}</span>
               </div>
             </div>
@@ -272,7 +278,7 @@
           <el-col :span="18" class="input">
             <div class="el-input el-input--mini el-input--suffix">
               <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',') }}</span>
+                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',  ') }}</span>
                 <span class="placeholder" v-else>{{ item.label }}</span>
               </div>
             </div>
@@ -480,7 +486,10 @@ export default {
 
 			isAccountingItemsShow: false,
 			// 当前查看的凭证内容（核算项目时）
-			currentVoucher: {}
+			currentVoucher: {},
+
+			// 是否正在导出数据到excel
+			isExportingToExcel: false
 		}
 	},
 	components: {
@@ -515,11 +524,12 @@ export default {
 				others
 			} = this.filterCondition
 			// accounts 过滤逻辑
-			accountsFrom = accountsFrom || 0
-			accountsTo = accountsTo || this.accountList.length - 1
+			accountsFrom = accountsFrom === '' ? 0 : accountsFrom
+			accountsTo = accountsTo === '' ? this.accountList.length - 1 : accountsTo
 			if (accountsFrom > accountsTo) {
 				[accountsFrom, accountsTo] = [accountsTo, accountsFrom]
-			}
+      }
+      
 			let accountsRange = this.accountList.slice(accountsFrom, accountsTo + 1)
 
 			// period 过滤逻辑
@@ -552,10 +562,8 @@ export default {
 			// 过滤出需要显示的内容
 			let entriesData = this.accountingEntriesData.filter(data => {
 				let isInAccounting = accountsRange.some(account => {
-					return (
-						account.no.includes(data.account_no) &&
-						account.name.includes(data.account_description)
-					)
+          return account.no.includes(data.account_no)
+          // && account.name.includes(data.account_description)
 				})
 
 				let voucherDate = new Date(data.date).getTime()
@@ -568,8 +576,6 @@ export default {
 					data.currency_amount >= currencyAmountFrom &&
 					data.currency_amount <= currencyAmountTo
 
-				// console.log('isInAccounting', isInAccounting);
-				// console.log('isInPeriod', isInPeriod);
 				let isInFilter = others.every(item => {
 					if (item.keywords && item.keywords.length > 0) {
 						// 数据在关键词中才返回true
@@ -577,7 +583,13 @@ export default {
 					}
 					// 没有选关键词时，不搜索
 					return true
-				})
+        })
+        
+        // console.log('isInAccounting', isInAccounting);
+				// console.log('isInPeriod', isInPeriod);
+				// console.log('isInVoucherNo', isInVoucherNo);
+				// console.log('isInCurrencyAmount', isInCurrencyAmount);
+				// console.log('isInFilter', isInFilter);
 
 				return (
 					isInAccounting &&
@@ -712,9 +724,36 @@ export default {
 			this.isCurrentFilterDrawShow = false
 		},
 		resetFilter() {
+			this.filterCondition.accountsFrom = ''
+			this.filterCondition.accountsTo = ''
+			this.filterCondition.periodFrom = ''
+			this.filterCondition.periodTo = ''
+			this.filterCondition.voucherNoFrom = ''
+			this.filterCondition.voucherNoTo = ''
+			this.filterCondition.currencyAmountFrom = ''
+			this.filterCondition.currencyAmountTo = ''
 			this.filterCondition.others = this.filterCondition.others.map(item => {
 				item.keywords = []
 				return item
+			})
+		},
+		exportToExcel() {
+			this.isExportingToExcel = true
+			import('@/tools/Export2Excel').then(excel => {
+				const tHeader = accountingEntriesKey.map(item => {
+					return item.value
+				})
+				const data = this.filterEntriesData.map(row => {
+					return accountingEntriesKey.map(item => {
+						return row[item.key]
+					})
+				})
+				excel.export_json_to_excel({
+					header: tHeader,
+					data,
+					filename: this.filename || 'Accounting entries'
+				})
+				this.isExportingToExcel = false
 			})
 		}
 	}
