@@ -45,7 +45,7 @@
       </el-row>
     </SubHeader>
     <div class="main" v-show="mappingStatus === MATCHED">
-      <el-table :data="filterMatched" style="width: 100%">
+      <el-table :data="filterMatched" style="width: 100%" v-loading="isGettingMappingList">
         <el-table-column header-align="center" label="Imported Accounts">
           <el-table-column align="center" header-align="center" label="Account No.">
             <template slot-scope="scope">
@@ -138,7 +138,7 @@
     </div>
 
     <div class="main un-matched" v-show="mappingStatus === TO_BE_MATCHED">
-      <el-table :data="filterToBeMatched" style="width: 100%">
+      <el-table :data="filterToBeMatched" style="width: 100%" v-loading="isGettingMappingList">
         <el-table-column header-align="center" label="Imported Accounts">
           <el-table-column align="center" header-align="center" label="Account No.">
             <template slot-scope="scope">
@@ -173,11 +173,11 @@
               <template v-else>
                 <el-select
                   @change="chooseAccountType(scope.row)"
+                  clearable
                   placeholder="Type of account"
                   size="small"
                   v-model="scope.row.accountType"
                   value-key="no"
-									clearable
                 >
                   <el-option
                     :key="item.no"
@@ -204,7 +204,12 @@
                   v-model="scope.row.matched_account_no"
                 ></el-input>-->
 
-                <el-select placeholder="Account No." v-model="scope.row.matched_account_no" @change="chooseAccountNo($event, scope.row)">
+                <el-select
+                  @change="chooseAccountNo($event, scope.row)"
+                  placeholder="Account No."
+                  size="small"
+                  v-model="scope.row.matched_account_no"
+                >
                   <el-option
                     :key="item.no + item.name + index"
                     :label="item.no"
@@ -228,6 +233,7 @@
                   clearable
                   disabled
                   placeholder="Account Name"
+                  size="small"
                   v-model="scope.row.matched_account_name"
                 ></el-input>
               </template>
@@ -407,7 +413,6 @@ export default {
 	created() {
 		this.getAccountType()
 		this.getAccountList()
-		this.getMappingList()
 	},
 	methods: {
 		unlockStatus() {
@@ -438,6 +443,7 @@ export default {
 		},
 		// 获取Account列表
 		async getAccountList() {
+			this.isGettingMappingList = true
 			const res = await api.getAccountList(
 				this.currentCompany.id,
 				this.currentType
@@ -445,6 +451,7 @@ export default {
 			if (res.data.error_code === 0) {
 				this.accountList = res.data.data
 			}
+			this.getMappingList()
 		},
 		// 获取当前语言下所有 account type
 		async getAccountType() {
@@ -456,12 +463,12 @@ export default {
 		// 获取已匹配和未匹配的列表
 		// isUpdatingMatched 为 true 表示是未匹配项变成了匹配项，需要更新 matched 数据
 		async getMappingList(shouldUpdateToBeMatched = true) {
-			this.isGettingMappingList = false
+			this.isGettingMappingList = true
 			const res = await api.getMappingList(
 				this.currentCompany.id,
 				this.currentType
 			)
-			this.isGettingMappingList = true
+			this.isGettingMappingList = false
 			if (res.data.error_code === 0) {
 				const { matched, to_be_matched } = res.data.data
 				// 获取相关 accountType
@@ -497,7 +504,7 @@ export default {
 		},
 		// 选择 Account Type，自动设置相应的Account No. Account Name
 		chooseAccountType(mapping) {
-			mapping.accountList = this.accountList.filter((item) => {
+			mapping.accountList = this.accountList.filter(item => {
 				return item.no.includes(mapping.accountType.no)
 			})
 			// const index = this.toBeMatchedData.findIndex(item => {
@@ -508,7 +515,7 @@ export default {
 			// 	mapping.accountType.name
 		},
 		chooseAccountNo(no, row) {
-			let account = this.accountList.find((item) => {
+			let account = this.accountList.find(item => {
 				return item.no === no
 			})
 			if (account) {
