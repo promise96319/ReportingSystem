@@ -229,7 +229,7 @@ export default {
 			this.currentBatchId = id
 
 			this.isGettingBatchData = true
-			const res = await api.queryBatch(this.currentCompany.id, id)
+			const res = await api.queryBatch(id)
 			this.isGettingBatchData = false
 			if (res.data.error_code !== 0) {
 				return

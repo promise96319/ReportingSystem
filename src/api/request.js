@@ -35,7 +35,9 @@ request.interceptors.response.use(
     const res = response.data
 
     // 说明获取不到正确信息
-    if (res.error_code != 0 && res.message) {
+    // error_code 0 返回数据成功
+    // error_code 5000 匹配未完成，无法进行此操作（此时不需要提示）
+    if (res.error_code !== 0 && res.error_code !== 5000 && res.message) {
       Message({
         message: res.message,
         type: 'error',
