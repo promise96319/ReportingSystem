@@ -12,13 +12,13 @@
 			show-password
 			prefix-icon="el-icon-lock"
 		></el-input>
-		<el-row class="forget-password">
+		<!-- <el-row class="forget-password">
 			<el-button
 				type="text"
 				size="mini"
 				@click="$router.push({ name: 'ForgetPassword' })"
 			>Forget Password?</el-button>
-		</el-row>
+		</el-row> -->
 		<el-button type="primary" @click="login" :loading="isLogining">Login</el-button>
 	</UserLayout>
 </template>

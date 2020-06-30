@@ -136,8 +136,18 @@ export default {
 				return
 			}
 
+
+			let no = this.accountType.no + str
+			// 将no控制在8个字符以内，不足的时候补0
+			if (no.length <= 8) {
+				no = no.padEnd(8, '0')
+			} else {
+				this.$message.error('Account No. 最大为8个字符')
+				return
+			}
+
 			const data = {
-				no: this.accountType.no + this.no,
+				no,
 				name: this.name,
 				type_no: this.accountType.no,
 				type_name: this.accountType.name

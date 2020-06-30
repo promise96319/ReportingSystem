@@ -75,7 +75,7 @@
           </el-table-column>
         </el-table-column>
 
-        <el-table-column header-align="center" label="Chart of accounts CN">
+        <el-table-column header-align="center" :label="`Chart of accounts ${currentType}`">
           <el-table-column align="center" header-align="center" label="Type of account">
             <template slot-scope="scope">
               <template v-if="scope.$index === 0">
@@ -166,7 +166,7 @@
           </el-table-column>
         </el-table-column>
 
-        <el-table-column header-align="center" label="Chart of accounts CN">
+        <el-table-column header-align="center" :label="`Chart of accounts ${currentType}`">
           <el-table-column align="center" header-align="center" label="Type of account">
             <template slot-scope="scope">
               <template v-if="scope.$index === 0"></template>
@@ -266,7 +266,7 @@
         <el-form-item label="Account No.:">{{ currentEditAccount.account_no }}</el-form-item>
         <el-form-item label="Account Name:">{{ currentEditAccount.account_name }}</el-form-item>
       </el-form>
-      <div class="title editable">Chart of accounts CN</div>
+      <div class="title editable">Chart of accounts {{ currentType }}</div>
       <el-form label-position="left" label-width="130px">
         <el-form-item label="Type of account:">
           <el-select
