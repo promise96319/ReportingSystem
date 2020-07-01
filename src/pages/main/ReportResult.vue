@@ -164,7 +164,7 @@
           <el-col :span="18" class="input">
             <div class="el-input el-input--mini el-input--suffix">
               <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',  ') }}</span>
+                <span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
                 <span class="placeholder" v-else>{{ item.label }}</span>
               </div>
             </div>
@@ -221,7 +221,7 @@
           <el-col :span="18" class="input">
             <div class="el-input el-input--mini el-input--suffix">
               <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',  ') }}</span>
+                <span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
                 <span class="placeholder" v-else>{{ item.label }}</span>
               </div>
             </div>
@@ -278,7 +278,7 @@
           <el-col :span="18" class="input">
             <div class="el-input el-input--mini el-input--suffix">
               <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(',  ') }}</span>
+                <span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
                 <span class="placeholder" v-else>{{ item.label }}</span>
               </div>
             </div>
@@ -528,8 +528,8 @@ export default {
 			accountsTo = accountsTo === '' ? this.accountList.length - 1 : accountsTo
 			if (accountsFrom > accountsTo) {
 				[accountsFrom, accountsTo] = [accountsTo, accountsFrom]
-      }
-      
+			}
+
 			let accountsRange = this.accountList.slice(accountsFrom, accountsTo + 1)
 
 			// period 过滤逻辑
@@ -562,8 +562,8 @@ export default {
 			// 过滤出需要显示的内容
 			let entriesData = this.accountingEntriesData.filter(data => {
 				let isInAccounting = accountsRange.some(account => {
-          return account.no.includes(data.account_no)
-          // && account.name.includes(data.account_description)
+					return account.no.includes(data.account_no)
+					// && account.name.includes(data.account_description)
 				})
 
 				let voucherDate = new Date(data.date).getTime()
@@ -583,9 +583,9 @@ export default {
 					}
 					// 没有选关键词时，不搜索
 					return true
-        })
-        
-        // console.log('isInAccounting', isInAccounting);
+				})
+
+				// console.log('isInAccounting', isInAccounting);
 				// console.log('isInPeriod', isInPeriod);
 				// console.log('isInVoucherNo', isInVoucherNo);
 				// console.log('isInCurrencyAmount', isInCurrencyAmount);
@@ -738,6 +738,10 @@ export default {
 			})
 		},
 		exportToExcel() {
+			if (!this.isMatchedDone) {
+				this.$message.warning('当前暂无数据可用')
+				return
+			}
 			this.isExportingToExcel = true
 			import('@/tools/Export2Excel').then(excel => {
 				const tHeader = accountingEntriesKey.map(item => {

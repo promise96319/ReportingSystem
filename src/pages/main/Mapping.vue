@@ -180,10 +180,10 @@
                   value-key="no"
                 >
                   <el-option
-                    :key="item.no"
+                    :key="item.no + item.name + index"
                     :label="item.no + '  ' + item.name"
                     :value="item"
-                    v-for="item in accountTypes"
+                    v-for="(item, index) in accountTypes"
                   ></el-option>
                 </el-select>
               </template>
@@ -275,20 +275,20 @@
             value-key="no"
           >
             <el-option
-              :key="item.no"
+              :key="item.no + item.name + index"
               :label="item.no + '  ' + item.name"
               :value="item"
-              v-for="item in accountTypes"
+              v-for="(item, index) in accountTypes"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="Account No.:">
           <el-select placeholder="Account No." v-model="currentEditAccount.account" value-key="no">
             <el-option
-              :key="item.no + item.name"
+              :key="item.no + item.name + index"
               :label="item.no"
               :value="item"
-              v-for="item in filterAccountList"
+              v-for="(item, index) in filterAccountList"
             ></el-option>
           </el-select>
           <!-- <el-input v-model="currentEditAccount.matched_account_no"></el-input> -->

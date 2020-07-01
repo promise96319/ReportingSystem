@@ -14,7 +14,7 @@
 				ref="upload"
 				class="upload-content"
 				drag
-				:action="`${URL.uploadBatch}/${currentCompany.id}?region=${this.currentType}`"
+				:action="`${URL.uploadBatch}/${currentCompany.id}`"
 				:data="{ is_analyze: true }"
 				:auto-upload="false"
 				:multiple="false"
