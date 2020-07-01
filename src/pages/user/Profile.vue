@@ -1,143 +1,123 @@
 <template>
-	<div class="company-profile">
-		<SubHeader title="Profile"></SubHeader>
-		<div class="main">
-			<div class="container">
-				<el-form
-					:model="companyProfile"
-					ref="companyProfile"
-					label-width="128px"
-					label-position="left"
-					class="company-info"
-				>
-					<el-form-item label="Company logo:">
-						<el-upload
-							class="avatar-uploader"
-							:action="URL.uploadCompanyLogo"
-							:show-file-list="false"
-							:on-success="uploadSuccessed"
-						>
-							<!-- :on-success="handleAvatarSuccess" -->
-							<!-- :before-upload="beforeAvatarUpload" -->
-							<img
-								v-if="companyProfile.logo"
-								:src="companyProfile.logo"
-								class="avatar"
-							/>
-							<i
-								v-else
-								class="el-icon-plus avatar-uploader-icon"
-							></i>
-						</el-upload>
-					</el-form-item>
+  <div class="company-profile">
+    <SubHeader title="Profile"></SubHeader>
+    <div class="main">
+      <div class="container">
+        <el-form
+          :model="companyProfile"
+          class="company-info"
+          label-position="left"
+          label-width="128px"
+          ref="companyProfile"
+        >
+          <el-form-item label="Company logo:">
+            <el-upload
+              :action="URL.uploadCompanyLogo"
+              :on-success="uploadSuccessed"
+              :show-file-list="false"
+              class="avatar-uploader"
+            >
+              <!-- :on-success="handleAvatarSuccess" -->
+              <!-- :before-upload="beforeAvatarUpload" -->
+              <img :src="companyProfile.logo" class="avatar" v-if="companyProfile.logo" />
+              <i class="el-icon-plus avatar-uploader-icon" v-else></i>
+            </el-upload>
+          </el-form-item>
 
-					<el-form-item label="Company name:">
-						<el-input
-							v-model="companyProfile.name"
-							:disabled="!isCompanyNameEditable"
-							placeholder="Company Name"
-						>
-							<el-button
-								slot="append"
-								class="lock"
-								@click="isCompanyNameEditable = !isCompanyNameEditable"
-							>
-								<svg-icon :icon-class="isCompanyNameEditable ? 'unlock' : 'lock'"></svg-icon>
-							</el-button>
-						</el-input>
-					</el-form-item>
+          <el-form-item label="Company name:">
+            <el-input
+              :disabled="!isCompanyNameEditable"
+              placeholder="Company Name"
+              v-model="companyProfile.name"
+            >
+              <el-button
+                @click="isCompanyNameEditable = !isCompanyNameEditable"
+                class="lock"
+                slot="append"
+              >
+                <svg-icon :icon-class="isCompanyNameEditable ? 'unlock' : 'lock'"></svg-icon>
+              </el-button>
+            </el-input>
+          </el-form-item>
 
-					<el-form-item label="Contact address:">
-						<el-row class="gap">
-							<el-col :span="24">
-								<el-input
-									v-model="street"
-									placeholder="Street"
-								></el-input>
-							</el-col>
-						</el-row>
-						<el-row
-							:gutter="20"
-							class="gap"
-						>
-							<el-col :span="12">
-								<el-input
-									v-model="city"
-									placeholder="City"
-								></el-input>
-							</el-col>
-							<el-col :span="12">
-								<el-input
-									v-model="companyProfile.postal_code"
-									placeholder="Postal code"
-								></el-input>
-							</el-col>
-						</el-row>
-						<el-row :gutter="20">
-							<el-col :span="12">
-								<el-select
-									v-model="country"
-									placeholder="Country"
-								>
-									<el-option
-										v-for="(item, index) in COUNTRIES"
-										:key="index"
-										:label="item"
-										:value="item"
-									></el-option>
-								</el-select>
-							</el-col>
-							<el-col :span="12"></el-col>
-						</el-row>
-					</el-form-item>
+          <el-form-item label="Chart of accounts type:" label-width="180px">
+            <el-select
+              :disabled="!isAccountTypeEditable"
+              :value="currentType"
+              @change="chooseAccountType"
+            >
+              <el-option :key="item" :label="item" :value="item" v-for="item in accountTypes"></el-option>
+            </el-select>
+            <el-button @click="isAccountTypeEditable=!isAccountTypeEditable" class="lock append">
+              <svg-icon :icon-class="isAccountTypeEditable ? 'unlock' : 'lock'"></svg-icon>
+            </el-button>
+          </el-form-item>
 
-					<el-form-item label="Website:">
-						<el-input
-							v-model="companyProfile.website"
-							placeholder="Example: www.example.com"
-						></el-input>
-					</el-form-item>
+          <el-form-item label="Contact address:">
+            <el-row class="gap">
+              <el-col :span="24">
+                <el-input placeholder="Street" v-model="street"></el-input>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20" class="gap">
+              <el-col :span="12">
+                <el-input placeholder="City" v-model="city"></el-input>
+              </el-col>
+              <el-col :span="12">
+                <el-input placeholder="Postal code" v-model="companyProfile.postal_code"></el-input>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-select placeholder="Country" v-model="country">
+                  <el-option
+                    :key="index"
+                    :label="item"
+                    :value="item"
+                    v-for="(item, index) in COUNTRIES"
+                  ></el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="12"></el-col>
+            </el-row>
+          </el-form-item>
 
-					<el-form-item label="Business scope:">
-						<el-input
-							type="textarea"
-							placeholder="Business scope"
-							rows="4"
-							v-model="companyProfile.business_scope"
-						></el-input>
-					</el-form-item>
-					<el-form-item>
-						<el-row :gutter="20">
-							<el-col :span="12">
-								<el-row
-									type="flex"
-									justify="space-between"
-									:gutter="12"
-								>
-									<el-col :span="12">
-										<el-button
-											type="primary"
-											class="full-width"
-											@click="updateCompany"
-											:loading="isUpdatingCompany"
-										>Confirm</el-button>
-									</el-col>
-									<el-col :span="12">
-										<el-button
-											plain
-											class="full-width"
-											@click="()=>{$router.go(-1)}"
-										>Cancel</el-button>
-									</el-col>
-								</el-row>
-							</el-col>
-							<el-col :span="12"></el-col>
-						</el-row>
-					</el-form-item>
-				</el-form>
-			</div>
-		</div>
-	</div>
+          <el-form-item label="Website:">
+            <el-input placeholder="Example: www.example.com" v-model="companyProfile.website"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Business scope:">
+            <el-input
+              placeholder="Business scope"
+              rows="4"
+              type="textarea"
+              v-model="companyProfile.business_scope"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-row :gutter="12" justify="space-between" type="flex">
+                  <el-col :span="12">
+                    <el-button
+                      :loading="isUpdatingCompany"
+                      @click="updateCompany"
+                      class="full-width"
+                      type="primary"
+                    >Confirm</el-button>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-button @click="()=>{$router.go(-1)}" class="full-width" plain>Cancel</el-button>
+                  </el-col>
+                </el-row>
+              </el-col>
+              <el-col :span="12"></el-col>
+            </el-row>
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -146,6 +126,8 @@ import COUNTRIES from '@/constant/countries.js'
 import api from '@/api'
 import URL from '@/api/config'
 import { SET_CURRENT_COMPANY, SET_COMPANY_LIST } from '@/store/modules/company'
+import accountTypes from '@/constant/accountType'
+import { CHANGE_TYPE } from '@/store/modules/account'
 
 // 国家，城市，街道 分隔符-> 国家$$$城市$$$街道
 const ADDRESS_DELIMITER = '$$$'
@@ -155,6 +137,10 @@ export default {
 		return {
 			COUNTRIES,
 			URL,
+
+			accountTypes,
+			isAccountTypeEditable: false,
+			choosenAccountType: '',
 
 			isCompanyNameEditable: false,
 			companyProfile: {},
@@ -169,6 +155,9 @@ export default {
 	computed: {
 		currentCompanyID() {
 			return this.$store.getters.currentCompany.id
+		},
+		currentType() {
+			return this.$store.getters.currentType
 		}
 	},
 	components: {
@@ -178,6 +167,9 @@ export default {
 		this.getCompanyDetail()
 	},
 	methods: {
+		chooseAccountType(type) {
+			this.$store.commit(CHANGE_TYPE, type)
+		},
 		async getCompanyDetail() {
 			if (!this.currentCompanyID) {
 				return
@@ -260,6 +252,29 @@ export default {
 				.lock {
 					font-size: 20px;
 					stroke: #606266;
+				}
+				.el-select {
+					width: 100%;
+					/deep/ .el-input__suffix {
+						right: 68px;
+					}
+				}
+
+				.append {
+					background-color: #f5f7fa;
+					position: absolute;
+					height: 40px;
+					width: 64px;
+					top: 0px;
+					right: 0px;
+					border-top-left-radius: 0;
+					border-bottom-left-radius: 0;
+					display: table-cell;
+					vertical-align: middle;
+					border-color: #dcdfe6 !important;
+					.svg-icon {
+						transform: translateY(-3px);
+					}
 				}
 				/deep/ .el-form-item__label {
 					color: #303133;

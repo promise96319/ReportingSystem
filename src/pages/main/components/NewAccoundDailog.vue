@@ -116,10 +116,10 @@ export default {
 
 			let no = this.accountType.no + str
 			// 将no控制在8个字符以内，不足的时候补0
-			if (no.length <= 8) {
-				no = no.padEnd(8, '0')
+			if (no.length <= 9) {
+				no = no.padEnd(9, '0')
 			} else {
-				this.$message.error('Account No. 最大为8个字符')
+				this.$message.error('Account No. 最大为9个字符')
 				return
 			}
 

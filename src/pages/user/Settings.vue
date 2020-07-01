@@ -65,49 +65,6 @@
 						</el-row>
 					</el-form-item>
 					<el-form-item></el-form-item>
-					<el-form-item label="Chat of accounts type:">
-						<el-select
-							:value="currentType"
-							@change="chooseAccountType"
-							:disabled="!isAccountTypeEditable"
-						>
-							<el-option
-								v-for="item in accountTypes"
-								:key="item"
-								:label="item"
-								:value="item"
-							></el-option>
-						</el-select>
-						<el-button
-							class="lock append"
-							@click="isAccountTypeEditable=!isAccountTypeEditable"
-						>
-							<svg-icon :icon-class="isAccountTypeEditable ? 'unlock' : 'lock'"></svg-icon>
-						</el-button>
-					</el-form-item>
-					<!-- <el-form-item>
-						<el-row
-							type="flex"
-							justify="space-between"
-							:gutter="12"
-						>
-							<el-col :span="12">
-								<el-button
-									:disabled="!isAccountTypeEditable"
-									type="primary"
-									class="full-width"
-									@click="updateAccountType"
-								>Confirm</el-button>
-							</el-col>
-							<el-col :span="12">
-								<el-button
-									plain
-									class="full-width"
-									@click="()=>{$router.go(-1)}"
-								>Cancel</el-button>
-							</el-col>
-						</el-row>
-					</el-form-item> -->
 				</el-form>
 			</div>
 		</div>
@@ -117,16 +74,10 @@
 <script>
 import SubHeader from '@/components/SubHeader'
 import api from '@/api'
-import accountTypes from '@/constant/accountType'
-import { CHANGE_TYPE } from '@/store/modules/account'
-
 export default {
 	data() {
 		return {
-			accountTypes,
-
 			isPasswordEditable: false,
-			isAccountTypeEditable: false,
 
 			oldPassword: '',
 			newPassword: '',
@@ -139,9 +90,6 @@ export default {
 		email() {
 			return this.$store.getters.user.email
 		},
-		currentType() {
-			return this.$store.getters.currentType
-		}
 	},
 	components: {
 		SubHeader
@@ -176,9 +124,6 @@ export default {
 			if (res.data.error_code === 0) {
 				this.$message.success('密码修改成功！')
 			}
-		},
-		chooseAccountType(type) {
-			this.$store.commit(CHANGE_TYPE, type)
 		}
 	}
 }
