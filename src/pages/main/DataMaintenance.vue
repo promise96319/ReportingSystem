@@ -243,7 +243,7 @@ export default {
 				return
 			}
 			this.isDeletingBatch = true
-			const res = await api.deleteBatch(this.currentCompany.id, id)
+			const res = await api.deleteBatch(id)
 			this.isDeletingBatch = false
 			if (res.data.error_code !== 0) {
 				return

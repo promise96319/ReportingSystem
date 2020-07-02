@@ -70,7 +70,7 @@ export default {
 			return this.$store.getters.currentCompany
 		},
 		currentType() {
-			return this.$store.getters.currentType
+			return this.$store.getters.currentCompany.current_region
 		}
 	},
 	created() {
@@ -133,7 +133,6 @@ export default {
 			this.isAddingAccount = true
 			const res = await api.addAccount(
 				this.currentCompany.id,
-				this.currentType,
 				data
 			)
 			this.isAddingAccount = false

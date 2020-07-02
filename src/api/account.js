@@ -4,22 +4,17 @@ import URL from './config'
 /**
  * 获取Account列表
  * @param {Number} companyId // 当前公司 ID
- * @param {String} region    // 当前选择的type:  CN | EN | FR
  */
-export const getAccountList = (companyId, region) => {
+export const getAccountList = (companyId) => {
   return request({
     method: 'get',
     url: `${URL.getAccountList}/${companyId}/accounts`,
-    params: {
-      region
-    }
   })
 }
 
 /**
  * 新增 Account
  * @param {Number} companyId 公司id
- * @param {String} region    当前选择的type
  * @param {Object} data      Account 数据，例如
    {
       "no": "10011.01",
@@ -29,13 +24,10 @@ export const getAccountList = (companyId, region) => {
       "is_active": false
    }
  */
-export const addAccount = (companyId, region, data) => {
+export const addAccount = (companyId, data) => {
   return request({
     method: 'post',
     url: `${URL.addAccount}/${companyId}/accounts`,
-    params: {
-      region
-    },
     data
   })
 }
@@ -43,7 +35,6 @@ export const addAccount = (companyId, region, data) => {
 /**
  * 更新Account
  * @param {Number} companyId 公司id
- * @param {String} region    当前选择的type
  * @param {String} no        Account no  
  * @param {Obejct} data      Account 数据，例如：
 {
@@ -54,12 +45,11 @@ export const addAccount = (companyId, region, data) => {
     "is_active": true
 }
  */
-export const updateAccount = (companyId, region, data) => {
+export const updateAccount = (companyId, data) => {
   return request({
     method: 'patch',
     url: `${URL.getAccountList}/${companyId}/accounts`,
     params: {
-      region,
       no: data.no
     },
     data

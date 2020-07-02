@@ -1,74 +1,52 @@
 <template>
-	<div class="settings">
-		<SubHeader title="Settings"></SubHeader>
-		<div class="main">
-			<div class="container">
-				<el-form
-					label-width="170px"
-					label-position="left"
-				>
-					<el-form-item label="Email address:">{{ email }}</el-form-item>
-					<el-form-item label="Password:">
-						<el-input
-							v-model="oldPassword"
-							:disabled="!isPasswordEditable"
-							show-password
-							placeholder="Old password"
-						>
-							<el-button
-								class="lock"
-								slot="append"
-								@click="togglePasswordEditor"
-							>
-								<svg-icon :icon-class="isPasswordEditable ? 'unlock' : 'lock'"></svg-icon>
-							</el-button>
-						</el-input>
-						<el-collapse-transition>
-							<div
-								class="new-password"
-								v-show="isPasswordEditable"
-							>
-								<el-input
-									v-model="newPassword"
-									show-password
-									placeholder="New password"
-								></el-input>
-								<el-input
-									v-model="confirmPassword"
-									show-password
-									placeholder="Confirm new password"
-								></el-input>
-							</div>
-						</el-collapse-transition>
-					</el-form-item>
-					<el-form-item>
-						<el-row
-							type="flex"
-							justify="space-between"
-							:gutter="12"
-						>
-							<el-col :span="12">
-								<el-button
-									:disabled="!isPasswordEditable"
-									type="primary"
-									class="full-width"
-									@click="updatePassword"
-								>Confirm</el-button>
-							</el-col>
-							<el-col :span="12">
-								<el-button
-									plain
-									class="full-width"
-									@click="()=>{$router.go(-1)}"
-								>Cancel</el-button>
-							</el-col>
-						</el-row>
-					</el-form-item>
-					<el-form-item></el-form-item>
-				</el-form>
-			</div>
-		</div>
-	</div>
+  <div class="settings">
+    <SubHeader title="Settings"></SubHeader>
+    <div class="main">
+      <div class="container">
+        <el-form label-position="left" label-width="170px">
+          <el-form-item label="Email address:">{{ email }}</el-form-item>
+          <el-form-item label="Password:">
+            <el-input
+              :disabled="!isPasswordEditable"
+              placeholder="Old password"
+              show-password
+              v-model="oldPassword"
+            >
+              <el-button @click="togglePasswordEditor" class="lock" slot="append">
+                <svg-icon :icon-class="isPasswordEditable ? 'unlock' : 'lock'"></svg-icon>
+              </el-button>
+            </el-input>
+            <el-collapse-transition>
+              <div class="new-password" v-show="isPasswordEditable">
+                <el-input placeholder="New password" show-password v-model="newPassword"></el-input>
+                <el-input
+                  placeholder="Confirm new password"
+                  show-password
+                  v-model="confirmPassword"
+                ></el-input>
+              </div>
+            </el-collapse-transition>
+          </el-form-item>
+          <el-form-item>
+            <el-row :gutter="12" justify="space-between" type="flex">
+              <el-col :span="12">
+                <el-button
+                  :disabled="!isPasswordEditable"
+                  @click="updatePassword"
+                  class="full-width"
+                  type="primary"
+                >Confirm</el-button>
+              </el-col>
+              <el-col :span="12">
+                <el-button @click="()=>{$router.go(-1)}" class="full-width" plain>Cancel</el-button>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item></el-form-item>
+        </el-form>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -81,15 +59,13 @@ export default {
 
 			oldPassword: '',
 			newPassword: '',
-			confirmPassword: '',
-
-			choosenAccountType: '',
+			confirmPassword: ''
 		}
 	},
 	computed: {
 		email() {
 			return this.$store.getters.user.email
-		},
+		}
 	},
 	components: {
 		SubHeader

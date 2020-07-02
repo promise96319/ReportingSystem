@@ -624,9 +624,6 @@ export default {
 		currentCompany() {
 			return this.$store.getters.currentCompany
 		},
-		currentType() {
-			return this.$store.getters.currentType
-		}
 	},
 	created() {
 		this.getEntries()
@@ -659,7 +656,7 @@ export default {
 		},
 		async getEntries() {
 			this.isGettingEntries = true
-			const res = await api.getEntries(this.currentCompany.id, this.currentType)
+			const res = await api.getEntries(this.currentCompany.id)
 			this.isGettingEntries = false
 			if (res.data.error_code === 0) {
 				this.accountingEntriesData = res.data.data
@@ -671,8 +668,7 @@ export default {
 		// 获取Account列表
 		async getAccountList() {
 			const res = await api.getAccountList(
-				this.currentCompany.id,
-				this.currentType
+				this.currentCompany.id
 			)
 			if (res.data.error_code === 0) {
 				this.accountList = res.data.data

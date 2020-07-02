@@ -127,7 +127,6 @@ import api from '@/api'
 import URL from '@/api/config'
 import { SET_CURRENT_COMPANY, SET_COMPANY_LIST } from '@/store/modules/company'
 import accountTypes from '@/constant/accountType'
-import { CHANGE_TYPE } from '@/store/modules/account'
 
 // 国家，城市，街道 分隔符-> 国家$$$城市$$$街道
 const ADDRESS_DELIMITER = '$$$'
@@ -157,7 +156,7 @@ export default {
 			return this.$store.getters.currentCompany.id
 		},
 		currentType() {
-			return this.$store.getters.currentType
+			return this.$store.getters.currentCompany.current_region
 		}
 	},
 	components: {
@@ -167,8 +166,13 @@ export default {
 		this.getCompanyDetail()
 	},
 	methods: {
-		chooseAccountType(type) {
-			this.$store.commit(CHANGE_TYPE, type)
+		async chooseAccountType(type) {
+			const res = await api.updateCompanyRegion(this.currentCompanyID, type)
+			if (res.data.error_code !== 0) {
+				return
+			}
+			this.$store.commit(SET_CURRENT_COMPANY, res.data.data)
+			this.$message.success('切换成功')
 		},
 		async getCompanyDetail() {
 			if (!this.currentCompanyID) {

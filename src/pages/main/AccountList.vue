@@ -137,9 +137,6 @@ export default {
 		currentCompany() {
 			return this.$store.getters.currentCompany
 		},
-		currentType() {
-			return this.$store.getters.currentType
-		},
 		filterAccountList() {
 			const { no, name, type_name, is_active } = this.filterCondition
 			let activeFilter =
@@ -163,8 +160,7 @@ export default {
 		async getAccountList() {
 			this.isGettingAccountList = true
 			const res = await api.getAccountList(
-				this.currentCompany.id,
-				this.currentType
+				this.currentCompany.id
 			)
 			this.isGettingAccountList = false
 			if (res.data.error_code === 0) {
@@ -199,7 +195,6 @@ export default {
 			this.currentUpdatingAccount = account
 			const res = await api.updateAccount(
 				this.currentCompany.id,
-				this.currentType,
 				newAccount
 			)
 			this.currentUpdatingAccount = {}

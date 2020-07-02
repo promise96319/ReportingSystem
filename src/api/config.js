@@ -26,6 +26,7 @@ const company = {
   uploadCompanyLogo:  `${URL}/company/logo`,   // 上传公司logo
   addCompany:         `${URL}/company`,        // 添加公司（暂无添加）
   updateCompany:      `${URL}/company`,        // 更新公司信息
+  updateCompanyRegion:`${URL}/company`,        // 更新公司下的region
 }
 
 const account = {
@@ -38,19 +39,18 @@ const account = {
 const batch = {
   uploadBatch:        `${URL}/batch/company`,  // 上传 batch
   getBatch:           `${URL}/batch/company`,  // 根据 年月获取 batch 批次
-  queryBatch:         `${URL}/batch`,  // 根据 batch_id 获取batch
-  deleteBatch:        `${URL}/batch`,  // 删除batch
-  // getAccountEntries:  `${URL}/batch`,          // 
+  queryBatch:         `${URL}/batch`,          // 根据 batch_id 获取batch
+  deleteBatch:        `${URL}/batch`,          // 删除batch
 }
 
 const mapping = {
-  uploadMappingList:  `${URL}/mapping/company`,  // 上传进行匹配后的未匹配项
-  getMappingList:     `${URL}/mapping/company`,  // 根据公司id查询 mapping 结果
-  updateMappingList:  `${URL}/mapping/company`,  // 根据公司id更新 mapping 结果
+  uploadMappingList:  `${URL}/mapping/company`, // 上传进行匹配后的未匹配项
+  getMappingList:     `${URL}/mapping/company`, // 根据公司id查询 mapping 结果
+  updateMappingList:  `${URL}/mapping/company`, // 根据公司id更新 mapping 结果
 }
 
 const entries = {
-  getEntries:         `${URL}/entries/company`,  // 获取所有entries
+  getEntries:         `${URL}/entries/company`, // 获取所有entries
 }
 
 export default {

@@ -52,6 +52,7 @@
               <template v-if="scope.$index === 0">
                 <el-input
                   class="search"
+                  clearable
                   placeholder="Account No."
                   size="small"
                   v-model="filterMatchedNo"
@@ -65,6 +66,7 @@
               <template v-if="scope.$index === 0">
                 <el-input
                   class="search"
+                  clearable
                   placeholder="Account Name"
                   size="small"
                   v-model="filterMatchedName"
@@ -75,12 +77,13 @@
           </el-table-column>
         </el-table-column>
 
-        <el-table-column header-align="center" :label="`Chart of accounts ${currentType}`">
+        <el-table-column :label="`Chart of accounts ${currentType}`" header-align="center">
           <el-table-column align="center" header-align="center" label="Type of account">
             <template slot-scope="scope">
               <template v-if="scope.$index === 0">
                 <el-input
                   class="search"
+                  clearable
                   placeholder="Type of account"
                   size="small"
                   v-model="filterMatchedAccountType"
@@ -94,6 +97,7 @@
               <template v-if="scope.$index === 0">
                 <el-input
                   class="search"
+                  clearable
                   placeholder="Account No."
                   size="small"
                   v-model="filterMatchedAccountNo"
@@ -107,6 +111,7 @@
               <template v-if="scope.$index === 0">
                 <el-input
                   class="search"
+                  clearable
                   placeholder="Account Name"
                   size="small"
                   v-model="filterMatchedAccountName"
@@ -143,7 +148,13 @@
           <el-table-column align="center" header-align="center" label="Account No.">
             <template slot-scope="scope">
               <template v-if="scope.$index === 0">
-                <el-input class="search" placeholder="Account No." size="small" v-model="filterNo"></el-input>
+                <el-input
+                  class="search"
+                  clearable
+                  placeholder="Account No."
+                  size="small"
+                  v-model="filterNo"
+                ></el-input>
               </template>
               <template v-else>{{ scope.row.account_no }}</template>
             </template>
@@ -154,6 +165,7 @@
               <template v-if="scope.$index === 0">
                 <el-input
                   class="search"
+                  clearable
                   placeholder="Account Name"
                   size="small"
                   v-model="filterName"
@@ -166,7 +178,7 @@
           </el-table-column>
         </el-table-column>
 
-        <el-table-column header-align="center" :label="`Chart of accounts ${currentType}`">
+        <el-table-column :label="`Chart of accounts ${currentType}`" header-align="center">
           <el-table-column align="center" header-align="center" label="Type of account">
             <template slot-scope="scope">
               <template v-if="scope.$index === 0"></template>
@@ -372,7 +384,7 @@ export default {
 			return this.$store.getters.currentCompany
 		},
 		currentType() {
-			return this.$store.getters.currentType
+			return this.$store.getters.currentCompany.current_region
 		},
 		filterToBeMatched() {
 			const result = this.toBeMatchedData.filter(item => {
@@ -402,7 +414,8 @@ export default {
 		},
 		filterAccountList() {
 			return this.accountList.filter(item => {
-				return item.no.includes(this.currentEditAccount.accountType.no)
+				const no = this.currentEditAccount.accountType.no
+				return item.no.includes(no)
 			})
 		}
 	},
@@ -444,10 +457,7 @@ export default {
 		// 获取Account列表
 		async getAccountList() {
 			this.isGettingMappingList = true
-			const res = await api.getAccountList(
-				this.currentCompany.id,
-				this.currentType
-			)
+			const res = await api.getAccountList(this.currentCompany.id)
 			if (res.data.error_code === 0) {
 				this.accountList = res.data.data
 			}
@@ -464,10 +474,7 @@ export default {
 		// isUpdatingMatched 为 true 表示是未匹配项变成了匹配项，需要更新 matched 数据
 		async getMappingList(shouldUpdateToBeMatched = true) {
 			this.isGettingMappingList = true
-			const res = await api.getMappingList(
-				this.currentCompany.id,
-				this.currentType
-			)
+			const res = await api.getMappingList(this.currentCompany.id)
 			this.isGettingMappingList = false
 			if (res.data.error_code === 0) {
 				const { matched, to_be_matched } = res.data.data
@@ -504,15 +511,13 @@ export default {
 		},
 		// 选择 Account Type，自动设置相应的Account No. Account Name
 		chooseAccountType(mapping) {
+			if (mapping.accountType === '') {
+				mapping.accountList = this.accountList
+				return
+			}
 			mapping.accountList = this.accountList.filter(item => {
 				return item.no.includes(mapping.accountType.no)
 			})
-			// const index = this.toBeMatchedData.findIndex(item => {
-			// 	return mapping.account_no === item.account_no
-			// })
-			// this.toBeMatchedData[index].matched_account_no = mapping.accountType.no
-			// this.toBeMatchedData[index].matched_account_name =
-			// 	mapping.accountType.name
 		},
 		chooseAccountNo(no, row) {
 			let account = this.accountList.find(item => {
@@ -543,7 +548,6 @@ export default {
 			this.isSavingMapping = false
 			const res = await api.uploadMappingList(
 				this.currentCompany.id,
-				this.currentType,
 				mapping_list
 			)
 			this.isSavingMapping = true
@@ -574,11 +578,7 @@ export default {
 				matched_account_name: this.currentEditAccount.account.name
 			}
 			this.isUpdatingMapping = true
-			const res = await api.updateMappingList(
-				this.currentCompany.id,
-				this.currentType,
-				mapping
-			)
+			const res = await api.updateMappingList(this.currentCompany.id, mapping)
 			this.isUpdatingMapping = false
 
 			if (res.data.error_code === 0) {

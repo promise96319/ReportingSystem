@@ -59,3 +59,18 @@ export const updateCompany = (id, data) => {
     data
   })
 }
+
+/**
+ * 更新公司下的region
+ * @param {Number} companyId 公司id
+ * @param {String} region    公司region
+ */
+export const updateCompanyRegion = (companyId, region) => {
+  return request({
+    method: 'patch',
+    url: `${URL.updateCompanyRegion}/${companyId}/region`,
+    data: {
+      region
+    }
+  })
+}

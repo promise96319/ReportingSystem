@@ -60,10 +60,9 @@ export const queryBatch = (batchId, isAnalyze = true) => {
 
 /**
  * 根据 batch id 删除batch
- * @param {*} companyId  公司id
  * @param {*} batchId  批次id
  */
-export const deleteBatch = (companyId, batchId) => {
+export const deleteBatch = (batchId) => {
   return request({
     method: 'delete',
     url: `${URL.deleteBatch}/${batchId}`,
