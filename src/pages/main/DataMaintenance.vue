@@ -63,6 +63,7 @@
 		<div class="main">
 			<importedDataTable
 				:imported-data="importedData"
+				:height="windowHeight - 180"
 				:loading="isGettingBatchData"
 			></importedDataTable>
 		</div>
@@ -96,8 +97,10 @@ import SubHeader from '@/components/SubHeader'
 import importedDataTable from './components/ImportedDataTable'
 import { YEAR_OPTIONS, MONTH_OPTIONS } from '@/constant/dateOptions'
 import api from '@/api'
+import windowResizeMixin from '@/mixins/windowResizeMixin'
 
 export default {
+	mixins: [windowResizeMixin],
 	data() {
 		return {
 			YEAR_OPTIONS,

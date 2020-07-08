@@ -14,9 +14,10 @@
     <div class="main">
       <el-table
         :data="filterAccountList"
+        :max-height="windowHeight-180"
         :row-class-name="tableRowClassName"
         border
-        size="medium"
+        size="mini"
         style="width: 100%"
         v-loading="isGettingAccountList"
       >
@@ -64,6 +65,7 @@
             </template>
             <template v-else>
               <el-button
+								size="mini"
                 :class="[isEditable ? '' : 'disable']"
                 :loading="scope.row.no === currentUpdatingAccount.no"
                 @click="toggleStatus(scope.row)"
@@ -71,6 +73,7 @@
                 v-if="scope.row.is_active"
               >Enable</el-button>
               <el-button
+								size="mini"
                 :class="[isEditable ? '' : 'disable', 'danger']"
                 :loading="scope.row.no === currentUpdatingAccount.no"
                 @click="toggleStatus(scope.row)"
@@ -106,8 +109,10 @@
 import SubHeader from '@/components/SubHeader'
 import NewAccoundDailog from './components/NewAccoundDailog'
 import api from '@/api'
+import windowResizeMixin from '@/mixins/windowResizeMixin'
 
 export default {
+	mixins: [windowResizeMixin],
 	data() {
 		return {
 			isAddAccountDialogShow: false,
@@ -159,9 +164,7 @@ export default {
 	methods: {
 		async getAccountList() {
 			this.isGettingAccountList = true
-			const res = await api.getAccountList(
-				this.currentCompany.id
-			)
+			const res = await api.getAccountList(this.currentCompany.id)
 			this.isGettingAccountList = false
 			if (res.data.error_code === 0) {
 				this.accountList = res.data.data
@@ -193,10 +196,7 @@ export default {
 			newAccount.is_active = !newAccount.is_active
 			this.isUpdatingAccount = true
 			this.currentUpdatingAccount = account
-			const res = await api.updateAccount(
-				this.currentCompany.id,
-				newAccount
-			)
+			const res = await api.updateAccount(this.currentCompany.id, newAccount)
 			this.currentUpdatingAccount = {}
 			this.isUpdatingAccount = false
 			if (res.data.error_code === 0) {
@@ -220,10 +220,6 @@ export default {
 	@import '../../styles/customTable.scss';
 	/deep/ .el-table__header .cell {
 		font-size: 16px;
-	}
-	/deep/ .el-table__row td {
-		padding-top: 2px;
-		padding-bottom: 2px;
 	}
 	.search {
 		margin: 6px 0;

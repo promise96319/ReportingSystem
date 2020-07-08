@@ -5,14 +5,16 @@
 			border
 			style="width: 100%"
 			:row-class-name="tableRowClassName"
-			size="medium"
+			size="mini"
 			v-loading="loading"
+			:max-height="height"
 		>
 			<el-table-column
 				v-for="(item, index) in importedDataKey"
 				:key="index"
 				:prop="item.key"
 				:label="item.value"
+				:width="item.width"
 				align="center"
 				header-align="center"
 			></el-table-column>
@@ -34,6 +36,11 @@ export default {
 		loading: {
 			type: Boolean,
 			default: false
+		},
+		// height： table 的高度，可能需要根据窗口大小进行变化
+		height: {
+			type: Number,
+			required: false
 		}
 	},
 	data() {

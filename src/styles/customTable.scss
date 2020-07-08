@@ -22,5 +22,4 @@ $table_cell_background_color: rgba($color: #409eff, $alpha: 0.1);
 
 /deep/ .el-table tr.highlight-row {
 	background-color: $table_cell_background_color;
-	height: 20px;
 }

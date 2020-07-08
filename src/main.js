@@ -37,6 +37,7 @@ import {
   Loading,
   Checkbox,
   CheckboxGroup,
+  Popover,
 } from 'element-ui'
 
 import lang from 'element-ui/lib/locale/lang/en'
@@ -70,6 +71,7 @@ Vue
   .use(Loading)
   .use(Checkbox)
   .use(CheckboxGroup)
+  .use(Popover)
 
 Vue.use(Loading.directive)
 

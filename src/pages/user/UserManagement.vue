@@ -23,12 +23,12 @@
 						align="center"
 						header-align="center"
 					></el-table-column>
-					<el-table-column
+					<!-- <el-table-column
 						prop="username"
 						label="User name"
 						align="center"
 						header-align="center"
-					></el-table-column>
+					></el-table-column> -->
 					<el-table-column
 						prop="email"
 						label="Email address"
@@ -99,10 +99,10 @@
 		<el-dialog
 			title="Edit user data"
 			:visible.sync="isDialogShow"
-			width="400px"
+			width="500px"
 		>
 			<el-form
-				:label-width="isEditPasswordShow ? '130px' : '60px'"
+				:label-width="isEditPasswordShow ? '140px' : '60px'"
 				label-position="left"
 			>
 				<el-form-item label="Email">{{ tmpUserData.email }}</el-form-item>

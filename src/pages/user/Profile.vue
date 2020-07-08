@@ -7,7 +7,7 @@
           :model="companyProfile"
           class="company-info"
           label-position="left"
-          label-width="128px"
+          label-width="144px"
           ref="companyProfile"
         >
           <el-form-item label="Company logo:">
@@ -40,12 +40,8 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item label="Chart of accounts type:" label-width="180px">
-            <el-select
-              :disabled="!isAccountTypeEditable"
-              :value="currentType"
-              @change="chooseAccountType"
-            >
+          <el-form-item label="Chart of accounts type:" label-width="200px">
+            <el-select :disabled="!isAccountTypeEditable" v-model="choosenAccountType">
               <el-option :key="item" :label="item" :value="item" v-for="item in accountTypes"></el-option>
             </el-select>
             <el-button @click="isAccountTypeEditable=!isAccountTypeEditable" class="lock append">
@@ -166,14 +162,6 @@ export default {
 		this.getCompanyDetail()
 	},
 	methods: {
-		async chooseAccountType(type) {
-			const res = await api.updateCompanyRegion(this.currentCompanyID, type)
-			if (res.data.error_code !== 0) {
-				return
-			}
-			this.$store.commit(SET_CURRENT_COMPANY, res.data.data)
-			this.$message.success('切换成功')
-		},
 		async getCompanyDetail() {
 			if (!this.currentCompanyID) {
 				return
@@ -227,12 +215,28 @@ export default {
 				this.currentCompanyID,
 				this.companyProfile
 			)
+
 			this.isUpdatingCompany = false
+
 			if (res.data.error_code === 0) {
 				this.$store.commit(SET_CURRENT_COMPANY, res.data.data)
 				this.$message.success('更新成功!')
 				// 重新获取company list
 				// 否则请求公司列表
+				if (
+					this.choosenAccountType &&
+					this.choosenAccountType !== this.currentType
+				) {
+					const result = await api.updateCompanyRegion(
+						this.currentCompanyID,
+						this.choosenAccountType
+					)
+					if (result.data.error_code !== 0) {
+						return
+					}
+					this.$store.commit(SET_CURRENT_COMPANY, result.data.data)
+				}
+
 				const result = await api.getCompanyList()
 				if (result.data.error_code === 0) {
 					const { companies } = result.data.data
@@ -240,6 +244,9 @@ export default {
 				}
 			}
 		}
+	},
+	mounted() {
+		this.choosenAccountType = this.currentType
 	}
 }
 </script>

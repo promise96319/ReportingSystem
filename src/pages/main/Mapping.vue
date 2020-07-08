@@ -44,98 +44,87 @@
         </el-col>
       </el-row>
     </SubHeader>
+
     <div class="main" v-show="mappingStatus === MATCHED">
-      <el-table :data="filterMatched" style="width: 100%" v-loading="isGettingMappingList">
+      <el-table
+        :data="filterMatched"
+        :max-height="windowHeight - 180"
+        size="small"
+        style="width: 100%"
+        v-loading="isGettingMappingList"
+      >
         <el-table-column header-align="center" label="Imported Accounts">
-          <el-table-column align="center" header-align="center" label="Account No.">
-            <template slot-scope="scope">
-              <template v-if="scope.$index === 0">
-                <el-input
-                  class="search"
-                  clearable
-                  placeholder="Account No."
-                  size="small"
-                  v-model="filterMatchedNo"
-                ></el-input>
-              </template>
-              <template v-else>{{ scope.row.account_no }}</template>
+          <el-table-column align="center" header-align="center">
+            <template slot="header">
+              <SearchPopover
+                placeholder="Account No."
+                title="Account No."
+                v-model="filterMatchedNo"
+              ></SearchPopover>
             </template>
+            <template slot-scope="scope">{{ scope.row.account_no }}</template>
           </el-table-column>
-          <el-table-column align="center" header-align="center" label="Account Name">
-            <template slot-scope="scope">
-              <template v-if="scope.$index === 0">
-                <el-input
-                  class="search"
-                  clearable
-                  placeholder="Account Name"
-                  size="small"
-                  v-model="filterMatchedName"
-                ></el-input>
-              </template>
-              <template v-else>{{ scope.row.account_name }}</template>
+          <el-table-column align="center" header-align="center">
+            <template slot="header">
+              <SearchPopover
+                placeholder="Account Name"
+                title="Account Name"
+                v-model="filterMatchedName"
+              ></SearchPopover>
             </template>
+            <template slot-scope="scope">{{ scope.row.account_name }}</template>
           </el-table-column>
         </el-table-column>
 
         <el-table-column :label="`Chart of accounts ${currentType}`" header-align="center">
-          <el-table-column align="center" header-align="center" label="Type of account">
-            <template slot-scope="scope">
-              <template v-if="scope.$index === 0">
-                <el-input
-                  class="search"
-                  clearable
-                  placeholder="Type of account"
-                  size="small"
-                  v-model="filterMatchedAccountType"
-                ></el-input>
-              </template>
-              <template v-else>{{ scope.row.accountType.no + ' ' + scope.row.accountType.name }}</template>
+          <el-table-column align="center" header-align="center">
+            <template slot="header">
+              <SearchPopover
+                placeholder="Type of account"
+                title="Type of account"
+                v-model="filterMatchedAccountType"
+              ></SearchPopover>
             </template>
+            <template
+              slot-scope="scope"
+            >{{ scope.row.accountType.no + ' ' + scope.row.accountType.name }}</template>
           </el-table-column>
           <el-table-column align="center" header-align="center" label="Account No.">
-            <template slot-scope="scope">
-              <template v-if="scope.$index === 0">
-                <el-input
-                  class="search"
-                  clearable
-                  placeholder="Account No."
-                  size="small"
-                  v-model="filterMatchedAccountNo"
-                ></el-input>
-              </template>
-              <template v-else>{{ scope.row.matched_account_no }}</template>
+            <template slot="header">
+              <SearchPopover
+                placeholder="Account No."
+                title="Account No."
+                v-model="filterMatchedAccountNo"
+              ></SearchPopover>
             </template>
+            <template slot-scope="scope">{{ scope.row.matched_account_no }}</template>
           </el-table-column>
           <el-table-column align="center" header-align="center" label="Account Name">
-            <template slot-scope="scope">
-              <template v-if="scope.$index === 0">
-                <el-input
-                  class="search"
-                  clearable
-                  placeholder="Account Name"
-                  size="small"
-                  v-model="filterMatchedAccountName"
-                ></el-input>
-              </template>
-              <template v-else>{{ scope.row.matched_account_name }}</template>
+            <template slot="header">
+              <SearchPopover
+                placeholder="Account Name"
+                title="Account Name"
+                v-model="filterMatchedAccountName"
+              ></SearchPopover>
             </template>
+            <template slot-scope="scope">{{ scope.row.matched_account_name }}</template>
           </el-table-column>
         </el-table-column>
 
         <el-table-column align="center" header-align="center">
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <div @click="isEditable = !isEditable" class="status">
               <svg-icon :icon-class="isEditable ? 'unlock-fill' : 'lock-fill'"></svg-icon>Action
             </div>
           </template>
-          <template slot-scope="scope" v-if="scope.$index !== 0">
+          <template slot-scope="scope">
             <el-button
               :class="[isEditable ? '' : 'disable', 'action']"
               :type="isEditable ? 'primary' : 'info'"
               @click="editAccount(scope.row)"
               icon="el-icon-edit-outline"
               plain
-              size="small"
+              size="mini"
             >Edit</el-button>
           </template>
         </el-table-column>
@@ -143,37 +132,29 @@
     </div>
 
     <div class="main un-matched" v-show="mappingStatus === TO_BE_MATCHED">
-      <el-table :data="filterToBeMatched" style="width: 100%" v-loading="isGettingMappingList">
+      <el-table
+        :data="filterToBeMatched"
+        :max-height="windowHeight - 180"
+        size="small"
+        style="width: 100%"
+        v-loading="isGettingMappingList"
+      >
         <el-table-column header-align="center" label="Imported Accounts">
-          <el-table-column align="center" header-align="center" label="Account No.">
+          <el-table-column align="center" header-align="center">
+            <template slot="header">
+              <SearchPopover placeholder="Account No." title="Account No." v-model="filterNo"></SearchPopover>
+            </template>
             <template slot-scope="scope">
-              <template v-if="scope.$index === 0">
-                <el-input
-                  class="search"
-                  clearable
-                  placeholder="Account No."
-                  size="small"
-                  v-model="filterNo"
-                ></el-input>
-              </template>
-              <template v-else>{{ scope.row.account_no }}</template>
+              <template>{{ scope.row.account_no }}</template>
             </template>
           </el-table-column>
 
-          <el-table-column align="center" header-align="center" label="Account Name">
+          <el-table-column align="center" header-align="center">
+            <template slot="header">
+              <SearchPopover placeholder="Account Name" title="Account Name" v-model="filterName"></SearchPopover>
+            </template>
             <template slot-scope="scope">
-              <template v-if="scope.$index === 0">
-                <el-input
-                  class="search"
-                  clearable
-                  placeholder="Account Name"
-                  size="small"
-                  v-model="filterName"
-                >
-                  <!-- <el-button icon="el-icon-search" slot="append"></el-button> -->
-                </el-input>
-              </template>
-              <template v-else>{{ scope.row.account_name }}</template>
+              <template>{{ scope.row.account_name }}</template>
             </template>
           </el-table-column>
         </el-table-column>
@@ -181,8 +162,7 @@
         <el-table-column :label="`Chart of accounts ${currentType}`" header-align="center">
           <el-table-column align="center" header-align="center" label="Type of account">
             <template slot-scope="scope">
-              <template v-if="scope.$index === 0"></template>
-              <template v-else>
+              <template>
                 <el-select
                   @change="chooseAccountType(scope.row)"
                   clearable
@@ -204,18 +184,7 @@
 
           <el-table-column align="center" header-align="center" label="Account No.">
             <template slot-scope="scope">
-              <template v-if="scope.$index === 0">
-                <!-- <el-input :placeholder="item.value" class="search" size="small">
-                  <el-button icon="el-icon-search" slot="append"></el-button>
-                </el-input>-->
-              </template>
-              <template v-else>
-                <!-- <el-input
-                  clearable
-                  placeholder="Account No."
-                  v-model="scope.row.matched_account_no"
-                ></el-input>-->
-
+              <template>
                 <el-select
                   @change="chooseAccountNo($event, scope.row)"
                   placeholder="Account No."
@@ -235,12 +204,7 @@
 
           <el-table-column align="center" header-align="center" label="Account Name">
             <template slot-scope="scope">
-              <template v-if="scope.$index === 0">
-                <!-- <el-input :placeholder="item.value" class="search" size="small">
-                  <el-button icon="el-icon-search" slot="append"></el-button>
-                </el-input>-->
-              </template>
-              <template v-else>
+              <template>
                 <el-input
                   clearable
                   disabled
@@ -331,14 +295,17 @@
 
 <script>
 import SubHeader from '@/components/SubHeader'
+import SearchPopover from '@/components/SearchPopover'
 import NewAccoundDailog from './components/NewAccoundDailog'
 import api from '@/api'
 import { FR } from '@/constant/accountType'
+import windowResizeMixin from '@/mixins/windowResizeMixin'
 
 const MATCHED = 'Matched'
 const TO_BE_MATCHED = 'To be matched'
 
 export default {
+	mixins: [windowResizeMixin],
 	data() {
 		return {
 			MATCHED,
@@ -393,7 +360,6 @@ export default {
 					item.account_name.indexOf(this.filterName) !== -1
 				)
 			})
-			result.unshift({})
 			return result
 		},
 		filterMatched() {
@@ -409,7 +375,6 @@ export default {
 					)
 				)
 			})
-			result.unshift({})
 			return result
 		},
 		filterAccountList() {
@@ -421,6 +386,7 @@ export default {
 	},
 	components: {
 		SubHeader,
+		SearchPopover,
 		NewAccoundDailog
 	},
 	created() {
@@ -586,7 +552,7 @@ export default {
 				this.getMappingList()
 				this.$message.success('更新成功')
 			}
-		}
+		},
 	}
 }
 </script>

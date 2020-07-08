@@ -17,11 +17,13 @@
     <div class="main">
       <el-table
         :data="filterEntriesData"
+        :max-height="windowHeight - 180"
         :row-class-name="tableRowClassName"
         @row-click="tableRowClick"
         border
         v-if="isMatchedDone"
         v-loading="isGettingEntries"
+				size="mini"
       >
         <el-table-column
           :key="index"
@@ -30,12 +32,14 @@
           align="center"
           header-align="center"
           v-for="(item, index) in accountingEntriesKey"
-          width="120px"
+          :width="item.width"
         ></el-table-column>
       </el-table>
       <div class="match-tip" v-else>
-        <div class="tip">您有一些匹配尚未完成，请先完成匹配再来查看Accounting entries</div>
-        <el-button @click="$router.push({ name: 'Mapping' })" type="primary">去匹配</el-button>
+        <div
+          class="tip"
+        >There are still some accounts to be matched. Please complete the matching work at first.</div>
+        <el-button @click="$router.push({ name: 'Mapping' })" type="primary">To complete the match</el-button>
       </div>
     </div>
 
@@ -340,11 +344,13 @@
         :row-class-name="tableRowClassName"
         @row-click="showAccountingItems"
         height="600px"
+				size="mini"
       >
         <el-table-column
           :key="item.key"
           :label="item.value"
           :prop="item.key"
+					:width="item.width"
           align="center"
           header-align="center"
           v-for="item in journalEntryKey"
@@ -369,8 +375,10 @@ import {
 	accountingItemsKey
 } from '@/constant/accountingEntriesKey'
 import api from '@/api'
+import windowResizeMixin from '@/mixins/windowResizeMixin'
 
 export default {
+	mixins: [windowResizeMixin],
 	data() {
 		return {
 			accountingEntriesKey,
@@ -623,7 +631,7 @@ export default {
 		},
 		currentCompany() {
 			return this.$store.getters.currentCompany
-		},
+		}
 	},
 	created() {
 		this.getEntries()
@@ -667,9 +675,7 @@ export default {
 		},
 		// 获取Account列表
 		async getAccountList() {
-			const res = await api.getAccountList(
-				this.currentCompany.id
-			)
+			const res = await api.getAccountList(this.currentCompany.id)
 			if (res.data.error_code === 0) {
 				this.accountList = res.data.data
 			}
@@ -766,6 +772,7 @@ export default {
 		width: 120px;
 	}
 	.main {
+		height: 100%;
 		padding: 30px;
 		@import '../../styles/customTable.scss';
 		/deep/ .el-table__header .cell {
@@ -774,9 +781,11 @@ export default {
 		.match-tip {
 			text-align: center;
 			.tip {
-				margin-top: 100px;
+				width: 360px;
+				margin: 100px auto 0;
 			}
 			.el-button {
+				width: 200px;
 				margin-top: 20px;
 			}
 		}
