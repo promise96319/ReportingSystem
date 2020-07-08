@@ -61,6 +61,7 @@ export const updateCompany = (id, data) => {
 }
 
 /**
+ * [已废弃] - region参数已被移动到company下，与company信息同步更改
  * 更新公司下的region
  * @param {Number} companyId 公司id
  * @param {String} region    公司region

@@ -1,19 +1,28 @@
 <template>
   <el-form label-position="left" label-width="130px">
     <el-form-item label="Type of account:">
-      <el-select @change="setDefaultTypeName" v-model="accountType" value-key="no">
-        <el-option
-          :key="item.no + item.name + index"
-          :label="item.no + '  ' + item.name"
+			<el-select v-model="accountType" clearable>
+				<el-option
+          :key="item + index"
+          :label="item"
           :value="item"
-          v-for="(item, index) in accountTypes"
+          v-for="(item, index) in accountTypesArr"
         ></el-option>
-      </el-select>
+			</el-select>
+      
     </el-form-item>
     <el-form-item label="Account No.:">
       <el-row :gutter="16" justify="space-between" type="flex">
         <el-col :span="12">
-          <el-input disabled v-model="accountType.no"></el-input>
+          <!-- <el-input disabled v-model="accountType.no"></el-input> -->
+					<el-select @change="setDefaultTypeName" v-model="currentSelectedAccount" value-key="no" clearable>
+						<el-option
+							:key="item.no + item.name + index"
+							:label="item.no"
+							:value="item"
+							v-for="(item, index) in filterAccounts"
+						></el-option>
+      </el-select>
         </el-col>
         <!-- <el-col :span="1">
 					.
@@ -53,12 +62,14 @@ export default {
 		return {
 			accountTypes: [],
 
-			// 选择的 account Type
-			accountType: {
+			// 当前选择的 account Type
+			accountType: '',
+			// 当前
+			currentSelectedAccount: {
+				no: '',
 				name: '',
-				no: ''
 			},
-			// type_no + no === accountNo
+			// currentSelectedAccount.no + no === accountNo
 			no: '',
 			name: '',
 
@@ -71,6 +82,25 @@ export default {
 		},
 		currentType() {
 			return this.$store.getters.currentCompany.current_region
+		},
+		// accountType里的name 是 type of account, defaul 是name, no 是 no
+		accountTypesArr() {
+			let arr = this.accountTypes.map((item) => {
+				return item.name
+			})
+			return [...new Set(arr)]
+		},
+		// 过滤后的 accounts
+		filterAccounts() {
+			let accounts = this.accountTypes.filter((item) => {
+				return this.accountType === '' || item.name === this.accountType
+			})
+			return accounts.map((item) => {
+				return {
+					name: item.default,
+					no: item.no
+				}
+			})
 		}
 	},
 	created() {
@@ -78,28 +108,29 @@ export default {
 	},
 	methods: {
 		setDefaultTypeName() {
-			if (typeof this.accountType.default !== 'undefined') {
-				this.name = this.accountType.default
+			if (typeof this.currentSelectedAccount.name !== 'undefined') {
+				this.name = this.currentSelectedAccount.name
 			}
 		},
 		async getAccountType() {
 			const res = await api.getAccountType(this.currentType)
 			if (res.data.error_code === 0) {
 				this.accountTypes = res.data.data
-				if (this.accountTypes.length > 0) {
-					this.accountType = this.accountTypes[0]
-					this.setDefaultTypeName()
-				}
 			}
 		},
 		async addAccount() {
-			if (this.accountType.name === '') {
-				this.$message.error('Please select the type of account')
+			if (!this.accountType) {
+				this.$message.error('Please select the type of account.')
 				return
 			}
 
-			if (this.no === '') {
-				this.$message.error('Please enter Account No.')
+			if (!this.currentSelectedAccount.no) {
+				this.$message.error('Please select the Account No.')
+				return
+			}
+
+			if (this.currentSelectedAccount.no.length < 9 && this.no === '') {
+				this.$message.error('Please enter the Account No.')
 				return
 			}
 
@@ -114,7 +145,7 @@ export default {
 				return
 			}
 
-			let no = this.accountType.no + str
+			let no = this.currentSelectedAccount.no + str
 			// 将no控制在8个字符以内，不足的时候补0
 			if (no.length <= 9) {
 				no = no.padEnd(9, '0')
@@ -126,8 +157,8 @@ export default {
 			const data = {
 				no,
 				name: this.name,
-				type_no: this.accountType.no,
-				type_name: this.accountType.name
+				type_no: this.currentSelectedAccount.no,
+				type_name: this.accountType
 			}
 
 			this.isAddingAccount = true

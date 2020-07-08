@@ -41,7 +41,7 @@
           </el-form-item>
 
           <el-form-item label="Chart of accounts type:" label-width="200px">
-            <el-select :disabled="!isAccountTypeEditable" v-model="choosenAccountType">
+            <el-select :disabled="!isAccountTypeEditable" v-model="companyProfile.current_region">
               <el-option :key="item" :label="item" :value="item" v-for="item in accountTypes"></el-option>
             </el-select>
             <el-button @click="isAccountTypeEditable=!isAccountTypeEditable" class="lock append">
@@ -135,7 +135,6 @@ export default {
 
 			accountTypes,
 			isAccountTypeEditable: false,
-			choosenAccountType: '',
 
 			isCompanyNameEditable: false,
 			companyProfile: {},
@@ -151,9 +150,6 @@ export default {
 		currentCompanyID() {
 			return this.$store.getters.currentCompany.id
 		},
-		currentType() {
-			return this.$store.getters.currentCompany.current_region
-		}
 	},
 	components: {
 		SubHeader
@@ -222,21 +218,6 @@ export default {
 				this.$store.commit(SET_CURRENT_COMPANY, res.data.data)
 				this.$message.success('更新成功!')
 				// 重新获取company list
-				// 否则请求公司列表
-				if (
-					this.choosenAccountType &&
-					this.choosenAccountType !== this.currentType
-				) {
-					const result = await api.updateCompanyRegion(
-						this.currentCompanyID,
-						this.choosenAccountType
-					)
-					if (result.data.error_code !== 0) {
-						return
-					}
-					this.$store.commit(SET_CURRENT_COMPANY, result.data.data)
-				}
-
 				const result = await api.getCompanyList()
 				if (result.data.error_code === 0) {
 					const { companies } = result.data.data
@@ -245,9 +226,6 @@ export default {
 			}
 		}
 	},
-	mounted() {
-		this.choosenAccountType = this.currentType
-	}
 }
 </script>
 

@@ -85,9 +85,7 @@
                 v-model="filterMatchedAccountType"
               ></SearchPopover>
             </template>
-            <template
-              slot-scope="scope"
-            >{{ scope.row.accountType.no + ' ' + scope.row.accountType.name }}</template>
+            <template slot-scope="scope">{{ scope.row.accountType }}</template>
           </el-table-column>
           <el-table-column align="center" header-align="center" label="Account No.">
             <template slot="header">
@@ -172,10 +170,10 @@
                   value-key="no"
                 >
                   <el-option
-                    :key="item.no + item.name + index"
-                    :label="item.no + '  ' + item.name"
+                    :key="item + index"
+                    :label="item"
                     :value="item"
-                    v-for="(item, index) in accountTypes"
+                    v-for="(item, index) in accountTypesArr"
                   ></el-option>
                 </el-select>
               </template>
@@ -185,16 +183,17 @@
           <el-table-column align="center" header-align="center" label="Account No.">
             <template slot-scope="scope">
               <template>
+                  <!-- @change="chooseAccountNo($event, scope.row)" -->
                 <el-select
-                  @change="chooseAccountNo($event, scope.row)"
                   placeholder="Account No."
                   size="small"
-                  v-model="scope.row.matched_account_no"
+                  v-model="scope.row.matched"
+									value-key="no"
                 >
                   <el-option
                     :key="item.no + item.name + index"
                     :label="item.no"
-                    :value="item.no"
+                    :value="item"
                     v-for="(item, index) in scope.row.accountList"
                   ></el-option>
                 </el-select>
@@ -205,13 +204,19 @@
           <el-table-column align="center" header-align="center" label="Account Name">
             <template slot-scope="scope">
               <template>
-                <el-input
-                  clearable
-                  disabled
+                <el-select
                   placeholder="Account Name"
                   size="small"
-                  v-model="scope.row.matched_account_name"
-                ></el-input>
+                  v-model="scope.row.matched"
+									value-key="name"
+                >
+                  <el-option
+                    :key="item.name + item.no + index"
+                    :label="item.name"
+                    :value="item"
+                    v-for="(item, index) in scope.row.accountList"
+                  ></el-option>
+                </el-select>
               </template>
             </template>
           </el-table-column>
@@ -245,32 +250,36 @@
       <div class="title editable">Chart of accounts {{ currentType }}</div>
       <el-form label-position="left" label-width="130px">
         <el-form-item label="Type of account:">
-          <el-select
-            placeholder="Type of account"
-            v-model="currentEditAccount.accountType"
-            value-key="no"
-          >
+          <el-select placeholder="Type of account" v-model="currentEditAccount.accountType">
             <el-option
-              :key="item.no + item.name + index"
-              :label="item.no + '  ' + item.name"
+              :key="item + index"
+              :label="item"
               :value="item"
-              v-for="(item, index) in accountTypes"
+              v-for="(item, index) in accountTypesArr"
             ></el-option>
           </el-select>
         </el-form-item>
+
         <el-form-item label="Account No.:">
           <el-select placeholder="Account No." v-model="currentEditAccount.account" value-key="no">
             <el-option
               :key="item.no + item.name + index"
               :label="item.no"
               :value="item"
-              v-for="(item, index) in filterAccountList"
+              v-for="(item, index) in filterAccounts"
             ></el-option>
           </el-select>
-          <!-- <el-input v-model="currentEditAccount.matched_account_no"></el-input> -->
         </el-form-item>
+
         <el-form-item label="Account Name:">
-          <el-input disabled v-model="currentEditAccount.account.name"></el-input>
+          <el-select placeholder="Account Name" v-model="currentEditAccount.account" value-key="name">
+            <el-option
+              :key="item.name + item.no + index"
+              :label="item.name"
+              :value="item"
+              v-for="(item, index) in filterAccounts"
+            ></el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item>
@@ -298,7 +307,6 @@ import SubHeader from '@/components/SubHeader'
 import SearchPopover from '@/components/SearchPopover'
 import NewAccoundDailog from './components/NewAccoundDailog'
 import api from '@/api'
-import { FR } from '@/constant/accountType'
 import windowResizeMixin from '@/mixins/windowResizeMixin'
 
 const MATCHED = 'Matched'
@@ -335,8 +343,8 @@ export default {
 			filterMatchedAccountName: '',
 			// 当前编辑 mapping 的内容
 			currentEditAccount: {
-				// { no: '', name: '' }
-				accountType: {},
+				// ''
+				accountType: '',
 				// { no: '', name: '' }
 				account: {}
 			},
@@ -377,10 +385,27 @@ export default {
 			})
 			return result
 		},
-		filterAccountList() {
+		// accountType里的name 是 type of account, defaul 是name, no 是 no
+		accountTypesArr() {
+			let arr = this.accountTypes.map(item => {
+				return item.name
+			})
+			return [...new Set(arr)]
+		},
+		// 过滤后的 accounts
+		filterAccounts() {
+			if (!this.currentEditAccount.accountType) {
+				return this.accountList
+			}
+
+			let types = this.accountTypes.filter((item) => {
+				return this.currentEditAccount.accountType === '' || item.name === this.currentEditAccount.accountType
+			})
+			
 			return this.accountList.filter(item => {
-				const no = this.currentEditAccount.accountType.no
-				return item.no.includes(no)
+				return types.some((type) => {
+					return item.no.indexOf(type.no) === 0
+				})
 			})
 		}
 	},
@@ -404,14 +429,12 @@ export default {
 				return
 			}
 			this.isEditAccountDialogShow = true
-			this.currentEditAccount = {
-				account_no: account.account_no,
-				account_name: account.account_name,
-				accountType: account.accountType,
-				account: {
-					no: account.matched_account_no,
-					name: account.matched_account_name
-				}
+			this.currentEditAccount.account_no = account.account_no
+			this.currentEditAccount.account_name = account.account_name
+			this.currentEditAccount.accountType = account.accountType
+			this.currentEditAccount.account = {
+				no: account.matched_account_no,
+				name: account.matched_account_name
 			}
 		},
 		hideDialog(isAdded) {
@@ -439,36 +462,44 @@ export default {
 		// 获取已匹配和未匹配的列表
 		// isUpdatingMatched 为 true 表示是未匹配项变成了匹配项，需要更新 matched 数据
 		async getMappingList(shouldUpdateToBeMatched = true) {
-			this.isGettingMappingList = true
+			if (shouldUpdateToBeMatched) {
+				this.isGettingMappingList = true
+			}
 			const res = await api.getMappingList(this.currentCompany.id)
 			this.isGettingMappingList = false
 			if (res.data.error_code === 0) {
 				const { matched, to_be_matched } = res.data.data
 				// 获取相关 accountType
 				this.matchedData = matched.map(item => {
-					// CN 语言下 第一个小数点前是account type
+					// CN,EN 下是四位
+					// FR,US 下部分是四位，部分三位，US部分二位
 					// FR 语言下 大部分三位算一类，部分四位算一类（6开头）
+					// 先从四位开始查找，再查找三位，再查找二位
 					let accountType = this.accountTypes.find(type => {
-						if (this.currentType === FR) {
-							return type.no.slice(0, 3) === item.matched_account_no.slice(0, 3)
-						} else {
-							return (
-								type.no.split('.')[0] === item.matched_account_no.split('.')[0]
-							)
-						}
+						return type.no.slice(0, 4) === item.matched_account_no.slice(0, 4)
 					})
-					item.accountType =
-						typeof accountType === 'undefined'
-							? { no: '', name: '' }
-							: accountType
+					if (!accountType) {
+						accountType = this.accountTypes.find(type => {
+							return type.no.slice(0, 3) === item.matched_account_no.slice(0, 3)
+						})
+					}
+					if (!accountType) {
+						accountType = this.accountTypes.find(type => {
+							return type.no.slice(0, 2) === item.matched_account_no.slice(0, 2)
+						})
+					}
+
+					item.accountType = (accountType && accountType.name) || ''
 					return item
 				})
 				// 添加三个属性
 				if (shouldUpdateToBeMatched) {
 					this.toBeMatchedData = to_be_matched.map(item => {
-						item.accountType = { no: '', name: '', default: '' }
-						item.matched_account_no = ''
-						item.matched_account_name = ''
+						item.accountType = ''
+						item.matched = {
+							no: '',
+							name: '',
+						}
 						item.accountList = this.accountList
 						return item
 					})
@@ -481,8 +512,15 @@ export default {
 				mapping.accountList = this.accountList
 				return
 			}
+
+			let types = this.accountTypes.filter((item) => {
+				return mapping.accountType === '' || item.name === mapping.accountType
+			})
+			
 			mapping.accountList = this.accountList.filter(item => {
-				return item.no.includes(mapping.accountType.no)
+				return types.some((type) => {
+					return item.no.indexOf(type.no) === 0
+				})
 			})
 		},
 		chooseAccountNo(no, row) {
@@ -497,15 +535,15 @@ export default {
 		async uploadMappingList() {
 			const filterMappingList = this.toBeMatchedData.filter(item => {
 				return (
-					item.matched_account_no !== '' && item.matched_account_name !== ''
+					item.matched.no !== '' && item.matched.name !== ''
 				)
 			})
 			const mapping_list = filterMappingList.map(item => {
 				return {
 					account_no: item.account_no,
 					account_name: item.account_name,
-					matched_account_no: item.matched_account_no,
-					matched_account_name: item.matched_account_name
+					matched_account_no: item.matched.no,
+					matched_account_name: item.matched.name
 				}
 			})
 			if (mapping_list.length === 0) {
@@ -523,7 +561,7 @@ export default {
 				this.getMappingList(false)
 				this.toBeMatchedData = this.toBeMatchedData.filter(item => {
 					return (
-						item.matched_account_no === '' || item.matched_account_name === ''
+						item.matched.no === '' || item.matched.name === ''
 					)
 				})
 			}
@@ -552,7 +590,7 @@ export default {
 				this.getMappingList()
 				this.$message.success('更新成功')
 			}
-		},
+		}
 	}
 }
 </script>
