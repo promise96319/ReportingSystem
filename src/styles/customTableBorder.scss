@@ -1,0 +1,27 @@
+$table_border_color: #ccc;
+
+/deep/ .el-table--border:after,
+/deep/ .el-table--group:after,
+/deep/ .el-table:before {
+  background-color: $table_border_color;
+}
+
+/deep/ .el-table--border,
+/deep/ .el-table--group {
+  border-color: $table_border_color;
+}
+
+/deep/ .el-table td,
+/deep/ .el-table th.is-leaf {
+  border-bottom: 1px solid $table_border_color;
+}
+
+/deep/ .el-table--border th,
+/deep/ .el-table--border th.gutter:last-of-type {
+  border-bottom: 1px solid $table_border_color;
+}
+
+/deep/ .el-table--border td,
+/deep/ .el-table--border th {
+  border-right: 1px solid $table_border_color;
+}

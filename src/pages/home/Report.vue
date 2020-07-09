@@ -1,187 +1,136 @@
 <template>
-	<div class="report">
-		<SubHeader title="Reports">
-			<el-button
-				size="medium"
-				icon="el-icon-s-data"
-				plain
-				@click="$router.push({ name: 'Home' })"
-			>Dashboard</el-button>
-			<el-button
-				size="medium"
-				class="primary-icon"
-				type="primary"
-				@click="isStepDialogShow=true"
-			>
-				<svg-icon icon-class="plus-square"></svg-icon>New data
-			</el-button>
-		</SubHeader>
+  <div class="report">
+    <SubHeader title="Reports">
+      <el-button
+        @click="$router.push({ name: 'Home' })"
+        icon="el-icon-s-data"
+        plain
+        size="medium"
+      >Dashboard</el-button>
+      <el-button @click="isStepDialogShow=true" class="primary-icon" size="medium" type="primary">
+        <svg-icon icon-class="plus-square"></svg-icon>New data
+      </el-button>
+    </SubHeader>
 
-		<div class="main">
-			<div
-				class="module module1"
-				@click="showPeriodDialog(moduleOptions[0])"
-			>
-				<div class="tip">{{ moduleOptions[0] }}</div>
-				<div class="item1">Assets</div>
-				<div class="item2">Liabities</div>
-				<div class="item3">Equity</div>
-			</div>
-			<div
-				class="module module2"
-				@click="showPeriodDialog(moduleOptions[1])"
-			>
-				<div class="tip">{{ moduleOptions[1] }}</div>
-				<div class="item1">
-					<div class="sales">Sales revenus</div>
-					<div class="margin">Margin</div>
-				</div>
-				<div class="item2">Expenses</div>
-				<div class="item3">Net income</div>
-			</div>
-			<div
-				class="module module3"
-				@click="showPeriodDialog(moduleOptions[2])"
-			>
-				<div class="tip">{{ moduleOptions[2] }}</div>
-				<div class="item1">Operating activities</div>
-				<div class="item2">Investing activities</div>
-				<div class="item3">Finacing activities</div>
-				<div class="item4">Net Cash flow</div>
-			</div>
-			<div class="module module4">
-				<div class="tip">{{ moduleOptions[3] }}</div>
-				<el-row
-					class="header"
-					:gutter="10"
-				>
-					<el-col :span="12">
-						<div>Account</div>
-					</el-col>
-					<el-col :span="6">
-						<div>Debit</div>
-					</el-col>
-					<el-col :span="6">
-						<div>Credit</div>
-					</el-col>
-				</el-row>
-				<el-row
-					v-for="(item, index) in accountOptions"
-					:key="index"
-					:gutter="10"
-				>
-					<el-col :span="12">
-						<div>{{ item.value }}</div>
-					</el-col>
-					<el-col :span="6">
-						<div v-if="index < 3">{{ item.number }}</div>
-						<div v-else>0</div>
-					</el-col>
-					<el-col :span="6">
-						<div v-if="index >= 3">{{ item.number }}</div>
-						<div v-else>0</div>
-					</el-col>
-				</el-row>
-			</div>
-			<div class="module module5">
-				<div class="tip">{{ moduleOptions[4] }}</div>
-				<div class="container">
-					<div class="header">Account Receivable</div>
-					<el-row :gutter="16">
-						<el-col :span="16">
-							<div>Sell 500 items</div>
-						</el-col>
-						<el-col :span="8">
-							<div>2000</div>
-						</el-col>
-					</el-row>
-					<el-row :gutter="16">
-						<el-col :span="16">
-							<div>Sell 200 items</div>
-						</el-col>
-						<el-col :span="8">
-							<div>800</div>
-						</el-col>
-					</el-row>
-					<el-row :gutter="16">
-						<el-col :span="16">
-							<div>Payment received</div>
-						</el-col>
-						<el-col :span="8">
-							<div>-2000</div>
-						</el-col>
-					</el-row>
-					<el-row :gutter="16">
-						<el-col :span="16">
-							<div>Goods return 300</div>
-						</el-col>
-						<el-col :span="8">
-							<div>-800</div>
-						</el-col>
-					</el-row>
-				</div>
-			</div>
-		</div>
+    <div class="main">
+      <div @click="showPeriodDialog(moduleOptions[0])" class="module module1">
+        <div class="tip">{{ moduleOptions[0] }}</div>
+        <div class="item1">Assets</div>
+        <div class="item2">Liabities</div>
+        <div class="item3">Equity</div>
+      </div>
+      <div @click="showPeriodDialog(moduleOptions[1])" class="module module2">
+        <div class="tip">{{ moduleOptions[1] }}</div>
+        <div class="item1">
+          <div class="sales">Sales revenus</div>
+          <div class="margin">Margin</div>
+        </div>
+        <div class="item2">Expenses</div>
+        <div class="item3">Net income</div>
+      </div>
+      <div @click="showPeriodDialog(moduleOptions[2])" class="module module3">
+        <div class="tip">{{ moduleOptions[2] }}</div>
+        <div class="item1">Operating activities</div>
+        <div class="item2">Investing activities</div>
+        <div class="item3">Finacing activities</div>
+        <div class="item4">Net Cash flow</div>
+      </div>
+      <div class="module module4">
+        <div class="tip">{{ moduleOptions[3] }}</div>
+        <el-row :gutter="10" class="header">
+          <el-col :span="12">
+            <div>Account</div>
+          </el-col>
+          <el-col :span="6">
+            <div>Debit</div>
+          </el-col>
+          <el-col :span="6">
+            <div>Credit</div>
+          </el-col>
+        </el-row>
+        <el-row :gutter="10" :key="index" v-for="(item, index) in accountOptions">
+          <el-col :span="12">
+            <div>{{ item.value }}</div>
+          </el-col>
+          <el-col :span="6">
+            <div v-if="index < 3">{{ item.number }}</div>
+            <div v-else>0</div>
+          </el-col>
+          <el-col :span="6">
+            <div v-if="index >= 3">{{ item.number }}</div>
+            <div v-else>0</div>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="module module5" @click="goToGeneralLedger">
+        <div class="tip">{{ moduleOptions[4] }}</div>
+        <div class="container">
+          <div class="header">Account Receivable</div>
+          <el-row :gutter="16">
+            <el-col :span="16">
+              <div>Sell 500 items</div>
+            </el-col>
+            <el-col :span="8">
+              <div>2000</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="16">
+            <el-col :span="16">
+              <div>Sell 200 items</div>
+            </el-col>
+            <el-col :span="8">
+              <div>800</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="16">
+            <el-col :span="16">
+              <div>Payment received</div>
+            </el-col>
+            <el-col :span="8">
+              <div>-2000</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="16">
+            <el-col :span="16">
+              <div>Goods return 300</div>
+            </el-col>
+            <el-col :span="8">
+              <div>-800</div>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
+    </div>
 
-		<el-dialog
-			:visible.sync="isStepDialogShow"
-			width="800px"
-		>
-			<StepDialog></StepDialog>
-		</el-dialog>
+    <el-dialog :visible.sync="isStepDialogShow" width="800px">
+      <StepDialog></StepDialog>
+    </el-dialog>
 
-		<el-dialog
-			:title="currentTitle"
-			:visible.sync="isPeriodDialogShow"
-			width="400px"
-			center
-		>
-			<el-row
-				:gutter="12"
-				type="flex"
-				align="middle"
-			>
-				<el-col :span="4">Period:</el-col>
-				<el-col :span="10">
-					<el-select
-						v-model="currentYear"
-						@change="selectYear"
-					>
-						<el-option
-							v-for="item in YEAR_OPTIONS"
-							:key="item"
-							:label="item"
-							:value="item"
-						></el-option>
-					</el-select>
-				</el-col>
-				<el-col :span="10">
-					<el-select
-						v-model="currentMonth"
-						value-key="value"
-						@change="selectMonth"
-					>
-						<el-option
-							v-for="item in MONTH_OPTIONS"
-							:key="item.key"
-							:label="item.value"
-							:value="item"
-						></el-option>
-					</el-select>
-				</el-col>
-			</el-row>
-			<span
-				slot="footer"
-				class="dialog-footer"
-			>
-				<el-button
-					type="primary"
-					@click="goToReport"
-				>Confirm</el-button>
-				<el-button @click="isPeriodDialogShow = false">Cancel</el-button>
-			</span>
-		</el-dialog>
-	</div>
+    <el-dialog :title="currentTitle" :visible.sync="isPeriodDialogShow" center width="400px">
+      <el-row :gutter="12" align="middle" type="flex">
+        <el-col :span="4">Period:</el-col>
+        <el-col :span="10">
+          <el-select @change="selectYear" v-model="currentYear">
+            <el-option :key="item" :label="item" :value="item" v-for="item in YEAR_OPTIONS"></el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="10">
+          <el-select @change="selectMonth" v-model="currentMonth" value-key="value">
+            <el-option
+              :key="item.key"
+              :label="item.value"
+              :value="item"
+              v-for="item in MONTH_OPTIONS"
+            ></el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+      <span class="dialog-footer" slot="footer">
+        <el-button @click="goToReport" type="primary">Confirm</el-button>
+        <el-button @click="isPeriodDialogShow = false">Cancel</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -267,6 +216,9 @@ export default {
 		},
 		goToReport() {
 			this.$router.push({ name: 'BalanceSheet' })
+		},
+		goToGeneralLedger() {
+			this.$router.push({ name: 'GeneralLedger' })
 		}
 	},
 	mounted() {

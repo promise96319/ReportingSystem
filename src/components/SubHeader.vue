@@ -6,7 +6,7 @@
       <div class="title">{{ title }}</div>
 			<slot name="left"></slot>
 		</el-row>
-		<el-row type="flex" justify="end" align="middle">
+		<el-row type="flex" justify="end" align="middle" class="right">
 			<slot></slot>
 		</el-row>
 	</div>

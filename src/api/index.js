@@ -5,6 +5,7 @@ import * as account from './account'
 import * as batch from './batch'
 import * as mapping from './mapping'
 import * as entries from './entries'
+import * as report from './report'
 
 export default {
   ...user,
@@ -14,4 +15,5 @@ export default {
   ...batch,
   ...mapping,
   ...entries,
+  ...report,
 }

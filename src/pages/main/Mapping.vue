@@ -440,6 +440,7 @@ export default {
 		hideDialog(isAdded) {
 			this.isAddAccountDialogShow = false
 			if (isAdded) {
+				this.getAccountList()
 				this.getMappingList()
 			}
 		},
