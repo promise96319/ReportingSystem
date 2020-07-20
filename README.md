@@ -9,6 +9,8 @@
   - yarn build
 
 ## 开发记录
+  - 7月20日 晚上11：10~
+
   - 7月9日
     - 下午12：30~下午3：30
       - locale general ledger 样式完成

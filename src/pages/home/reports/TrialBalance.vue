@@ -1,34 +1,217 @@
 <template>
-  <div class="trial-balance">
-    <SubHeader title="Balance Sheet">
-      <el-button 
-        size="medium"
-        icon="el-icon-s-data"
-        type="primary"
+	<div class="trial-balance">
+		<SubHeader
+			:is-back="true"
+			title="Trial balance"
+		>
+			<div class="filter">
+				Période :
+				<el-date-picker
+					end-placeholder="Au"
+					range-separator="-"
+					size="mini"
+					start-placeholder="Du"
+					type="monthrange"
+					:clearable="false"
+					v-model="filterCondition.date"
+				></el-date-picker>Devise :
+				<el-select
+					size="mini"
+					v-model="filterCondition.devise"
+				>
+					<el-option
+						:key="GL_SINGLE"
+						:label="GL_SINGLE"
+						:value="GL_SINGLE"
+					></el-option>
+					<el-option
+						:key="GL_MULTIPLE"
+						:label="GL_MULTIPLE"
+						:value="GL_MULTIPLE"
+					></el-option>
+				</el-select>
+			</div>
+			<el-button
+				@click="$router.go(-1)"
 				class="primary-icon"
-        @click="$router.go(-1)"
-        >Reports</el-button>
-    </SubHeader>
-    <div class="main">
-      
-    </div>
-  </div>
+				icon="el-icon-s-data"
+				size="mini"
+				type="primary"
+			>Reports</el-button>
+		</SubHeader>
+		<div class="main">
+			<div class="content">
+				<el-table
+					:data="trialBalanceData"
+					border
+					:height="windowHeight - 180"
+					size="mini"
+					style="width: 100%"
+				>
+					<el-table-column
+						label="Cumul période"
+						header-align="center"
+					>
+						<el-table-column
+							label="Débiteur"
+							prop="total_debit"
+							header-align="center"
+							align="right"
+						>
+						</el-table-column>
+						<el-table-column
+							label="Créditeur"
+							prop="total_credit"
+							header-align="center"
+							align="right"
+						>
+						</el-table-column>
+					</el-table-column>
+
+					<el-table-column
+						label="N° compte"
+						prop="account_no"
+						header-align="center"
+					>
+					</el-table-column>
+					<el-table-column
+						label="Intitulé"
+						prop="account_description"
+						header-align="center"
+					>
+					</el-table-column>
+
+					<el-table-column
+						label="Solde N"
+						header-align="center"
+					>
+						<el-table-column
+							label="Débiteur"
+							prop="debit_n"
+							header-align="center"
+							align="right"
+						>
+						</el-table-column>
+						<el-table-column
+							label="Créditeur"
+							prop="credit_n"
+							header-align="center"
+							align="right"
+						>
+						</el-table-column>
+					</el-table-column>
+					<el-table-column
+						label="Solde N-1"
+						header-align="center"
+					>
+						<el-table-column
+							label="Débiteur"
+							prop="debit_n_1"
+							header-align="center"
+							align="right"
+						>
+						</el-table-column>
+						<el-table-column
+							label="Créditeur"
+							prop="credit_n_1"
+							header-align="center"
+							align="right"
+						>
+						</el-table-column>
+					</el-table-column>
+				</el-table>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
+import SubHeader from '@/components/SubHeader'
+import api from '@/api'
+import { GL_SINGLE, GL_MULTIPLE } from '@/constant/generalLedgerKey'
+import windowResizeMixin from '@/mixins/windowResizeMixin'
 
-    }
-  },
-  methods: {
-  }
+export default {
+	mixins: [windowResizeMixin],
+	data() {
+		return {
+			GL_SINGLE,
+			GL_MULTIPLE,
+			filterCondition: {
+				date: [],
+				devise: GL_SINGLE
+			},
+			trialBalanceData: []
+		}
+	},
+	computed: {
+		currentCompany() {
+			return this.$store.getters.currentCompany
+		}
+	},
+	components: {
+		SubHeader
+	},
+	created() {
+		this.getTrialBalance()
+	},
+	methods: {
+		async getTrialBalance() {
+			const res = await api.getGeneralLedger(
+				// this.currentCompany.id
+				6,
+				'2020-07',
+				'2020-08',
+				'Trial balance'
+			)
+			if (res.data.error_code === 0) {
+				this.trialBalanceData = res.data.data.concat(
+					res.data.data,
+					res.data.data,
+					res.data.data
+				)
+			}
+		}
+	}
 }
 </script>
 
 <style lang="scss" scoped>
-.trial-balance {
+@import '../../../styles/customTableBorder.scss';
 
+.trial-balance {
+	.filter {
+		.el-date-editor,
+		.el-select {
+			margin-right: 20px;
+		}
+	}
+	.main {
+		padding: 30px;
+		/deep/ .header .el-table__header {
+			th {
+				background-color: #ededed;
+				color: #333;
+				font-weight: bold;
+			}
+		}
+		.content {
+			overflow: scroll;
+			.el-table {
+				border-bottom: 1px solid #999;
+				/deep/ .bold-row {
+					font-size: 14px;
+					font-weight: bold;
+				}
+				&:last-child {
+					border-color: #ccc;
+				}
+			}
+		}
+	}
+}
+
+/deep/ .el-table__body tr:hover td {
+	background-color: rgba($color: #409eff, $alpha: 0.1);
 }
 </style>

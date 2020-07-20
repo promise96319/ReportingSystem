@@ -35,7 +35,7 @@
         <div class="item3">Finacing activities</div>
         <div class="item4">Net Cash flow</div>
       </div>
-      <div class="module module4">
+      <div class="module module4" @click="goToTrialBalance">
         <div class="tip">{{ moduleOptions[3] }}</div>
         <el-row :gutter="10" class="header">
           <el-col :span="12">
@@ -219,6 +219,9 @@ export default {
 		},
 		goToGeneralLedger() {
 			this.$router.push({ name: 'GeneralLedger' })
+		},
+		goToTrialBalance() {
+			this.$router.push({ name: 'TrialBalance' })
 		}
 	},
 	mounted() {

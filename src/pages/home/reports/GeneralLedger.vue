@@ -1,6 +1,6 @@
 <template>
   <div class="general-ledger">
-    <SubHeader :is-back="true" title="Balance Sheet">
+    <SubHeader :is-back="true" title="General ledger">
       <div class="filter">
         Période :
         <el-date-picker
@@ -128,7 +128,8 @@ export default {
 			const res = await api.getGeneralLedger(
 				this.currentCompany.id,
 				'2020-07',
-				'2020-08'
+				'2020-08',
+				'General ledger'
 			)
 			this.isGettingGeneralLedgerData = false
 			if (res.data.error_code === 0) {

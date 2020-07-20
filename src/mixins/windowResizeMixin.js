@@ -11,7 +11,7 @@ export default {
   },
   methods: {
     handleWindowResize() {      
-      // 节流
+      // 防抖
       if (this.timer) {
         clearTimeout(this.timer)
       }
