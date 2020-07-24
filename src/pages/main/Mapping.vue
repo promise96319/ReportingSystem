@@ -168,6 +168,7 @@
                   size="small"
                   v-model="scope.row.accountType"
                   value-key="no"
+									filterable
                 >
                   <el-option
                     :key="item + index"
@@ -189,6 +190,8 @@
                   size="small"
                   v-model="scope.row.matched"
 									value-key="no"
+									clearable
+									filterable
                 >
                   <el-option
                     :key="item.no + item.name + index"
@@ -209,6 +212,8 @@
                   size="small"
                   v-model="scope.row.matched"
 									value-key="name"
+									clearable
+									filterable
                 >
                   <el-option
                     :key="item.name + item.no + index"
@@ -523,6 +528,11 @@ export default {
 					return item.no.indexOf(type.no) === 0
 				})
 			})
+
+			mapping.matched = {
+				no: '',
+				name: ''
+			}
 		},
 		chooseAccountNo(no, row) {
 			let account = this.accountList.find(item => {
@@ -536,7 +546,7 @@ export default {
 		async uploadMappingList() {
 			const filterMappingList = this.toBeMatchedData.filter(item => {
 				return (
-					item.matched.no !== '' && item.matched.name !== ''
+					item.matched && item.matched.no !== '' && item.matched.name !== ''
 				)
 			})
 			const mapping_list = filterMappingList.map(item => {

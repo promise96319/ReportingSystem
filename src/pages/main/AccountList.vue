@@ -2,7 +2,7 @@
   <div class="accounts">
     <SubHeader title="Accounts">
       <el-button
-        @click="isAddAccountDialogShow = true"
+        @click="showAddAccount"
         class="primary-icon"
         size="medium"
         type="primary"
@@ -91,6 +91,7 @@
       class="new-account"
       title="Add account"
       width="540px"
+			:destroy-on-close="true"
     >
       <NewAccoundDailog @hideDialog="hideDialog($event)"></NewAccoundDailog>
     </el-dialog>
@@ -162,6 +163,9 @@ export default {
 		this.getAccountList()
 	},
 	methods: {
+		showAddAccount() {
+			this.isAddAccountDialogShow = true
+		},
 		async getAccountList() {
 			this.isGettingAccountList = true
 			const res = await api.getAccountList(this.currentCompany.id)

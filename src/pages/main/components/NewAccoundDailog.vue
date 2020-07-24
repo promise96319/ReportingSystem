@@ -1,57 +1,85 @@
 <template>
-  <el-form label-position="left" label-width="130px">
-    <el-form-item label="Type of account:">
-			<el-select v-model="accountType" clearable>
+	<el-form
+		label-position="left"
+		label-width="130px"
+	>
+		<el-form-item label="Type of account:">
+			<el-select
+				v-model="accountType"
+				clearable
+				@change="changeAccountType"
+			>
 				<el-option
-          :key="item + index"
-          :label="item"
-          :value="item"
-          v-for="(item, index) in accountTypesArr"
-        ></el-option>
+					:key="item + index"
+					:label="item"
+					:value="item"
+					v-for="(item, index) in accountTypesArr"
+				></el-option>
 			</el-select>
-      
-    </el-form-item>
-    <el-form-item label="Account No.:">
-      <el-row :gutter="16" justify="space-between" type="flex">
-        <el-col :span="12">
-          <!-- <el-input disabled v-model="accountType.no"></el-input> -->
-					<el-select @change="setDefaultTypeName" v-model="currentSelectedAccount" value-key="no" clearable>
+		</el-form-item>
+		<el-form-item label="Account No.:">
+			<el-row
+				:gutter="16"
+				justify="space-between"
+				type="flex"
+			>
+				<el-col :span="12">
+					<!-- <el-input disabled v-model="accountType.no"></el-input> -->
+					<el-select
+						@change="setDefaultTypeName"
+						v-model="currentSelectedAccount"
+						value-key="no"
+						clearable
+					>
 						<el-option
 							:key="item.no + item.name + index"
 							:label="item.no"
 							:value="item"
 							v-for="(item, index) in filterAccounts"
 						></el-option>
-      </el-select>
-        </el-col>
-        <!-- <el-col :span="1">
-					.
-        </el-col>-->
-        <el-col :span="12">
-          <el-input clearable placeholder="Account No." v-model="no"></el-input>
-        </el-col>
-      </el-row>
-    </el-form-item>
-    <el-form-item label="Account Name:">
-      <el-input clearable placeholder="Account Name" v-model="name"></el-input>
-    </el-form-item>
-    <el-form-item label="Status:">Enable</el-form-item>
-    <el-form-item>
-      <el-row :gutter="12" justify="space-between" type="flex">
-        <el-col :span="12">
-          <el-button
-            :loading="isAddingAccount"
-            @click="addAccount"
-            class="full-width"
-            type="primary"
-          >Save</el-button>
-        </el-col>
-        <el-col :span="12">
-          <el-button @click="hideAddedDialog" class="full-width" plain>Cancel</el-button>
-        </el-col>
-      </el-row>
-    </el-form-item>
-  </el-form>
+					</el-select>
+				</el-col>
+				<el-col :span="12">
+					<el-input
+						clearable
+						placeholder="Account No."
+						v-model="no"
+					></el-input>
+				</el-col>
+			</el-row>
+		</el-form-item>
+		<el-form-item label="Account Name:">
+			<el-input
+				clearable
+				placeholder="Account Name"
+				v-model="name"
+			></el-input>
+		</el-form-item>
+		<el-form-item label="Status:">Enable</el-form-item>
+		<el-form-item>
+			<el-row
+				:gutter="12"
+				justify="space-between"
+				type="flex"
+			>
+				<el-col :span="12">
+					<el-button
+						:loading="isAddingAccount"
+						@click="addAccount"
+						class="full-width"
+						type="primary"
+					>Save</el-button>
+				</el-col>
+				<el-col :span="12">
+					<el-button
+						@click="hideAddedDialog"
+						class="full-width"
+						plain
+					>Cancel</el-button>
+				</el-col>
+			</el-row>
+		</el-form-item>
+	</el-form>
 </template>
 
 <script>
@@ -73,7 +101,7 @@ export default {
 			no: '',
 			name: '',
 
-			isAddingAccount: false
+			isAddingAccount: false,
 		}
 	},
 	computed: {
@@ -98,15 +126,37 @@ export default {
 			return accounts.map((item) => {
 				return {
 					name: item.default,
-					no: item.no
+					no: item.no,
 				}
 			})
-		}
+		},
 	},
 	created() {
 		this.getAccountType()
 	},
 	methods: {
+		changeAccountType() {
+			if (this.accountType) {
+				let finded = this.filterAccounts.find((item) => {
+					return item.no === this.currentSelectedAccount.no
+				})
+				if (!finded) {
+					this.currentSelectedAccount = {
+						no: '',
+						name: '',
+					}
+					this.no = ''
+					this.name = ''
+				}
+			} else {
+				this.currentSelectedAccount = {
+					no: '',
+					name: '',
+				}
+				this.no = ''
+				this.name = ''
+			}
+		},
 		setDefaultTypeName() {
 			if (typeof this.currentSelectedAccount.name !== 'undefined') {
 				this.name = this.currentSelectedAccount.name
@@ -158,14 +208,11 @@ export default {
 				no,
 				name: this.name,
 				type_no: this.currentSelectedAccount.no,
-				type_name: this.accountType
+				type_name: this.accountType,
 			}
 
 			this.isAddingAccount = true
-			const res = await api.addAccount(
-				this.currentCompany.id,
-				data
-			)
+			const res = await api.addAccount(this.currentCompany.id, data)
 			this.isAddingAccount = false
 
 			if (res.data.error_code === 0) {
@@ -178,8 +225,8 @@ export default {
 		},
 		hideDialog(isAdded = false) {
 			this.$emit('hideDialog', isAdded)
-		}
-	}
+		},
+	},
 }
 </script>
 

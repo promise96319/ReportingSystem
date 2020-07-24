@@ -217,6 +217,8 @@ export default {
 			if (res.data.error_code === 0) {
 				this.$store.commit(SET_CURRENT_COMPANY, res.data.data)
 				this.$message.success('更新成功!')
+				this.isAccountTypeEditable = false
+				this.isCompanyNameEditable = false
 				// 重新获取company list
 				const result = await api.getCompanyList()
 				if (result.data.error_code === 0) {

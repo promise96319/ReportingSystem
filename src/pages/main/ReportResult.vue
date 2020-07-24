@@ -1,370 +1,595 @@
 <template>
-  <div class="accounting-entries">
-    <SubHeader title="Accounting entries">
-      <el-button
-        :loading="isExportingToExcel"
-        @click="exportToExcel"
-        class="plain-icon"
-        plain
-        size="medium"
-      >
-        <svg-icon icon-class="export"></svg-icon>Export
-      </el-button>
-      <el-button @click="isFilterDrawerShow=true" class="primary-icon" size="medium" type="primary">
-        <svg-icon icon-class="filter"></svg-icon>Filter
-      </el-button>
-    </SubHeader>
-    <div class="main">
-      <el-table
-        :data="filterEntriesData"
-        :max-height="windowHeight - 180"
-        :row-class-name="tableRowClassName"
-        @row-click="tableRowClick"
-        border
-        v-if="isMatchedDone"
-        v-loading="isGettingEntries"
+	<div class="accounting-entries">
+		<SubHeader title="Accounting entries">
+			<el-button
+				:loading="isExportingToExcel"
+				@click="exportToExcel"
+				class="plain-icon"
+				plain
+				size="medium"
+			>
+				<svg-icon icon-class="export"></svg-icon>Export
+			</el-button>
+			<el-button
+				@click="isFilterDrawerShow=true"
+				class="primary-icon"
+				size="medium"
+				type="primary"
+			>
+				<svg-icon icon-class="filter"></svg-icon>Filter
+			</el-button>
+		</SubHeader>
+		<div class="main">
+			<el-table
+				:data="filterEntriesData"
+				:max-height="windowHeight - 180"
+				:row-class-name="tableRowClassName"
+				@row-click="tableRowClick"
+				border
+				v-if="isMatchedDone"
+				v-loading="isGettingEntries"
 				size="mini"
-      >
-        <el-table-column
-          :key="index"
-          :label="item.value"
-          :prop="item.key"
-          align="center"
-          header-align="center"
-          v-for="(item, index) in accountingEntriesKey"
-          :width="item.width"
-        ></el-table-column>
-      </el-table>
-      <div class="match-tip" v-else>
-        <div
-          class="tip"
-        >There are still some accounts to be matched. Please complete the matching work at first.</div>
-        <el-button @click="$router.push({ name: 'Mapping' })" type="primary">To complete the match</el-button>
-      </div>
-    </div>
-
-    <el-drawer :visible.sync="isFilterDrawerShow" :with-header="false" size="700px">
-      <div class="filter-container">
-        <!-- accounts 过滤 from -->
-        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
-          <el-col :span="6" class="label">Accounts:</el-col>
-          <el-col :span="18" class="input">
-            <el-row :gutter="12" align="middle" justify="space-between" type="flex">
-              <el-col :span="4" class="from">From</el-col>
-              <el-col :span="20">
-                <el-select
-                  clearable
-                  placeholder="Accounts"
-                  size="mini"
-                  v-model="filterCondition.accountsFrom"
-                  value-key="no"
-                >
-                  <el-option
-                    :key="item.no + item.name + index"
-                    :label="item.no + '  ' + item.name"
-                    :value="index"
-                    v-for="(item, index) in accountList"
-                  ></el-option>
-                </el-select>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-        <!-- accounts 过滤 to -->
-        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
-          <el-col :span="6" class="label"></el-col>
-          <el-col :span="18" class="input">
-            <el-row :gutter="12" align="middle" justify="space-between" type="flex">
-              <el-col :span="4" class="from">To</el-col>
-              <el-col :span="20">
-                <el-select
-                  clearable
-                  placeholder="Accounts"
-                  size="mini"
-                  v-model="filterCondition.accountsTo"
-                  value-key="no"
-                >
-                  <el-option
-                    :key="item.no + item.name"
-                    :label="item.no + '  ' + item.name"
-                    :value="index"
-                    v-for="(item, index) in accountList"
-                  ></el-option>
-                </el-select>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-
-        <el-row
-          :gutter="20"
-          :key="item.key"
-          align="middle"
-          class="search-item"
-          justify="space-between"
-          type="flex"
-          v-for="item in filterCondition.others.slice(0, 2)"
-        >
-          <el-col :span="6" class="label">{{ item.label }}:</el-col>
-          <el-col :span="18" class="input">
-            <div class="el-input el-input--mini el-input--suffix">
-              <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
-                <span class="placeholder" v-else>{{ item.label }}</span>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-
-        <!-- 凭证日期 过滤 -->
-        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
-          <el-col :span="6" class="label">Period:</el-col>
-          <el-col :span="18" class="input">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
-                  <el-col :span="4">From</el-col>
-                  <el-col :span="18">
-                    <el-date-picker
-                      align="right"
-                      clearable
-                      placeholder="Start date"
-                      size="mini"
-                      type="date"
-                      v-model="filterCondition.periodFrom"
-                    ></el-date-picker>
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="12">
-                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
-                  <el-col :offset="1" :span="3">To</el-col>
-                  <el-col :span="18">
-                    <el-date-picker
-                      align="right"
-                      clearable
-                      placeholder="End date"
-                      size="mini"
-                      type="date"
-                      v-model="filterCondition.periodTo"
-                    ></el-date-picker>
-                  </el-col>
-                </el-row>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-
-        <el-row
-          :gutter="20"
-          :key="item.key"
-          align="middle"
-          class="search-item"
-          justify="space-between"
-          type="flex"
-          v-for="item in filterCondition.others.slice(2, 3)"
-        >
-          <el-col :span="6" class="label">{{ item.label }}:</el-col>
-          <el-col :span="18" class="input">
-            <div class="el-input el-input--mini el-input--suffix">
-              <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
-                <span class="placeholder" v-else>{{ item.label }}</span>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-
-        <!-- 凭证编号 过滤 -->
-        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
-          <el-col :span="6" class="label">Voucher No.:</el-col>
-          <el-col :span="18" class="input">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
-                  <el-col :span="4">From</el-col>
-                  <el-col :span="18">
-                    <el-input
-                      clearable
-                      placeholder="Start No."
-                      size="mini"
-                      type="number"
-                      v-model="filterCondition.voucherNoFrom"
-                    ></el-input>
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="12">
-                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
-                  <el-col :offset="1" :span="3">To</el-col>
-                  <el-col :span="18">
-                    <el-input
-                      clearable
-                      placeholder="End No."
-                      size="mini"
-                      type="number"
-                      v-model="filterCondition.voucherNoTo"
-                    ></el-input>
-                  </el-col>
-                </el-row>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-
-        <el-row
-          :gutter="20"
-          :key="item.key"
-          align="middle"
-          class="search-item"
-          justify="space-between"
-          type="flex"
-          v-for="item in filterCondition.others.slice(3, 4)"
-        >
-          <el-col :span="6" class="label">{{ item.label }}:</el-col>
-          <el-col :span="18" class="input">
-            <div class="el-input el-input--mini el-input--suffix">
-              <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
-                <span class="placeholder" v-else>{{ item.label }}</span>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-
-        <!-- 金额大小 过滤 -->
-        <el-row :gutter="20" align="middle" class="search-item" justify="space-between" type="flex">
-          <el-col :span="6" class="label">Currency amount:</el-col>
-          <el-col :span="18" class="input">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
-                  <el-col :span="4">From</el-col>
-                  <el-col :span="18">
-                    <el-input
-                      clearable
-                      placeholder="Min amount"
-                      size="mini"
-                      type="number"
-                      v-model="filterCondition.currencyAmountFrom"
-                    ></el-input>
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="12">
-                <el-row :gutter="12" align="middle" justify="space-between" type="flex">
-                  <el-col :offset="1" :span="3">To</el-col>
-                  <el-col :span="18">
-                    <el-input
-                      clearable
-                      placeholder="Max amount"
-                      size="mini"
-                      type="number"
-                      v-model="filterCondition.currencyAmountTo"
-                    ></el-input>
-                  </el-col>
-                </el-row>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
-
-        <el-row
-          :gutter="20"
-          :key="item.key"
-          align="middle"
-          class="search-item"
-          justify="space-between"
-          type="flex"
-          v-for="item in filterCondition.others.slice(4)"
-        >
-          <el-col :span="6" class="label">{{ item.label }}:</el-col>
-          <el-col :span="18" class="input">
-            <div class="el-input el-input--mini el-input--suffix">
-              <div @click="showFilterDraw(item)" class="el-input__inner filter-row">
-                <span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
-                <span class="placeholder" v-else>{{ item.label }}</span>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="20" align="middle" class="action" justify="space-between" type="flex">
-          <el-col :span="6" class="label"></el-col>
-          <el-col :span="18" class="input">
-            <el-button @click="resetFilter" class="full-width" type="primary">
-              <i class="el-icon-refresh"></i>
-              Reset
-            </el-button>
-          </el-col>
-        </el-row>
-      </div>
-    </el-drawer>
-
-    <el-drawer :title="currentFilter.label" :visible.sync="isCurrentFilterDrawShow" size="400px">
-      <div class="drawer-filter">
-        <el-input clearable prefix-icon="el-icon-search" size="small" v-model="currentSearchValue"></el-input>
-        <el-checkbox
-          :indeterminate="isIndeterminate"
-          @change="handleSelectAllOptions"
-          v-model="isSelectAll"
-        >Select All</el-checkbox>
-        <el-checkbox-group v-model="currentFilter.keywords">
-          <el-checkbox
-            :key="option"
-            :label="option"
-            @change="handleSelectOptions"
-            v-for="option in filterSeachOptions"
-          ></el-checkbox>
-        </el-checkbox-group>
-        <el-row :gutter="20" class="confirm" type="flex">
-          <el-col>
-            <el-button @click="confirmFilter" type="primary">OK</el-button>
-          </el-col>
-          <el-col>
-            <el-button @click="clearFilter">Clear</el-button>
-          </el-col>
-        </el-row>
-      </div>
-    </el-drawer>
-
-    <el-dialog :visible.sync="isAllVouchersShow" title="Journal Entry" width="1200px">
-      <el-row align="middle" class="journal-header" justify="space-betweeen" type="flex">
-        <el-col>
-          Date
-          <span>{{ allVouchers | formatDate }}</span>
-        </el-col>
-        <el-col class="right">
-          Voucher No.
-          <span>{{ allVouchers[0] && allVouchers[0].voucher_no }}</span>
-        </el-col>
-      </el-row>
-      <el-table
-        :data="allVouchers"
-        :row-class-name="tableRowClassName"
-        @row-click="showAccountingItems"
-        height="600px"
-				size="mini"
-      >
-        <el-table-column
-          :key="item.key"
-          :label="item.value"
-          :prop="item.key"
+			>
+				<el-table-column
+					:key="index"
+					:label="item.value"
+					:prop="item.key"
+					align="center"
+					header-align="center"
+					v-for="(item, index) in accountingEntriesKey"
 					:width="item.width"
-          align="center"
-          header-align="center"
-          v-for="item in journalEntryKey"
-        ></el-table-column>
-      </el-table>
-    </el-dialog>
+				></el-table-column>
+			</el-table>
+			<div
+				class="match-tip"
+				v-else
+			>
+				<div class="tip">There are still some accounts to be matched. Please complete the matching work at first.</div>
+				<el-button
+					@click="$router.push({ name: 'Mapping' })"
+					type="primary"
+				>To complete the match</el-button>
+			</div>
+		</div>
 
-    <el-dialog :visible.sync="isAccountingItemsShow" title="Accounting items" width="400px">
-      <el-row :key="item.key" class="accounting-items" v-for="item in accountingItemsKey">
-        <el-row class="header">{{ item.value + ':' }}</el-row>
-        <el-row class="content">{{ currentVoucher[item.key] }}</el-row>
-      </el-row>
-    </el-dialog>
-  </div>
+		<el-drawer
+			:visible.sync="isFilterDrawerShow"
+			:with-header="false"
+			size="700px"
+		>
+			<div class="filter-container">
+				<!-- accounts 过滤 from -->
+				<el-row
+					:gutter="20"
+					align="middle"
+					class="search-item"
+					justify="space-between"
+					type="flex"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					>Accounts:</el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<el-row
+							:gutter="12"
+							align="middle"
+							justify="space-between"
+							type="flex"
+						>
+							<el-col
+								:span="4"
+								class="from"
+							>From</el-col>
+							<el-col :span="20">
+								<el-select
+									clearable
+									placeholder="Accounts"
+									size="mini"
+									v-model="filterCondition.accountsFrom"
+									value-key="no"
+								>
+									<el-option
+										:key="item.no + item.name + index"
+										:label="item.no + '  ' + item.name"
+										:value="index"
+										v-for="(item, index) in accountList"
+									></el-option>
+								</el-select>
+							</el-col>
+						</el-row>
+					</el-col>
+				</el-row>
+				<!-- accounts 过滤 to -->
+				<el-row
+					:gutter="20"
+					align="middle"
+					class="search-item"
+					justify="space-between"
+					type="flex"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					></el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<el-row
+							:gutter="12"
+							align="middle"
+							justify="space-between"
+							type="flex"
+						>
+							<el-col
+								:span="4"
+								class="from"
+							>To</el-col>
+							<el-col :span="20">
+								<el-select
+									clearable
+									placeholder="Accounts"
+									size="mini"
+									v-model="filterCondition.accountsTo"
+									value-key="no"
+								>
+									<el-option
+										:key="item.no + item.name"
+										:label="item.no + '  ' + item.name"
+										:value="index"
+										v-for="(item, index) in accountList"
+									></el-option>
+								</el-select>
+							</el-col>
+						</el-row>
+					</el-col>
+				</el-row>
+
+				<el-row
+					:gutter="20"
+					:key="item.key"
+					align="middle"
+					class="search-item"
+					justify="space-between"
+					type="flex"
+					v-for="item in filterCondition.others.slice(0, 2)"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					>{{ item.label }}:</el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<div class="el-input el-input--mini el-input--suffix">
+							<div
+								@click="showFilterDraw(item)"
+								class="el-input__inner filter-row"
+							>
+								<span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
+								<span
+									class="placeholder"
+									v-else
+								>{{ item.label }}</span>
+							</div>
+						</div>
+					</el-col>
+				</el-row>
+
+				<!-- 凭证日期 过滤 -->
+				<el-row
+					:gutter="20"
+					align="middle"
+					class="search-item"
+					justify="space-between"
+					type="flex"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					>Period:</el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<el-row :gutter="20">
+							<el-col :span="12">
+								<el-row
+									:gutter="12"
+									align="middle"
+									justify="space-between"
+									type="flex"
+								>
+									<el-col :span="4">From</el-col>
+									<el-col :span="18">
+										<el-date-picker
+											align="right"
+											clearable
+											placeholder="Start date"
+											size="mini"
+											type="date"
+											v-model="filterCondition.periodFrom"
+										></el-date-picker>
+									</el-col>
+								</el-row>
+							</el-col>
+							<el-col :span="12">
+								<el-row
+									:gutter="12"
+									align="middle"
+									justify="space-between"
+									type="flex"
+								>
+									<el-col
+										:offset="1"
+										:span="3"
+									>To</el-col>
+									<el-col :span="18">
+										<el-date-picker
+											align="right"
+											clearable
+											placeholder="End date"
+											size="mini"
+											type="date"
+											v-model="filterCondition.periodTo"
+										></el-date-picker>
+									</el-col>
+								</el-row>
+							</el-col>
+						</el-row>
+					</el-col>
+				</el-row>
+
+				<el-row
+					:gutter="20"
+					:key="item.key"
+					align="middle"
+					class="search-item"
+					justify="space-between"
+					type="flex"
+					v-for="item in filterCondition.others.slice(2, 3)"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					>{{ item.label }}:</el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<div class="el-input el-input--mini el-input--suffix">
+							<div
+								@click="showFilterDraw(item)"
+								class="el-input__inner filter-row"
+							>
+								<span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
+								<span
+									class="placeholder"
+									v-else
+								>{{ item.label }}</span>
+							</div>
+						</div>
+					</el-col>
+				</el-row>
+
+				<!-- 凭证编号 过滤 -->
+				<el-row
+					:gutter="20"
+					align="middle"
+					class="search-item"
+					justify="space-between"
+					type="flex"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					>Voucher No.:</el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<el-row :gutter="20">
+							<el-col :span="12">
+								<el-row
+									:gutter="12"
+									align="middle"
+									justify="space-between"
+									type="flex"
+								>
+									<el-col :span="4">From</el-col>
+									<el-col :span="18">
+										<el-input
+											clearable
+											placeholder="Start No."
+											size="mini"
+											type="number"
+											v-model="filterCondition.voucherNoFrom"
+										></el-input>
+									</el-col>
+								</el-row>
+							</el-col>
+							<el-col :span="12">
+								<el-row
+									:gutter="12"
+									align="middle"
+									justify="space-between"
+									type="flex"
+								>
+									<el-col
+										:offset="1"
+										:span="3"
+									>To</el-col>
+									<el-col :span="18">
+										<el-input
+											clearable
+											placeholder="End No."
+											size="mini"
+											type="number"
+											v-model="filterCondition.voucherNoTo"
+										></el-input>
+									</el-col>
+								</el-row>
+							</el-col>
+						</el-row>
+					</el-col>
+				</el-row>
+
+				<el-row
+					:gutter="20"
+					:key="item.key"
+					align="middle"
+					class="search-item"
+					justify="space-between"
+					type="flex"
+					v-for="item in filterCondition.others.slice(3, 4)"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					>{{ item.label }}:</el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<div class="el-input el-input--mini el-input--suffix">
+							<div
+								@click="showFilterDraw(item)"
+								class="el-input__inner filter-row"
+							>
+								<span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
+								<span
+									class="placeholder"
+									v-else
+								>{{ item.label }}</span>
+							</div>
+						</div>
+					</el-col>
+				</el-row>
+
+				<!-- 金额大小 过滤 -->
+				<el-row
+					:gutter="20"
+					align="middle"
+					class="search-item"
+					justify="space-between"
+					type="flex"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					>Currency amount:</el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<el-row :gutter="20">
+							<el-col :span="12">
+								<el-row
+									:gutter="12"
+									align="middle"
+									justify="space-between"
+									type="flex"
+								>
+									<el-col :span="4">From</el-col>
+									<el-col :span="18">
+										<el-input
+											clearable
+											placeholder="Min amount"
+											size="mini"
+											type="number"
+											v-model="filterCondition.currencyAmountFrom"
+										></el-input>
+									</el-col>
+								</el-row>
+							</el-col>
+							<el-col :span="12">
+								<el-row
+									:gutter="12"
+									align="middle"
+									justify="space-between"
+									type="flex"
+								>
+									<el-col
+										:offset="1"
+										:span="3"
+									>To</el-col>
+									<el-col :span="18">
+										<el-input
+											clearable
+											placeholder="Max amount"
+											size="mini"
+											type="number"
+											v-model="filterCondition.currencyAmountTo"
+										></el-input>
+									</el-col>
+								</el-row>
+							</el-col>
+						</el-row>
+					</el-col>
+				</el-row>
+
+				<el-row
+					:gutter="20"
+					:key="item.key"
+					align="middle"
+					class="search-item"
+					justify="space-between"
+					type="flex"
+					v-for="item in filterCondition.others.slice(4)"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					>{{ item.label }}:</el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<div class="el-input el-input--mini el-input--suffix">
+							<div
+								@click="showFilterDraw(item)"
+								class="el-input__inner filter-row"
+							>
+								<span v-if="item.keywords.join(',')">{{ item.keywords.join(', ') }}</span>
+								<span
+									class="placeholder"
+									v-else
+								>{{ item.label }}</span>
+							</div>
+						</div>
+					</el-col>
+				</el-row>
+
+				<el-row
+					:gutter="20"
+					align="middle"
+					class="action"
+					justify="space-between"
+					type="flex"
+				>
+					<el-col
+						:span="6"
+						class="label"
+					></el-col>
+					<el-col
+						:span="18"
+						class="input"
+					>
+						<el-button
+							@click="resetFilter"
+							class="full-width"
+							type="primary"
+						>
+							<i class="el-icon-refresh"></i>
+							Reset
+						</el-button>
+					</el-col>
+				</el-row>
+			</div>
+		</el-drawer>
+
+		<el-drawer
+			:title="currentFilter.label"
+			:visible.sync="isCurrentFilterDrawShow"
+			size="400px"
+		>
+			<div class="drawer-filter">
+				<el-input
+					clearable
+					prefix-icon="el-icon-search"
+					size="small"
+					v-model="currentSearchValue"
+				></el-input>
+				<el-checkbox
+					:indeterminate="isIndeterminate"
+					@change="handleSelectAllOptions"
+					v-model="isSelectAll"
+				>Select All</el-checkbox>
+				<el-checkbox-group v-model="currentFilter.keywords">
+					<el-checkbox
+						:key="option"
+						:label="option"
+						@change="handleSelectOptions"
+						v-for="option in filterSeachOptions"
+					></el-checkbox>
+				</el-checkbox-group>
+				<el-row
+					:gutter="20"
+					class="confirm"
+					type="flex"
+				>
+					<el-col>
+						<el-button
+							@click="confirmFilter"
+							type="primary"
+						>OK</el-button>
+					</el-col>
+					<el-col>
+						<el-button @click="clearFilter">Clear</el-button>
+					</el-col>
+				</el-row>
+			</div>
+		</el-drawer>
+
+		<el-dialog
+			:visible.sync="isAllVouchersShow"
+			title="Journal Entry"
+			width="1200px"
+		>
+			<el-row
+				align="middle"
+				class="journal-header"
+				justify="space-betweeen"
+				type="flex"
+			>
+				<el-col>
+					Date
+					<span>{{ allVouchers | formatDate }}</span>
+				</el-col>
+				<el-col class="right">
+					Voucher No.
+					<span>{{ allVouchers[0] && allVouchers[0].voucher_no }}</span>
+				</el-col>
+			</el-row>
+			<el-table
+				:data="allVouchers"
+				:row-class-name="tableRowClassName"
+				@row-click="showAccountingItems"
+				height="600px"
+				size="mini"
+			>
+				<el-table-column
+					:key="item.key"
+					:label="item.value"
+					:prop="item.key"
+					:width="item.width"
+					align="center"
+					header-align="center"
+					v-for="item in journalEntryKey"
+				></el-table-column>
+			</el-table>
+		</el-dialog>
+
+		<el-dialog
+			:visible.sync="isAccountingItemsShow"
+			title="Accounting items"
+			width="400px"
+		>
+			<el-row
+				:key="item.key"
+				class="accounting-items"
+				v-for="item in accountingItemsKey"
+			>
+				<el-row class="header">{{ item.value + ':' }}</el-row>
+				<el-row class="content">{{ currentVoucher[item.key] }}</el-row>
+			</el-row>
+		</el-dialog>
+	</div>
 </template>
 
 <script>
@@ -372,10 +597,23 @@ import SubHeader from '@/components/SubHeader'
 import {
 	accountingEntriesKey,
 	journalEntryKey,
-	accountingItemsKey
+	accountingItemsKey,
 } from '@/constant/accountingEntriesKey'
 import api from '@/api'
 import windowResizeMixin from '@/mixins/windowResizeMixin'
+
+function transformDate(str, type) {
+	let date = new Date(str)
+	let y = date.getFullYear()
+	let m = date.getMonth() + 1
+	m = m < 10 ? '0' + m : m
+	let d = date.getDate()
+	d = d < 10 ? '0' + d : d
+	if (type === 'zh') {
+		return `${y}-${m}-${d}`
+	}
+	return `${d}/${m}/${y}`
+}
 
 export default {
 	mixins: [windowResizeMixin],
@@ -413,63 +651,63 @@ export default {
 						key: 'supplier',
 						label: 'Vendors',
 						keywords: [],
-						allOptions: []
+						allOptions: [],
 					},
 					{
 						key: 'customer',
 						label: 'Customers',
 						keywords: [],
-						allOptions: []
+						allOptions: [],
 					},
 					{
 						key: 'explanation',
 						label: 'Explanation',
 						keywords: [],
-						allOptions: []
+						allOptions: [],
 					},
 					{
 						key: 'currentcy',
 						label: 'Currentcy',
 						keywords: [],
-						allOptions: []
+						allOptions: [],
 					},
 					{
 						key: 'department',
 						label: 'Department',
 						keywords: [],
-						allOptions: []
+						allOptions: [],
 					},
 					{
 						key: 'employee',
 						label: 'Employee',
 						keywords: [],
-						allOptions: []
+						allOptions: [],
 					},
 					{
 						key: 'otherThirdParty',
 						label: 'Other third party',
 						keywords: [],
-						allOptions: []
+						allOptions: [],
 					},
 					{
 						key: 'project',
 						label: 'Project',
 						keywords: [],
-						allOptions: []
+						allOptions: [],
 					},
 					{
 						key: 'invoice_no',
 						label: 'Invoice No.',
 						keywords: [],
-						allOptions: []
+						allOptions: [],
 					},
 					{
 						key: 'iventory_item',
 						label: 'Iventory item',
 						keywords: [],
-						allOptions: []
-					}
-				]
+						allOptions: [],
+					},
+				],
 			},
 			// 是否弹出选择窗
 			isCurrentFilterDrawShow: false,
@@ -481,7 +719,7 @@ export default {
 			isSelectAll: false,
 			// 当前选择窗中的选项
 			currentFilter: {
-				allOptions: []
+				allOptions: [],
 			},
 
 			// account 列表
@@ -497,11 +735,11 @@ export default {
 			currentVoucher: {},
 
 			// 是否正在导出数据到excel
-			isExportingToExcel: false
+			isExportingToExcel: false,
 		}
 	},
 	components: {
-		SubHeader
+		SubHeader,
 	},
 	filters: {
 		formatDate(vouchers) {
@@ -509,14 +747,8 @@ export default {
 				return ''
 			}
 
-			let date = new Date(vouchers[0].date)
-			let y = date.getFullYear()
-			let m = date.getMonth() + 1
-			m = m < 10 ? '0' + m : m
-			let d = date.getDate()
-			d = d < 10 ? '0' + d : d
-			return `${d}/${m}/${y}`
-		}
+			return transformDate(vouchers[0].date)
+		},
 	},
 	computed: {
 		filterEntriesData() {
@@ -529,13 +761,13 @@ export default {
 				voucherNoTo,
 				currencyAmountFrom,
 				currencyAmountTo,
-				others
+				others,
 			} = this.filterCondition
 			// accounts 过滤逻辑
 			accountsFrom = accountsFrom === '' ? 0 : accountsFrom
 			accountsTo = accountsTo === '' ? this.accountList.length - 1 : accountsTo
 			if (accountsFrom > accountsTo) {
-				[accountsFrom, accountsTo] = [accountsTo, accountsFrom]
+				;[accountsFrom, accountsTo] = [accountsTo, accountsFrom]
 			}
 
 			let accountsRange = this.accountList.slice(accountsFrom, accountsTo + 1)
@@ -546,14 +778,14 @@ export default {
 			periodTo = periodTo === '' ? Infinity : new Date(periodTo).getTime()
 
 			if (periodFrom > periodTo) {
-				[periodFrom, periodTo] = [periodTo, periodFrom]
+				;[periodFrom, periodTo] = [periodTo, periodFrom]
 			}
 
 			// voucher no 过滤逻辑
 			voucherNoFrom = voucherNoFrom === '' ? -Infinity : voucherNoFrom
 			voucherNoTo = voucherNoTo === '' ? Infinity : voucherNoTo
 			if (voucherNoFrom > voucherNoTo) {
-				[voucherNoFrom, voucherNoTo] = [voucherNoTo, voucherNoFrom]
+				;[voucherNoFrom, voucherNoTo] = [voucherNoTo, voucherNoFrom]
 			}
 
 			// currency amount 过滤逻辑
@@ -561,15 +793,15 @@ export default {
 				currencyAmountFrom === '' ? -Infinity : currencyAmountFrom
 			currencyAmountTo = currencyAmountTo === '' ? Infinity : currencyAmountTo
 			if (currencyAmountFrom > currencyAmountTo) {
-				[currencyAmountFrom, currencyAmountTo] = [
+				;[currencyAmountFrom, currencyAmountTo] = [
 					currencyAmountTo,
-					currencyAmountFrom
+					currencyAmountFrom,
 				]
 			}
 
 			// 过滤出需要显示的内容
-			let entriesData = this.accountingEntriesData.filter(data => {
-				let isInAccounting = accountsRange.some(account => {
+			let entriesData = this.accountingEntriesData.filter((data) => {
+				let isInAccounting = accountsRange.some((account) => {
 					return account.no.includes(data.account_no)
 					// && account.name.includes(data.account_description)
 				})
@@ -577,14 +809,15 @@ export default {
 				let voucherDate = new Date(data.date).getTime()
 				let isInPeriod = voucherDate >= periodFrom && voucherDate <= periodTo
 
+				let voucherNo = data.voucher_no.replace(/\D/g, '')
 				let isInVoucherNo =
-					data.voucher_no >= voucherNoFrom && data.voucher_no <= voucherNoTo
+					voucherNo >= voucherNoFrom && voucherNo <= voucherNoTo
 
 				let isInCurrencyAmount =
 					data.currency_amount >= currencyAmountFrom &&
 					data.currency_amount <= currencyAmountTo
 
-				let isInFilter = others.every(item => {
+				let isInFilter = others.every((item) => {
 					if (item.keywords && item.keywords.length > 0) {
 						// 数据在关键词中才返回true
 						return item.keywords.includes(data[item.key])
@@ -609,10 +842,10 @@ export default {
 			})
 
 			// 重新设定筛选项
-			others.map(filter => {
+			others.map((filter) => {
 				// 值是否存在 { 值：false }
 				let existObj = {}
-				entriesData.forEach(data => {
+				entriesData.forEach((data) => {
 					let value = data[filter.key]
 					if (value || value === 0) {
 						existObj[value] = true
@@ -625,13 +858,13 @@ export default {
 			return entriesData
 		},
 		filterSeachOptions() {
-			return this.currentFilter.allOptions.filter(option => {
+			return this.currentFilter.allOptions.filter((option) => {
 				return option.includes(this.currentSearchValue)
 			})
 		},
 		currentCompany() {
 			return this.$store.getters.currentCompany
-		}
+		},
 	},
 	created() {
 		this.getEntries()
@@ -645,13 +878,13 @@ export default {
 			return 'cursor'
 		},
 		tableRowClick(row) {
-			this.allVouchers = this.accountingEntriesData.filter(item => {
+			this.allVouchers = this.accountingEntriesData.filter((item) => {
 				return row.voucher_no === item.voucher_no && row.date === item.date
 			})
 			this.isAllVouchersShow = true
 		},
 		showAccountingItems(row) {
-			let isAccountingItemsExisted = accountingItemsKey.some(item => {
+			let isAccountingItemsExisted = accountingItemsKey.some((item) => {
 				return row[item.key] || row[item.key] === 0
 			})
 			if (!isAccountingItemsExisted) {
@@ -666,8 +899,12 @@ export default {
 			this.isGettingEntries = true
 			const res = await api.getEntries(this.currentCompany.id)
 			this.isGettingEntries = false
+
 			if (res.data.error_code === 0) {
-				this.accountingEntriesData = res.data.data
+				this.accountingEntriesData = res.data.data.map((item) => {
+					item.date = transformDate(item.date, 'zh')
+					return item
+				})
 			}
 			if (res.data.error_code === 5000) {
 				this.isMatchedDone = false
@@ -706,7 +943,7 @@ export default {
 		},
 		confirmFilter() {
 			// 找到对应的筛选条件进行替换
-			const index = this.filterCondition.others.findIndex(item => {
+			const index = this.filterCondition.others.findIndex((item) => {
 				return item.key === this.currentFilter.key
 			})
 
@@ -716,7 +953,7 @@ export default {
 			this.isCurrentFilterDrawShow = false
 		},
 		clearFilter() {
-			const index = this.filterCondition.others.findIndex(item => {
+			const index = this.filterCondition.others.findIndex((item) => {
 				return item.key === this.currentFilter.key
 			})
 			this.currentFilter.keywords = []
@@ -734,7 +971,7 @@ export default {
 			this.filterCondition.voucherNoTo = ''
 			this.filterCondition.currencyAmountFrom = ''
 			this.filterCondition.currencyAmountTo = ''
-			this.filterCondition.others = this.filterCondition.others.map(item => {
+			this.filterCondition.others = this.filterCondition.others.map((item) => {
 				item.keywords = []
 				return item
 			})
@@ -745,24 +982,24 @@ export default {
 				return
 			}
 			this.isExportingToExcel = true
-			import('@/tools/Export2Excel').then(excel => {
-				const tHeader = accountingEntriesKey.map(item => {
+			import('@/tools/Export2Excel').then((excel) => {
+				const tHeader = accountingEntriesKey.map((item) => {
 					return item.value
 				})
-				const data = this.filterEntriesData.map(row => {
-					return accountingEntriesKey.map(item => {
+				const data = this.filterEntriesData.map((row) => {
+					return accountingEntriesKey.map((item) => {
 						return row[item.key]
 					})
 				})
 				excel.export_json_to_excel({
 					header: tHeader,
 					data,
-					filename: this.filename || 'Accounting entries'
+					filename: this.filename || 'Accounting entries',
 				})
 				this.isExportingToExcel = false
 			})
-		}
-	}
+		},
+	},
 }
 </script>
 
