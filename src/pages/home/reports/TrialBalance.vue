@@ -49,18 +49,18 @@
 					style="width: 100%"
 				>
 					<el-table-column
-						label="Cumul période"
+						:label="isFR ? 'Cumul période' : 'Period'"
 						header-align="center"
 					>
 						<el-table-column
-							label="Débiteur"
+							:label="isFR ? 'Débiteur' : 'Debit'"
 							prop="total_debit"
 							header-align="center"
 							align="right"
 						>
 						</el-table-column>
 						<el-table-column
-							label="Créditeur"
+							:label="isFR ? 'Créditeur' : 'Credit'"
 							prop="total_credit"
 							header-align="center"
 							align="right"
@@ -69,13 +69,13 @@
 					</el-table-column>
 
 					<el-table-column
-						label="N° compte"
+						:label="isFR ? 'N° compte' : 'Account No.'"
 						prop="account_no"
 						header-align="center"
 					>
 					</el-table-column>
 					<el-table-column
-						label="Intitulé"
+						:label="isFR ? 'Intitulé' : 'Account Description'"
 						prop="account_description"
 						header-align="center"
 					>
@@ -86,14 +86,14 @@
 						header-align="center"
 					>
 						<el-table-column
-							label="Débiteur"
+							:label="isFR ? 'Débiteur' : 'Debit'"
 							prop="debit_n"
 							header-align="center"
 							align="right"
 						>
 						</el-table-column>
 						<el-table-column
-							label="Créditeur"
+							:label="isFR ? 'Créditeur' : 'Credit'"
 							prop="credit_n"
 							header-align="center"
 							align="right"
@@ -105,14 +105,14 @@
 						header-align="center"
 					>
 						<el-table-column
-							label="Débiteur"
+							:label="isFR ? 'Débiteur' : 'Debit'"
 							prop="debit_n_1"
 							header-align="center"
 							align="right"
 						>
 						</el-table-column>
 						<el-table-column
-							label="Créditeur"
+							:label="isFR ? 'Créditeur' : 'Credit'"
 							prop="credit_n_1"
 							header-align="center"
 							align="right"
@@ -130,6 +130,7 @@ import SubHeader from '@/components/SubHeader'
 import api from '@/api'
 import { GL_SINGLE, GL_MULTIPLE } from '@/constant/generalLedgerKey'
 import windowResizeMixin from '@/mixins/windowResizeMixin'
+import { FR } from '@/constant/accountType'
 
 export default {
 	mixins: [windowResizeMixin],
@@ -145,6 +146,9 @@ export default {
 		}
 	},
 	computed: {
+		isFR() {
+			return this.$store.getters.currentCompany.current_region === FR
+		},
 		currentCompany() {
 			return this.$store.getters.currentCompany
 		}

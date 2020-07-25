@@ -29,7 +29,7 @@
       <el-table :data="[]" border class="header" height="36" size="mini" style="width: 100%">
         <el-table-column
           :key="item.key"
-          :label="item.label"
+          :label="currentCompany.current_region === FR ? item.fr_label : item.label"
           :width="item.width"
           v-for="item in localeGeneralLedgerKey"
         ></el-table-column>
@@ -67,11 +67,13 @@ import {
 	localeGeneralLedgerKey
 } from '@/constant/generalLedgerKey'
 import windowResizeMixin from '@/mixins/windowResizeMixin'
+import { FR } from '@/constant/accountType'
 
 export default {
 	mixins: [windowResizeMixin],
 	data() {
 		return {
+			FR,
 			GL_SINGLE,
 			GL_MULTIPLE,
 			localeGeneralLedgerKey,

@@ -234,6 +234,7 @@
       class="new-account"
       title="Add account"
       width="540px"
+			:destroy-on-close="true"
     >
       <NewAccoundDailog @hideDialog="hideDialog($event)"></NewAccoundDailog>
     </el-dialog>
