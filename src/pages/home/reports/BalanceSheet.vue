@@ -272,6 +272,7 @@ export default {
       let passif = this.balanceSheetData.PASSIF
       if (passif) {
         // todo 对passif做处理
+        passif.splice(8, 0, {})
         passif.splice(11, 0, {})
       }
       let actif = this.balanceSheetData.ACTIF
