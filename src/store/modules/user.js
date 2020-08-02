@@ -26,7 +26,8 @@ const user = {
   actions: {
     GetUserInfo({ commit }) {
       return new Promise((resolve, reject) => {
-        api.getUserInfo()
+        api
+          .getUserInfo()
           .then((res) => {
             // 只有正确获取信息时才能改变用户状态
             if (res.data.error_code === 0) {
@@ -43,14 +44,15 @@ const user = {
       })
     },
     // 远程登出
-    RemoteLogout({commit, state}) {
+    RemoteLogout({ commit, state }) {
       /**
        * 请求远程登出
        * 1. 如果 token 失效，或者出现未知错误，本地登出
        * 2. 否则 远程登出
        */
       return new Promise((resolve, reject) => {
-        api.logout()
+        api
+          .logout()
           .then((res) => {
             if (res.data.error_code === 0) {
               commit(CHANGE_USER, {})

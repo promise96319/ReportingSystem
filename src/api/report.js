@@ -7,15 +7,17 @@ import URL from './config'
  * @param {String} startDate  起始日期：如 2020-07
  * @param {String} endDate    结束日期：如 2020-08
  * @param {String} type       取值类型为: ['General ledger', 'Trial balance', ’Profit and loss']
+ * @param {String} currency   Locale | Multiple
  */
-export const getGeneralLedger = (companyId, startDate, endDate, type) => {
+export const getGeneralLedger = (companyId, startDate, endDate, type, currency) => {
   return request({
     method: 'get',
     url: `${URL.getGeneralLedger}/${companyId}`,
     params: {
       start: startDate,
       end: endDate,
-      type
+      type,
+      currency
     }
   })
 }

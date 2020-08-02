@@ -21,7 +21,7 @@ export default [
       isSideBar: true
     }
   },
-  
+
   {
     path: '/accounts',
     name: 'AccountList',

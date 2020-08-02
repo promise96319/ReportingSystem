@@ -13,7 +13,7 @@ const store = new Vuex.Store({
   modules: {
     app,
     user,
-    company,
+    company
   },
   getters
 })

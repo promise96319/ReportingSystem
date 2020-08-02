@@ -1,28 +1,25 @@
 <template>
   <div class="cash-flow-statement">
     <SubHeader title="Balance Sheet">
-      <el-button 
-        size="medium"
-        icon="el-icon-s-data"
-        type="primary"
-				class="primary-icon"
+      <el-button
         @click="$router.go(-1)"
-        >Reports</el-button>
+        class="primary-icon"
+        icon="el-icon-s-data"
+        size="medium"
+        type="primary"
+      >Reports</el-button>
     </SubHeader>
-    <div class="main">
-      
-    </div>
+    <div class="main"></div>
+
   </div>
 </template>
 
-<script>
-export default {
 
-}
+<script>
+export default {}
 </script>
 
 <style lang="scss" scoped>
 .cash-flow-statement {
-
 }
 </style>

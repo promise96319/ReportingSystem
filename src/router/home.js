@@ -20,26 +20,26 @@ export default [
   {
     path: '/report/balance-sheet',
     name: 'BalanceSheet',
-    component: BalanceSheet,
+    component: BalanceSheet
   },
   {
     path: '/report/profit-and-loss',
     name: 'ProfitAndLoss',
-    component: ProfitAndLoss,
+    component: ProfitAndLoss
   },
   {
     path: '/report/cash-flow-statement',
     name: 'CashFlowStatement',
-    component: CashFlowStatement,
+    component: CashFlowStatement
   },
   {
     path: '/report/trial-balance',
     name: 'TrialBalance',
-    component: TrialBalance,
+    component: TrialBalance
   },
   {
     path: '/report/general-ledger',
     name: 'GeneralLedger',
-    component: GeneralLedger,
-  },
+    component: GeneralLedger
+  }
 ]

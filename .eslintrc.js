@@ -1,17 +1,21 @@
 module.exports = {
-  'env': {
-    'browser': true,
-    'es2020': true
+  root: true,
+  env: {
+    node: true,
   },
-  'extends': [
+  extends: [
+    'plugin:vue/recommended',
     'eslint:recommended',
-    'plugin:vue/essential'
+    'prettier/vue',
+    'plugin:prettier/recommended',
   ],
-  'parserOptions': {
-    'ecmaVersion': 11,
-    'sourceType': 'module'
+  parserOptions: {
+    parser: 'babel-eslint',
   },
-  'plugins': [
-    'vue'
-  ]
+  plugins: ['prettier'],
+  rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'vue/component-name-in-template-casing': ['error', 'PascalCase'],
+  },
 }

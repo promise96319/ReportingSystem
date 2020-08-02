@@ -11,7 +11,7 @@ const getCompanyInfo = async (callback) => {
   const currentCompany = store.getters.currentCompany
 
   // 如果当前公司id存在，则不进行处理
-  if (currentCompany.id || currentCompany.id === 0) { 
+  if (currentCompany.id || currentCompany.id === 0) {
     callback(true)
     return
   }
@@ -21,7 +21,7 @@ const getCompanyInfo = async (callback) => {
   if (res.data.error_code === 0) {
     const { companies } = res.data.data
     store.commit(SET_COMPANY_LIST, companies)
-    if (companies.length === 0) { 
+    if (companies.length === 0) {
       console.log('异常错误：该用户没有绑定任何公司！')
       callback(false)
       return
@@ -31,12 +31,17 @@ const getCompanyInfo = async (callback) => {
       store.commit(SET_CURRENT_COMPANY, companies[0])
       callback(true)
       return
-    } 
-    
+    }
+
     // 如果本地有设置公司ID的话，则请求该ID，否则，请求第一个公司信息
     const companyID = localStorage.getItem(CURRENT_COMPANY_ID)
-    let currentCompany = companies.find((item) => { return item.id == companyID })
-    store.commit(SET_CURRENT_COMPANY, currentCompany ? currentCompany : companies[0])
+    let currentCompany = companies.find((item) => {
+      return item.id == companyID
+    })
+    store.commit(
+      SET_CURRENT_COMPANY,
+      currentCompany ? currentCompany : companies[0]
+    )
     callback(true)
   }
   callback(false)
@@ -79,7 +84,8 @@ router.beforeEach((to, from, next) => {
     return
   }
 
-  store.dispatch('GetUserInfo')
+  store
+    .dispatch('GetUserInfo')
     .then(() => {
       // 获取用户信息成功
       getCompanyInfo((isEnded) => {
@@ -91,4 +97,3 @@ router.beforeEach((to, from, next) => {
       next({ name: 'Login' })
     })
 })
-

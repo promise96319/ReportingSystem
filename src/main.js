@@ -37,7 +37,7 @@ import {
   Loading,
   Checkbox,
   CheckboxGroup,
-  Popover,
+  Popover
 } from 'element-ui'
 
 import lang from 'element-ui/lib/locale/lang/en'
@@ -46,8 +46,7 @@ locale.use(lang)
 Vue.component(DatePicker.name, DatePicker)
 Vue.component(CollapseTransition.name, CollapseTransition)
 
-Vue
-  .use(Button)
+Vue.use(Button)
   .use(Row)
   .use(Col)
   .use(Form)
