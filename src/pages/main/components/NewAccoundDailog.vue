@@ -1,7 +1,12 @@
 <template>
   <el-form label-position="left" label-width="130px">
     <el-form-item label="Type of account:">
-      <el-select v-model="accountType" clearable @change="changeAccountType">
+      <el-select
+        v-model="accountType"
+        clearable
+        filterable
+        @change="changeAccountType"
+      >
         <el-option
           v-for="(item, index) in accountTypesArr"
           :key="item + index"
@@ -18,6 +23,7 @@
             v-model="currentSelectedAccount"
             value-key="no"
             clearable
+            filterable
             @change="setDefaultTypeName"
           >
             <el-option

@@ -78,7 +78,10 @@
             prop="account_description"
           ></el-table-column>
 
-          <el-table-column header-align="center" label="Solde N">
+          <el-table-column
+            header-align="center"
+            :label="isFR ? 'Solde N' : 'Balance N'"
+          >
             <el-table-column
               :label="isFR ? 'Débiteur' : 'Debit'"
               align="right"
@@ -94,7 +97,10 @@
               width="120px"
             ></el-table-column>
           </el-table-column>
-          <el-table-column header-align="center" label="Solde N-1">
+          <el-table-column
+            header-align="center"
+            :label="isFR ? 'Solde N-1' : 'Balance N-1'"
+          >
             <el-table-column
               :label="isFR ? 'Débiteur' : 'Debit'"
               align="right"
@@ -170,11 +176,7 @@ export default {
       )
       this.isGettingTrialBalanceData = false
       if (res.data.error_code === 0) {
-        this.trialBalanceData = res.data.data.concat(
-          res.data.data,
-          res.data.data,
-          res.data.data
-        )
+        this.trialBalanceData = res.data.data
       }
     }
   }

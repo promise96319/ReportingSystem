@@ -45,7 +45,7 @@ export const localeGeneralLedgerKey = [
   },
   {
     key: 'balance',
-    label: 'Solde',
+    label: 'Balance',
     fr_label: 'Solde',
     width: '160px'
   }
