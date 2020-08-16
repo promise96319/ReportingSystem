@@ -475,6 +475,8 @@ export default {
       accountingItemsKey,
 
       filterCondition: {
+        accountsFrom: 0,
+        accountsTo: Infinity,
         date: [],
         devise: GL_MULTIPLE,
         analyticalItems: [],
@@ -494,6 +496,26 @@ export default {
     },
     formatTrialBalance() {
       let filterData = this.trialBalanceData
+      if (
+        this.filterCondition.accountRange &&
+        this.filterCondition.accountRange.length > 0
+      ) {
+        filterData = filterData.filter((item) => {
+          return this.filterCondition.accountRange.includes(item.account_no)
+        })
+      }
+
+      if (
+        this.filterCondition.analyticalItems &&
+        this.filterCondition.analyticalItems.length > 0
+      ) {
+        filterData = filterData.filter((item) => {
+          return this.filterCondition.analyticalItems.some((key) => {
+            return item[key]
+          })
+        })
+      }
+
       if (this.filterCondition.devise === GL_MULTIPLE) {
         // 整理数据
         let newData = []
@@ -579,6 +601,8 @@ export default {
         let { accountsFrom, accountsTo } = this.$route.query
         accountsFrom = accountsFrom || 0
         accountsTo = accountsTo || Infinity
+        this.filterCondition.accountsFrom = accountsFrom
+        this.filterCondition.accountsTo = accountsTo
         const max = Math.max(accountsFrom, accountsTo)
         const min = Math.min(accountsFrom, accountsTo)
         const list = this.accountList.filter((item, index) => {
@@ -604,7 +628,18 @@ export default {
       }
     },
     goToGenralLedger(row) {
-      console.log(row)
+      this.$router.push({
+        name: 'GeneralLedger',
+        query: {
+          accountsFrom: this.filterCondition.accountsFrom,
+          accountsTo: this.filterCondition.accountsTo,
+          analyticalItems: this.filterCondition.analyticalItems.join(',')
+        },
+        params: {
+          monthRange: this.filterCondition.date,
+          devise: this.filterCondition.devise
+        }
+      })
     }
   }
 }
