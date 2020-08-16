@@ -41,7 +41,7 @@
         <div class="item3">Finacing activities</div>
         <div class="item4">Net Cash flow</div>
       </div>
-      <div class="module module4" @click="goToTrialBalance">
+      <div class="module module4" @click="showFilterDialog(moduleOptions[3])">
         <div class="tip">{{ moduleOptions[3] }}</div>
         <el-row :gutter="10" class="header">
           <el-col :span="12">
@@ -72,7 +72,7 @@
           </el-col>
         </el-row>
       </div>
-      <div class="module module5" @click="goToGeneralLedger">
+      <div class="module module5" @click="showFilterDialog(moduleOptions[4])">
         <div class="tip">{{ moduleOptions[4] }}</div>
         <div class="container">
           <div class="header">Account Receivable</div>
@@ -154,6 +154,150 @@
         <el-button @click="isPeriodDialogShow = false">Cancel</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog :visible.sync="isFilterDialogShow" center width="520px">
+      <el-row
+        :gutter="20"
+        align="middle"
+        class="search-item"
+        justify="space-between"
+        type="flex"
+      >
+        <el-col :span="6" class="label">Accounts:</el-col>
+        <el-col :span="18" class="input">
+          <el-row
+            :gutter="12"
+            align="middle"
+            justify="space-between"
+            type="flex"
+          >
+            <el-col :span="4" class="from">From</el-col>
+            <el-col :span="20">
+              <el-select
+                v-model="filterCondition.accountsFrom"
+                clearable
+                placeholder="Accounts"
+                size="mini"
+                value-key="no"
+              >
+                <el-option
+                  v-for="(item, index) in accountList"
+                  :key="item.no + item.name + index"
+                  :label="item.no + '  ' + item.name"
+                  :value="index"
+                ></el-option>
+              </el-select>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+      <!-- accounts 过滤 to -->
+      <el-row
+        :gutter="20"
+        align="middle"
+        class="search-item"
+        justify="space-between"
+        type="flex"
+      >
+        <el-col :span="6" class="label"></el-col>
+        <el-col :span="18" class="input">
+          <el-row
+            :gutter="12"
+            align="middle"
+            justify="space-between"
+            type="flex"
+          >
+            <el-col :span="4" class="from">To</el-col>
+            <el-col :span="20">
+              <el-select
+                v-model="filterCondition.accountsTo"
+                clearable
+                placeholder="Accounts"
+                size="mini"
+                value-key="no"
+              >
+                <el-option
+                  v-for="(item, index) in accountList"
+                  :key="item.no + item.name"
+                  :label="item.no + '  ' + item.name"
+                  :value="index"
+                ></el-option>
+              </el-select>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+
+      <el-row
+        :gutter="20"
+        align="middle"
+        type="flex"
+        class="search-item"
+        justify="space-between"
+      >
+        <el-col :span="6" class="label">Period:</el-col>
+        <el-col :span="18">
+          <el-date-picker
+            v-model="filterCondition.monthRange"
+            end-placeholder="End"
+            range-separator="-"
+            size="mini"
+            start-placeholder="Start"
+            type="monthrange"
+            :clearable="false"
+          >
+            <!-- @change="getGeneralLedger" -->
+          </el-date-picker>
+        </el-col>
+      </el-row>
+
+      <el-row
+        :gutter="20"
+        align="middle"
+        type="flex"
+        class="search-item"
+        justify="space-between"
+      >
+        <el-col :span="6" class="label">Currency:</el-col>
+        <el-col :span="18">
+          <el-select v-model="filterCondition.devise" size="mini">
+            <el-option
+              :key="GL_SINGLE"
+              :label="GL_SINGLE"
+              :value="GL_SINGLE"
+            ></el-option>
+            <el-option
+              :key="GL_MULTIPLE"
+              :label="GL_MULTIPLE"
+              :value="GL_MULTIPLE"
+            ></el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+
+      <el-row
+        :gutter="20"
+        type="flex"
+        class="search-item"
+        justify="space-between"
+      >
+        <el-col :span="6" class="label">Analytical item:</el-col>
+        <el-col :span="18">
+          <el-checkbox-group v-model="filterCondition.analyticalItems">
+            <el-checkbox
+              v-for="item in accountingItemsKey"
+              :key="item.key"
+              :label="item.key"
+            ></el-checkbox>
+          </el-checkbox-group>
+        </el-col>
+      </el-row>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="goToReport">Confirm</el-button>
+        <el-button @click="isPeriodDialogShow = false">Cancel</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -161,6 +305,9 @@
 import SubHeader from '@/components/SubHeader'
 import StepDialog from './components/StepDialog'
 import { YEAR_OPTIONS, MONTH_OPTIONS } from '@/constant/dateOptions'
+import { GL_SINGLE, GL_MULTIPLE } from '@/constant/generalLedgerKey'
+import { accountingItemsKey } from '@/constant/accountingEntriesKey'
+import api from '@/api'
 export default {
   components: {
     SubHeader,
@@ -170,9 +317,13 @@ export default {
     return {
       YEAR_OPTIONS,
       MONTH_OPTIONS,
+      GL_SINGLE,
+      GL_MULTIPLE,
+      accountingItemsKey,
 
       isStepDialogShow: false,
       isPeriodDialogShow: false,
+      isFilterDialogShow: false,
       // 模块名称
       moduleOptions: [
         'Balance sheet',
@@ -224,8 +375,25 @@ export default {
       // 当前选择模块 年
       currentYear: '',
       // 当前选择模块 月
-      currentMonth: {}
+      currentMonth: {},
+
+      accountList: [],
+      filterCondition: {
+        accountsFrom: '',
+        accountsTo: '',
+        monthRange: [],
+        devise: GL_SINGLE,
+        analyticalItems: []
+      }
     }
+  },
+  computed: {
+    currentCompany() {
+      return this.$store.getters.currentCompany
+    }
+  },
+  created() {
+    this.getAccountList()
   },
   mounted() {
     const today = new Date()
@@ -233,9 +401,20 @@ export default {
     this.currentMonth = this.MONTH_OPTIONS[11 - today.getMonth()]
   },
   methods: {
+    // 获取Account列表
+    async getAccountList() {
+      const res = await api.getAccountList(this.currentCompany.id)
+      if (res.data.error_code === 0) {
+        this.accountList = res.data.data
+      }
+    },
     showPeriodDialog(title) {
       this.currentTitle = title
       this.isPeriodDialogShow = true
+    },
+    showFilterDialog(title) {
+      this.currentTitle = title
+      this.isFilterDialogShow = true
     },
     selectYear(e) {
       this.currentYear = e
@@ -262,16 +441,38 @@ export default {
           })
           break
         case this.moduleOptions[2]:
-          return
+          break
         // this.$router.push({ name: 'ProfitAndLoss' })
         // break
+        case this.moduleOptions[3]:
+          this.$router.push({
+            name: 'TrialBalance',
+            query: {
+              accountsFrom: this.filterCondition.accountsFrom,
+              accountsTo: this.filterCondition.accountsTo,
+              analyticalItems: this.filterCondition.analyticalItems.join(',')
+            },
+            params: {
+              monthRange: this.filterCondition.monthRange,
+              devise: this.filterCondition.devise
+            }
+          })
+          break
+        case this.moduleOptions[4]:
+          this.$router.push({
+            name: 'GeneralLedger',
+            query: {
+              accountsFrom: this.filterCondition.accountsFrom,
+              accountsTo: this.filterCondition.accountsTo,
+              analyticalItems: this.filterCondition.analyticalItems.join(',')
+            },
+            params: {
+              monthRange: this.filterCondition.monthRange,
+              devise: this.filterCondition.devise
+            }
+          })
+          break
       }
-    },
-    goToGeneralLedger() {
-      this.$router.push({ name: 'GeneralLedger' })
-    },
-    goToTrialBalance() {
-      this.$router.push({ name: 'TrialBalance' })
     }
   }
 }
@@ -479,6 +680,19 @@ $gap: 10px;
         }
       }
     }
+  }
+}
+
+.search-item {
+  margin-bottom: 16px;
+  .label {
+    font-weight: 600;
+  }
+  .el-select {
+    width: 100%;
+  }
+  .el-date-editor {
+    width: 100%;
   }
 }
 </style>

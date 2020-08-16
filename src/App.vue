@@ -37,6 +37,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #303133;
   background-color: #feffff;
-  min-width: 1200px;
+  min-width: 1440px;
 }
 </style>

@@ -11,7 +11,7 @@ const request = axios.create({
 
 // request interceptor
 request.interceptors.request.use(
-  config => {
+  (config) => {
     // let token = tokenManager.getToken()
     // token = token ? token : ''
     // console.log('token', token)
@@ -19,7 +19,7 @@ request.interceptors.request.use(
     // config.headers['Authorization'] = `Bearer ${token}`
     return config
   },
-  error => {
+  (error) => {
     console.log('err', error)
     Promise.reject(error)
   }
@@ -31,7 +31,7 @@ request.interceptors.response.use(
    * 下面的注释为通过在response里，自定义code来标示请求状态
    * 当code返回 0003 则说明权限有问题，登出并返回到登录页
    */
-  response => {
+  (response) => {
     const res = response.data
 
     // 说明获取不到正确信息
@@ -41,13 +41,13 @@ request.interceptors.response.use(
       Message({
         message: res.message,
         type: 'error',
-        duration: 5000,
+        duration: 5000
       })
     }
 
     return response
   },
-  error => {
+  (error) => {
     console.log('err' + error)
     Message({
       message: error.message,

@@ -12,8 +12,9 @@
           type="monthrange"
           :clearable="false"
           @change="getGeneralLedger"
-        ></el-date-picker
-        >Devise :
+        >
+        </el-date-picker>
+        Devise :
         <el-select v-model="filterCondition.devise" size="mini">
           <el-option
             :key="GL_SINGLE"
@@ -37,52 +38,127 @@
       >
     </SubHeader>
     <div class="main">
-      <el-table
-        :data="[]"
-        border
-        class="header"
-        height="36"
-        size="mini"
-        style="width: 100%;"
-      >
-        <el-table-column
-          v-for="item in localeGeneralLedgerKey"
-          :key="item.key"
-          :label="isFR ? item.fr_label : item.label"
-          :width="item.width"
-        ></el-table-column>
-      </el-table>
-      <div
-        v-loading="isGettingGeneralLedgerData"
-        :style="{ height: windowHeight - 216 + 'px' }"
-        class="content"
-      >
+      <div v-if="filterCondition.devise === GL_SINGLE" class="local">
         <el-table
-          v-for="(data, index) in formatSingleGenralLedger"
-          :key="index"
-          :data="data.entries"
-          :row-class-name="boldRowClass"
-          :show-header="false"
-          :span-method="arraySpanMethod"
+          :data="[]"
           border
+          class="header"
+          height="36"
           size="mini"
           style="width: 100%;"
         >
           <el-table-column
-            v-for="item in localeGeneralLedgerKey"
+            v-for="item in generalKey"
             :key="item.key"
+            :label="isFR ? item.fr_label : item.label"
             :width="item.width"
-          >
-            <template slot-scope="scope">
-              <template v-if="item.key === 'date'">
-                {{ scope.row[item.key] | filterDateInTable }}
-              </template>
-              <template v-else>
-                {{ scope.row[item.key] }}
-              </template>
-            </template>
-          </el-table-column>
+            header-align="center"
+          ></el-table-column>
         </el-table>
+        <div
+          v-loading="isGettingGeneralLedgerData"
+          :style="{ height: windowHeight - 216 + 'px' }"
+          class="content"
+        >
+          <el-table
+            v-for="(data, index) in formatGenralLedger"
+            :key="index"
+            :data="data.entries"
+            :row-class-name="boldRowClass"
+            :show-header="false"
+            :span-method="arraySpanMethod"
+            border
+            size="mini"
+            style="width: 100%;"
+          >
+            <el-table-column
+              v-for="item in generalKey"
+              :key="item.key"
+              :width="item.width"
+              :align="item.align"
+            >
+              <template slot-scope="scope">
+                <template v-if="item.key === 'date'">
+                  {{ scope.row[item.key] | filterDateInTable }}
+                </template>
+                <template v-else>
+                  {{ scope.row[item.key] }}
+                </template>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <div v-else class="mutiple">
+        <el-table
+          :data="[]"
+          border
+          class="header"
+          height="60"
+          size="mini"
+          style="width: 100%;"
+        >
+          <el-table-column
+            v-for="item in generalKey"
+            :key="item.key"
+            :label="isFR ? item.fr_label : item.label"
+            :width="item.width"
+            header-align="center"
+          ></el-table-column>
+        </el-table>
+        <div
+          v-loading="isGettingGeneralLedgerData"
+          :style="{ height: windowHeight - 216 + 'px' }"
+          class="content"
+        >
+          <el-table
+            v-for="(data, index) in formatGenralLedger"
+            :key="index"
+            :data="data.entries"
+            :row-class-name="boldRowClass"
+            :show-header="false"
+            :span-method="arraySpanMethod"
+            border
+            size="mini"
+            style="width: 100%;"
+          >
+            <el-table-column
+              v-for="item in generalKey"
+              :key="item.key"
+              :width="item.width"
+              :align="item.align"
+            >
+              <template slot-scope="scope">
+                <template v-if="item.key === 'date'">
+                  {{ scope.row[item.key] | filterDateInTable }}
+                </template>
+                <template
+                  v-else-if="
+                    item.key === 'balance_originale' ||
+                    item.key === 'balance_locale'
+                  "
+                >
+                  {{ scope.row.balance }}
+                </template>
+                <template
+                  v-else-if="
+                    item.key === 'debit_amount' || item.key === 'credit_amount'
+                  "
+                >
+                  <div v-if="scope.row.is_first || scope.row.is_last">
+                    {{ scope.row[item.key] }}
+                  </div>
+                  <div v-else class="link">
+                    {{ scope.row[item.key] }}
+                  </div>
+                </template>
+                <template v-else>
+                  {{ scope.row[item.key] }}
+                </template>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </div>
     </div>
   </div>
@@ -95,7 +171,8 @@ import {
   GENERAL_LEDGER,
   GL_SINGLE,
   GL_MULTIPLE,
-  localeGeneralLedgerKey
+  localeGeneralLedgerKey,
+  multipleGeneralLedgerKey
 } from '@/constant/generalLedgerKey'
 import windowResizeMixin from '@/mixins/windowResizeMixin'
 import { FR } from '@/constant/accountType'
@@ -118,14 +195,18 @@ export default {
       GL_SINGLE,
       GL_MULTIPLE,
       localeGeneralLedgerKey,
+      multipleGeneralLedgerKey,
 
       filterCondition: {
         date: [],
-        devise: GL_SINGLE
+        devise: GL_MULTIPLE,
+        analyticalItems: '',
+        accountRange: []
       },
 
-      localeGeneralLedgerData: [],
-      isGettingGeneralLedgerData: false
+      generalLedgerData: [],
+      isGettingGeneralLedgerData: false,
+      accountList: []
     }
   },
   computed: {
@@ -135,17 +216,22 @@ export default {
     isFR() {
       return this.currentCompany.current_region === FR
     },
+    generalKey() {
+      return this.filterCondition.devise === GL_SINGLE
+        ? localeGeneralLedgerKey
+        : multipleGeneralLedgerKey
+    },
     // 在第一行添加 no，balance，核算项目等
     // 在最后一行添加统计
-    formatSingleGenralLedger() {
-      return this.localeGeneralLedgerData.map((item) => {
+    formatGenralLedger() {
+      return this.generalLedgerData.map((item) => {
         item.entries = [
           {
             // invoice_no: item.account.no,
             // voucher_no: '',
             // 是否是第一列
             is_first: true,
-            invoice_no: item.account.no,
+            invoice_no: item.entries[0].account_no,
             voucher_no: item.account.name,
             balance: item.balance
           },
@@ -163,10 +249,42 @@ export default {
     }
   },
   created() {
-    this.filterCondition.date = [moment().add(-1, 'month'), moment()]
+    this.getAccountList()
+    const { query, params } = this.$route
+    if ([GL_SINGLE, GL_MULTIPLE].includes(params.devise)) {
+      this.filterCondition.devise = params.devise
+    }
+    if (params.monthRange && params.monthRange.length === 2) {
+      this.filterCondition.date = [
+        moment(params.monthRange[0]),
+        moment(params.monthRange[1])
+      ]
+    } else {
+      this.filterCondition.date = [moment().add(-12, 'month'), moment()]
+    }
+    this.filterCondition.analyticalItems = query.analyticalItems || ''
+
+    // 默认本月
     this.getGeneralLedger()
   },
   methods: {
+    // 获取Account列表
+    async getAccountList() {
+      const res = await api.getAccountList(this.currentCompany.id)
+      if (res.data.error_code === 0) {
+        this.accountList = res.data.data
+        let { accountsFrom, accountsTo } = this.$route.query
+        accountsFrom = accountsFrom || 0
+        accountsTo = accountsTo || Infinity
+        const max = Math.max(accountsFrom, accountsTo)
+        const min = Math.min(accountsFrom, accountsTo)
+        this.filterCondition.accountRange = this.accountList.filter(
+          (item, index) => {
+            return min <= index && index <= max
+          }
+        )
+      }
+    },
     async getGeneralLedger() {
       this.isGettingGeneralLedgerData = true
       const res = await api.getGeneralLedger(
@@ -174,11 +292,13 @@ export default {
         moment(this.filterCondition.date[0]).format('YYYY-MM'),
         moment(this.filterCondition.date[1]).format('YYYY-MM'),
         GENERAL_LEDGER,
-        GL_SINGLE.toLocaleLowerCase()
+        this.filterCondition.devise.toLocaleLowerCase()
       )
       this.isGettingGeneralLedgerData = false
       if (res.data.error_code === 0) {
-        this.localeGeneralLedgerData = res.data.data
+        this.generalLedgerData = res.data.data.filter((item) => {
+          return item && item.entries && item.entries.length > 0
+        })
       }
     },
     // 合并单元格
@@ -213,11 +333,16 @@ export default {
   }
   .main {
     padding: 30px;
-    /deep/ .header .el-table__header {
-      th {
+    /deep/ .header {
+      .el-table__header th {
         background-color: #ededed;
         color: #303133;
         font-weight: bold;
+        .cell {
+          height: 100%;
+          word-wrap: break-word;
+          word-break: normal;
+        }
       }
     }
     .content {
@@ -231,6 +356,12 @@ export default {
         }
         &:last-child {
           border-color: #ccc;
+        }
+        .link {
+          cursor: pointer;
+          &:hover {
+            color: #409eff;
+          }
         }
       }
     }

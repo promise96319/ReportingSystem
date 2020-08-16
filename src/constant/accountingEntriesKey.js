@@ -100,76 +100,76 @@ export const journalEntryKey = [
   {
     key: 'account_no',
     value: 'Account No.',
-    width: '120px',
+    width: '120px'
   },
   {
     key: 'account_description',
     value: 'Account name',
-    width: 'auto',
+    width: 'auto'
   },
   {
     key: 'explanation',
     value: 'Explanation',
-    width: '140px',
+    width: '140px'
   },
   {
     key: 'currency',
     value: 'Currency',
-    width: '100px',
+    width: '100px'
   },
   {
     key: 'currency_amount',
     value: 'Currency amount',
-    width: '140px',
+    width: '140px'
   },
   {
     key: 'exchange_rate',
     value: 'Exchange rate',
-    width: '120px',
+    width: '120px'
   },
   {
     key: 'debit_amount',
     value: 'Debit',
-    width: '100px',
+    width: '100px'
   },
   {
     key: 'credit_amount',
     value: 'Credit',
-    width: '100px',
-  },
+    width: '100px'
+  }
 ]
 
 export const accountingItemsKey = [
   {
     key: 'customer',
-    value: 'Customer',
+    value: 'Customer'
   },
   {
     key: 'supplier',
-    value: 'Supplier',
+    value: 'Supplier'
   },
   {
     key: 'other_third_party',
-    value: 'Other third party',
+    value: 'Other third party'
   },
   {
     key: 'employee',
-    value: 'Employee',
+    value: 'Employee'
   },
   {
     key: 'department',
-    value: 'Department',
+    value: 'Department'
   },
   {
     key: 'project',
-    value: 'Project',
+    value: 'Project'
   },
   {
     key: 'invioice_no',
-    value: 'Invoice No.',
+    value: 'Invoice No.'
   },
   {
     key: 'inventory_item',
-    value: 'Inventory item',
+    value: 'Inventory item'
   }
 ]

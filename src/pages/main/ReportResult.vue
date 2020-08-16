@@ -589,7 +589,7 @@ export default {
           },
           {
             key: 'currentcy',
-            label: 'Currentcy',
+            label: 'Currency',
             keywords: [],
             allOptions: []
           },
