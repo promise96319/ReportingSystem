@@ -37,10 +37,10 @@
       >
     </SubHeader>
     <div class="main">
-      <div class="content">
+      <div v-show="filterCondition.devise === GL_SINGLE" class="content">
         <el-table
           v-loading="isGettingTrialBalanceData"
-          :data="trialBalanceData"
+          :data="formatTrialBalance"
           :height="windowHeight - 180"
           border
           size="mini"
@@ -56,14 +56,32 @@
               header-align="center"
               prop="total_debit"
               width="120px"
-            ></el-table-column>
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="total_debit(row)"
+                >
+                  {{ row.local_debit_n_1 | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
             <el-table-column
               :label="isFR ? 'Créditeur' : 'Credit'"
               align="right"
               header-align="center"
               prop="total_credit"
               width="120px"
-            ></el-table-column>
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.total_credit | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
           </el-table-column>
 
           <el-table-column
@@ -88,14 +106,32 @@
               header-align="center"
               prop="debit_n"
               width="120px"
-            ></el-table-column>
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.debit_n | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
             <el-table-column
               :label="isFR ? 'Créditeur' : 'Credit'"
               align="right"
               header-align="center"
               prop="credit_n"
               width="120px"
-            ></el-table-column>
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.credit_n | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
           </el-table-column>
           <el-table-column
             header-align="center"
@@ -107,14 +143,295 @@
               header-align="center"
               prop="debit_n_1"
               width="120px"
-            ></el-table-column>
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.debit_n_1 | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
             <el-table-column
               :label="isFR ? 'Créditeur' : 'Credit'"
               align="right"
               header-align="center"
               prop="credit_n_1"
               width="120px"
-            ></el-table-column>
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.credit_n_1 | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
+          </el-table-column>
+        </el-table>
+      </div>
+      <div v-show="filterCondition.devise === GL_MULTIPLE" class="content">
+        <el-table
+          v-loading="isGettingTrialBalanceData"
+          :data="formatTrialBalance"
+          :height="windowHeight - 180"
+          border
+          size="mini"
+          style="width: 100%;"
+        >
+          <el-table-column
+            :label="isFR ? 'Cumul période devise originale' : 'Period'"
+            header-align="center"
+          >
+            <el-table-column
+              :label="isFR ? 'Débiteur' : 'Debit'"
+              align="right"
+              header-align="center"
+              prop="original_total_debit"
+              width="100px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="row.type === 'italic' ? 'italic' : ''"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.original_total_debit | fixedNum }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="isFR ? 'Créditeur' : 'Credit'"
+              align="right"
+              header-align="center"
+              prop="original_total_credit"
+              width="100px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.original_total_credit | fixedNum }}
+                </div>
+              </template>
+            </el-table-column>
+          </el-table-column>
+
+          <el-table-column
+            :label="isFR ? 'Cumul période devise locale' : 'Period'"
+            header-align="center"
+          >
+            <el-table-column
+              :label="isFR ? 'Débiteur' : 'Debit'"
+              align="right"
+              header-align="center"
+              prop="local_total_debit"
+              width="95px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.local_total_debit | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
+            <el-table-column
+              :label="isFR ? 'Créditeur' : 'Credit'"
+              align="right"
+              header-align="center"
+              prop="local_total_credit"
+              width="95px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.local_total_credit | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
+          </el-table-column>
+
+          <el-table-column
+            :label="isFR ? 'N° compte' : 'Account No.'"
+            header-align="center"
+            prop="account_no"
+            width="100px"
+          >
+            <template slot-scope="{ row }">
+              <div :class="row.type === 'italic' ? 'italic' : ''">
+                {{ row.account_no | fixedNum }}
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            :label="isFR ? 'Intitulé' : 'Account Description'"
+            header-align="center"
+            prop="account_description"
+          >
+            <template slot-scope="{ row }">
+              <div :class="row.type === 'italic' ? 'italic' : ''">
+                {{ row.account_description }}
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            header-align="center"
+            :label="isFR ? 'Solde N devise originale' : 'Balance N'"
+          >
+            <el-table-column
+              :label="isFR ? 'Débiteur' : 'Debit'"
+              align="right"
+              header-align="center"
+              prop="original_debit_n"
+              width="80px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.original_debit_n | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
+            <el-table-column
+              :label="isFR ? 'Créditeur' : 'Credit'"
+              align="right"
+              header-align="center"
+              prop="original_credit_n"
+              width="80px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.original_credit_n | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
+          </el-table-column>
+
+          <el-table-column
+            header-align="center"
+            :label="isFR ? 'Solde N devise locale' : 'Balance N'"
+          >
+            <el-table-column
+              :label="isFR ? 'Débiteur' : 'Debit'"
+              align="right"
+              header-align="center"
+              prop="local_debit_n"
+              width="80px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.local_debit_n | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
+            <el-table-column
+              :label="isFR ? 'Créditeur' : 'Credit'"
+              align="right"
+              header-align="center"
+              prop="local_credit_n"
+              width="80px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.local_credit_n | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
+          </el-table-column>
+
+          <el-table-column
+            header-align="center"
+            :label="isFR ? 'Solde N-1 devise originale' : 'Balance N-1'"
+          >
+            <el-table-column
+              :label="isFR ? 'Débiteur' : 'Debit'"
+              align="right"
+              header-align="center"
+              prop="original_debit_n_1"
+              width="90px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.original_debit_n_1 | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
+            <el-table-column
+              :label="isFR ? 'Créditeur' : 'Credit'"
+              align="right"
+              header-align="center"
+              prop="original_credit_n_1"
+              width="90px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.original_credit_n_1 | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
+          </el-table-column>
+
+          <el-table-column
+            header-align="center"
+            :label="isFR ? 'Solde N-1 devise locale' : 'Balance N-1'"
+          >
+            <el-table-column
+              :label="isFR ? 'Débiteur' : 'Debit'"
+              align="right"
+              header-align="center"
+              prop="local_debit_n_1"
+              width="90px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.local_debit_n_1 | fixedNum }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="isFR ? 'Créditeur' : 'Credit'"
+              align="right"
+              header-align="center"
+              prop="local_credit_n_1"
+              width="90px"
+            >
+              <template slot-scope="{ row }">
+                <div
+                  :class="[row.type === 'italic' ? 'italic' : '', 'link']"
+                  @click="goToGenralLedger(row)"
+                >
+                  {{ row.local_credit_n_1 | fixedNum }}
+                </div>
+              </template></el-table-column
+            >
           </el-table-column>
         </el-table>
       </div>
@@ -130,6 +447,7 @@ import {
   GL_SINGLE,
   GL_MULTIPLE
 } from '@/constant/generalLedgerKey'
+import { accountingItemsKey } from '@/constant/accountingEntriesKey'
 import windowResizeMixin from '@/mixins/windowResizeMixin'
 import { FR } from '@/constant/accountType'
 import moment from 'moment'
@@ -138,14 +456,29 @@ export default {
   components: {
     SubHeader
   },
+  filters: {
+    fixedNum(num) {
+      if (typeof num !== 'number') {
+        return num
+      }
+      if (!num) {
+        return num
+      }
+      return num.toFixed(2)
+    }
+  },
   mixins: [windowResizeMixin],
   data() {
     return {
       GL_SINGLE,
       GL_MULTIPLE,
+      accountingItemsKey,
+
       filterCondition: {
         date: [],
-        devise: GL_SINGLE
+        devise: GL_MULTIPLE,
+        analyticalItems: [],
+        accountRange: []
       },
       trialBalanceData: [],
 
@@ -158,13 +491,104 @@ export default {
     },
     currentCompany() {
       return this.$store.getters.currentCompany
+    },
+    formatTrialBalance() {
+      let filterData = this.trialBalanceData
+      if (this.filterCondition.devise === GL_MULTIPLE) {
+        // 整理数据
+        let newData = []
+        filterData.forEach((item) => {
+          item.local_total_credit = item.total_credit
+          item.local_total_debit = item.total_debit
+          item.local_debit_n = item.debit_n
+          item.local_debit_n_1 = item.debit_n_1
+          item.local_credit_n = item.credit_n
+          item.local_credit_n_1 = item.credit_n_1
+          newData.push(item)
+          let rmbItem = {
+            type: 'italic',
+            ...item,
+            account_no: '',
+            account_description: 'CNY',
+            original_total_debit: item.multiple_total.RMB.original.total_debit,
+            original_total_credit:
+              item.multiple_total.RMB.original.total_credit,
+            local_total_debit: item.multiple_total.RMB.local.total_debit,
+            local_total_credit: item.multiple_total.RMB.local.total_credit,
+            original_debit_n: item.multiple_balance.RMB.original_n.debit,
+            original_credit_n: item.multiple_balance.RMB.original_n.credit,
+            original_debit_n_1: item.multiple_balance.RMB.original_n_1.debit,
+            original_credit_n_1: item.multiple_balance.RMB.original_n_1.credit,
+            local_debit_n: item.multiple_balance.RMB.local_n.debit,
+            local_credit_n: item.multiple_balance.RMB.local_n.credit,
+            local_debit_n_1: item.multiple_balance.RMB.local_n_1.debit,
+            local_credit_n_1: item.multiple_balance.RMB.local_n_1.credit
+          }
+          newData.push(rmbItem)
+          let usdItem = {
+            type: 'italic',
+            ...item,
+            account_no: '',
+            account_description: 'USD',
+            original_total_debit: item.multiple_total.USD.original.total_debit,
+            original_total_credit:
+              item.multiple_total.USD.original.total_credit,
+            local_total_debit: item.multiple_total.USD.local.total_debit,
+            local_total_credit: item.multiple_total.USD.local.total_credit,
+            original_debit_n: item.multiple_balance.USD.original_n.debit,
+            original_credit_n: item.multiple_balance.USD.original_n.credit,
+            original_debit_n_1: item.multiple_balance.USD.original_n_1.debit,
+            original_credit_n_1: item.multiple_balance.USD.original_n_1.credit,
+            local_debit_n: item.multiple_balance.USD.local_n.debit,
+            local_credit_n: item.multiple_balance.USD.local_n.credit,
+            local_debit_n_1: item.multiple_balance.USD.local_n_1.debit,
+            local_credit_n_1: item.multiple_balance.USD.local_n_1.credit
+          }
+          newData.push(usdItem)
+        })
+        filterData = newData
+      }
+      return filterData
     }
   },
   created() {
-    this.filterCondition.date = [moment().add(-1, 'month'), moment()]
+    this.getAccountList()
+    const { query, params } = this.$route
+    if ([GL_SINGLE, GL_MULTIPLE].includes(params.devise)) {
+      this.filterCondition.devise = params.devise
+    }
+    if (params.monthRange && params.monthRange.length === 2) {
+      this.filterCondition.date = [
+        moment(params.monthRange[0]),
+        moment(params.monthRange[1])
+      ]
+    } else {
+      this.filterCondition.date = [moment().add(-12, 'month'), moment()]
+    }
+    this.filterCondition.analyticalItems = query.analyticalItems
+      ? query.analyticalItems.toLocaleLowerCase().replace(' ', '_').split(',')
+      : []
     this.getTrialBalance()
   },
   methods: {
+    // 获取Account列表
+    async getAccountList() {
+      const res = await api.getAccountList(this.currentCompany.id)
+      if (res.data.error_code === 0) {
+        this.accountList = res.data.data
+        let { accountsFrom, accountsTo } = this.$route.query
+        accountsFrom = accountsFrom || 0
+        accountsTo = accountsTo || Infinity
+        const max = Math.max(accountsFrom, accountsTo)
+        const min = Math.min(accountsFrom, accountsTo)
+        const list = this.accountList.filter((item, index) => {
+          return min <= index && index <= max
+        })
+        this.filterCondition.accountRange = list.map((item) => {
+          return item.no
+        })
+      }
+    },
     async getTrialBalance() {
       this.isGettingTrialBalanceData = true
       const res = await api.getGeneralLedger(
@@ -172,12 +596,15 @@ export default {
         moment(this.filterCondition.date[0]).format('YYYY-MM'),
         moment(this.filterCondition.date[1]).format('YYYY-MM'),
         TRIAL_BALANCE,
-        GL_SINGLE.toLocaleLowerCase()
+        this.filterCondition.devise.toLocaleLowerCase()
       )
       this.isGettingTrialBalanceData = false
       if (res.data.error_code === 0) {
         this.trialBalanceData = res.data.data
       }
+    },
+    goToGenralLedger(row) {
+      console.log(row)
     }
   }
 }
@@ -203,7 +630,8 @@ export default {
       }
     }
     .content {
-      overflow: scroll;
+      overflow-y: scroll;
+      width: 100%;
       .el-table {
         border-bottom: 1px solid #999;
         color: #303133;
@@ -213,6 +641,16 @@ export default {
         }
         &:last-child {
           border-color: #ccc;
+        }
+        .italic {
+          font-style: italic;
+          color: #909399;
+        }
+        .link {
+          cursor: pointer;
+          &:hover {
+            color: #409eff;
+          }
         }
       }
     }

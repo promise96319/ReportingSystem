@@ -81,6 +81,18 @@
                 <template v-if="item.key === 'date'">
                   {{ scope.row[item.key] | filterDateInTable }}
                 </template>
+                <template
+                  v-else-if="
+                    item.key === 'debit_amount' || item.key === 'credit_amount'
+                  "
+                >
+                  <div v-if="scope.row.is_first || scope.row.is_last">
+                    {{ scope.row[item.key] }}
+                  </div>
+                  <div v-else class="link" @click="tableRowClick(scope.row)">
+                    {{ scope.row[item.key] }}
+                  </div>
+                </template>
                 <template v-else>
                   {{ scope.row[item.key] }}
                 </template>
@@ -148,7 +160,7 @@
                   <div v-if="scope.row.is_first || scope.row.is_last">
                     {{ scope.row[item.key] }}
                   </div>
-                  <div v-else class="link">
+                  <div v-else class="link" @click="tableRowClick(scope.row)">
                     {{ scope.row[item.key] }}
                   </div>
                 </template>
@@ -161,6 +173,66 @@
         </div>
       </div>
     </div>
+
+    <!-- journal entry -->
+    <el-dialog
+      :visible.sync="isAllVouchersShow"
+      title="Journal Entry"
+      width="1200px"
+      class="journal"
+    >
+      <el-row
+        align="middle"
+        class="journal-header"
+        justify="space-betweeen"
+        type="flex"
+      >
+        <el-col>
+          Date
+          <span>{{
+            allVouchers[0] &&
+            allVouchers[0].date &&
+            moment(allVouchers[0].date).format('DD/MM/yyyy')
+          }}</span>
+        </el-col>
+        <el-col class="right">
+          Voucher No.
+          <span>{{ allVouchers[0] && allVouchers[0].voucher_no }}</span>
+        </el-col>
+      </el-row>
+      <el-table
+        :data="allVouchers"
+        :row-class-name="tableRowClassName"
+        height="600px"
+        size="mini"
+        @row-click="showAccountingItems"
+      >
+        <el-table-column
+          v-for="item in journalEntryKey"
+          :key="item.key"
+          :label="item.value"
+          :prop="item.key"
+          :width="item.width"
+          align="center"
+          header-align="center"
+        ></el-table-column>
+      </el-table>
+    </el-dialog>
+
+    <el-dialog
+      :visible.sync="isAccountingItemsShow"
+      title="Accounting items"
+      width="400px"
+    >
+      <el-row
+        v-for="item in accountingItemsKey"
+        :key="item.key"
+        class="accounting-items"
+      >
+        <el-row class="header">{{ item.value + ':' }}</el-row>
+        <el-row class="content">{{ currentVoucher[item.key] }}</el-row>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -174,6 +246,10 @@ import {
   localeGeneralLedgerKey,
   multipleGeneralLedgerKey
 } from '@/constant/generalLedgerKey'
+import {
+  accountingItemsKey,
+  journalEntryKey
+} from '@/constant/accountingEntriesKey'
 import windowResizeMixin from '@/mixins/windowResizeMixin'
 import { FR } from '@/constant/accountType'
 import moment from 'moment'
@@ -196,17 +272,31 @@ export default {
       GL_MULTIPLE,
       localeGeneralLedgerKey,
       multipleGeneralLedgerKey,
+      journalEntryKey,
+      accountingItemsKey,
 
+      // 过滤条件
       filterCondition: {
         date: [],
-        devise: GL_MULTIPLE,
-        analyticalItems: '',
+        devise: GL_SINGLE,
+        analyticalItems: [],
         accountRange: []
       },
 
+      // 当前数据
       generalLedgerData: [],
+      allEntriesData: [],
       isGettingGeneralLedgerData: false,
-      accountList: []
+      accountList: [],
+
+      // 用户点击某一行凭证，显示dialog
+      isAllVouchersShow: false,
+      // 用户点击某一行凭证，显示的内容
+      allVouchers: [],
+
+      isAccountingItemsShow: false,
+      // 当前查看的凭证内容（核算项目时）
+      currentVoucher: {}
     }
   },
   computed: {
@@ -224,7 +314,34 @@ export default {
     // 在第一行添加 no，balance，核算项目等
     // 在最后一行添加统计
     formatGenralLedger() {
-      return this.generalLedgerData.map((item) => {
+      // 过滤数据
+      let filterData = this.generalLedgerData.filter((item) => {
+        return this.filterCondition.accountRange.includes(
+          item.entries[0].account_no
+        )
+      })
+
+      const analyticalItems = this.filterCondition.analyticalItems
+      if (analyticalItems.length > 0) {
+        filterData = filterData.filter((item) => {
+          let result = []
+          item.entries.forEach((entry) => {
+            analyticalItems.forEach((key) => {
+              if (entry[key]) {
+                result.push(entry[key])
+              }
+            })
+          })
+          item.analyticalItems = result
+          return result.length > 0
+        })
+      }
+
+      return filterData.map((item) => {
+        let name = item.account.name
+        if (item.analyticalItems && item.analyticalItems.length > 0) {
+          name = name + '/' + item.analyticalItems.join('/')
+        }
         item.entries = [
           {
             // invoice_no: item.account.no,
@@ -232,7 +349,7 @@ export default {
             // 是否是第一列
             is_first: true,
             invoice_no: item.entries[0].account_no,
-            voucher_no: item.account.name,
+            voucher_no: name,
             balance: item.balance
           },
           ...item.entries,
@@ -260,14 +377,44 @@ export default {
         moment(params.monthRange[1])
       ]
     } else {
-      this.filterCondition.date = [moment().add(-12, 'month'), moment()]
+      this.filterCondition.date = [moment(), moment()]
     }
-    this.filterCondition.analyticalItems = query.analyticalItems || ''
+    this.filterCondition.analyticalItems = query.analyticalItems
+      ? query.analyticalItems.toLocaleLowerCase().replace(' ', '_').split(',')
+      : []
 
     // 默认本月
     this.getGeneralLedger()
   },
   methods: {
+    moment(date) {
+      return moment(date)
+    },
+    tableRowClick(row) {
+      this.allVouchers = this.allEntriesData.filter((item) => {
+        return row.voucher_no === item.voucher_no && row.date === item.date
+      })
+      this.isAllVouchersShow = true
+    },
+    tableRowClassName({ rowIndex }) {
+      if (rowIndex % 2 !== 0) {
+        return 'cursor highlight-row'
+      }
+      return 'cursor'
+    },
+    showAccountingItems(row) {
+      let isAccountingItemsExisted = accountingItemsKey.some((item) => {
+        return row[item.key] || row[item.key] === 0
+      })
+      if (!isAccountingItemsExisted) {
+        this.$message.warning('当前凭证没有核算项目')
+        return
+      }
+
+      this.isAccountingItemsShow = true
+      this.currentVoucher = row
+    },
+
     // 获取Account列表
     async getAccountList() {
       const res = await api.getAccountList(this.currentCompany.id)
@@ -278,11 +425,12 @@ export default {
         accountsTo = accountsTo || Infinity
         const max = Math.max(accountsFrom, accountsTo)
         const min = Math.min(accountsFrom, accountsTo)
-        this.filterCondition.accountRange = this.accountList.filter(
-          (item, index) => {
-            return min <= index && index <= max
-          }
-        )
+        const list = this.accountList.filter((item, index) => {
+          return min <= index && index <= max
+        })
+        this.filterCondition.accountRange = list.map((item) => {
+          return item.no
+        })
       }
     },
     async getGeneralLedger() {
@@ -296,8 +444,14 @@ export default {
       )
       this.isGettingGeneralLedgerData = false
       if (res.data.error_code === 0) {
+        // 过滤没有 entries 的数据
         this.generalLedgerData = res.data.data.filter((item) => {
           return item && item.entries && item.entries.length > 0
+        })
+
+        // 获取所有的 entries 数据
+        this.generalLedgerData.forEach((item) => {
+          this.allEntriesData = this.allEntriesData.concat(item.entries)
         })
       }
     },
@@ -366,9 +520,36 @@ export default {
       }
     }
   }
+  /deep/ .el-table__body tr:hover td {
+    background-color: rgba($color: #409eff, $alpha: 0.1);
+  }
 }
 
-/deep/ .el-table__body tr:hover td {
-  background-color: rgba($color: #409eff, $alpha: 0.1);
+.journal-header {
+  font-weight: bold;
+  margin-bottom: 10px;
+  span {
+    margin-left: 12px;
+  }
+  .right {
+    text-align: right;
+  }
+}
+
+.accounting-items {
+  border-bottom: 1px solid #ebeef5;
+  margin-bottom: 10px;
+  .header {
+    height: 24px;
+    font-weight: 500;
+    color: #303133;
+  }
+  .content {
+    height: 24px;
+    color: #303133;
+  }
+}
+/deep/.journal .el-table__row.cursor {
+  cursor: pointer;
 }
 </style>
