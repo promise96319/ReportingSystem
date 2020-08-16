@@ -15,7 +15,11 @@
         >
         </el-date-picker>
         Devise :
-        <el-select v-model="filterCondition.devise" size="mini">
+        <el-select
+          v-model="filterCondition.devise"
+          size="mini"
+          @change="getGeneralLedger"
+        >
           <el-option
             :key="GL_SINGLE"
             :label="GL_SINGLE"

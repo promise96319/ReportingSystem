@@ -14,7 +14,11 @@
           @change="getTrialBalance"
         ></el-date-picker
         >Devise :
-        <el-select v-model="filterCondition.devise" size="mini">
+        <el-select
+          v-model="filterCondition.devise"
+          size="mini"
+          @change="getTrialBalance"
+        >
           <el-option
             :key="GL_SINGLE"
             :label="GL_SINGLE"
@@ -527,6 +531,9 @@ export default {
           item.local_credit_n = item.credit_n
           item.local_credit_n_1 = item.credit_n_1
           newData.push(item)
+          if (!item.multiple_total || !item.multiple_balance) {
+            return
+          }
           let rmbItem = {
             type: 'italic',
             ...item,
