@@ -28,7 +28,9 @@
           size="mini"
           style="width: 100%;"
         >
-          <el-table-column label="COMPTE DE RESULTAT">
+          <el-table-column
+            :label="isFR ? 'COMPTE DE RESULTAT' : 'PROFIT & LOSS'"
+          >
             <template slot-scope="scope">
               <div v-if="scope.row.add_index" class="bold">
                 {{ scope.row.name }}
@@ -50,11 +52,11 @@
               </div>
               <div v-else-if="scope.row.name.includes('\n')">
                 <div class="empty">empty</div>
-                <div class="link">
+                <div class="link" @click="goToTrialBalance">
                   {{ scope.row.amount && scope.row.amount[0] }}
                 </div>
               </div>
-              <div v-else class="link">
+              <div v-else class="link" @click="goToTrialBalance">
                 {{ scope.row.amount && scope.row.amount[0] }}
               </div>
             </template>
@@ -69,11 +71,11 @@
               </div>
               <div v-else-if="scope.row.name.includes('\n')">
                 <div class="empty">empty</div>
-                <div class="link">
+                <div class="link" @click="goToTrialBalance">
                   {{ scope.row.amount && scope.row.amount[0] }}
                 </div>
               </div>
-              <div v-else class="link">
+              <div v-else class="link" @click="goToTrialBalance">
                 {{ scope.row.amount && scope.row.amount[0] }}
               </div>
             </template>
@@ -88,11 +90,11 @@
               </div>
               <div v-else-if="scope.row.name.includes('\n')">
                 <div class="empty">empty</div>
-                <div class="link">
+                <div class="link" @click="goToTrialBalance">
                   {{ scope.row.amount && scope.row.amount[0] }}
                 </div>
               </div>
-              <div v-else class="link">
+              <div v-else class="link" @click="goToTrialBalance">
                 {{ scope.row.amount && scope.row.amount[0] }}
               </div>
             </template>
@@ -108,7 +110,11 @@ import SubHeader from '@/components/SubHeader'
 import api from '@/api'
 import windowResizeMixin from '@/mixins/windowResizeMixin'
 import { FR, EN, CN } from '@/constant/accountType'
-import { monthOptions, PROFIT_AND_LOSS } from '@/constant/generalLedgerKey'
+import {
+  monthOptions,
+  PROFIT_AND_LOSS,
+  GL_SINGLE
+} from '@/constant/generalLedgerKey'
 import moment from 'moment'
 
 export default {
@@ -142,11 +148,22 @@ export default {
     },
     currentYear() {
       const year = moment(this.selectedDate).year()
-      return `Exercice ${year}`
+      if (this.isFR) {
+        return `Exercice ${year}`
+      } else {
+        return `Y ${year}`
+      }
     },
     lastYear() {
       const year = moment(this.selectedDate).year()
-      return `Exercice ${year - 1}`
+      if (this.isFR) {
+        return `Exercice ${year - 1}`
+      } else {
+        return `Y ${year - 1}`
+      }
+    },
+    isFR() {
+      return this.currentCompany.current_region === FR
     }
   },
   created() {
@@ -170,6 +187,15 @@ export default {
       if (res.data.error_code === 0) {
         this.profitAndLossData = res.data.data
       }
+    },
+    goToTrialBalance() {
+      this.$router.push({
+        name: 'TrialBalance',
+        params: {
+          monthRange: [this.selectedDate, this.selectedDate],
+          devise: GL_SINGLE
+        }
+      })
     }
   }
 }
@@ -190,6 +216,9 @@ export default {
         background-color: #ededed;
         color: #303133;
         font-weight: bold;
+        .link {
+          cursor: text;
+        }
       }
     }
     .content {
@@ -210,6 +239,7 @@ export default {
       }
       .link {
         color: #409eff;
+        cursor: pointer;
       }
       .bold {
         font-weight: 500;

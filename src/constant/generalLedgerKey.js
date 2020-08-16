@@ -124,14 +124,14 @@ export const multipleGeneralLedgerKey = [
   },
   {
     key: 'balance_originale',
-    label: 'Balance',
+    label: 'Balance in original currency',
     fr_label: 'Solde en devise originale',
     width: '120px',
     align: 'right'
   },
   {
     key: 'balance_locale',
-    label: 'Balance',
+    label: 'Balance in local currency',
     fr_label: 'Solde en devise locale',
     width: '120px',
     align: 'right'

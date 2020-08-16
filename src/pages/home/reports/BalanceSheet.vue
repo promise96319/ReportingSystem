@@ -29,7 +29,7 @@
           style="width: 100%;"
           :span-method="spanMethod"
         >
-          <el-table-column label="ACTIF">
+          <el-table-column :label="isFR ? 'ACTIF' : 'ASSETS'">
             <template slot-scope="scope">
               <div
                 v-if="
@@ -60,17 +60,25 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
+                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
               >
                 <div class="empty">empty</div>
                 <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
-                  {{ scope.row.actif.amount && scope.row.actif.amount[0] }}
+                  {{
+                    (scope.row.actif.amount && scope.row.actif.amount[0])
+                      | fixedNum
+                  }}
                 </div>
               </div>
-              <div v-else :class="classFilter(scope.$index, tables.ACTIF.row2)">
+              <div
+                v-else
+                :class="classFilter(scope.$index, tables.ACTIF.row2)"
+                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+              >
                 {{
-                  scope.row.actif &&
-                  scope.row.actif.amount &&
-                  scope.row.actif.amount[1]
+                  (scope.row.actif &&
+                    scope.row.actif.amount &&
+                    scope.row.actif.amount[1]) | fixedNum
                 }}
               </div>
             </template>
@@ -87,23 +95,31 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
+                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
               >
                 <div class="empty">empty</div>
                 <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
-                  {{ scope.row.actif.amount && scope.row.actif.amount[1] }}
+                  {{
+                    (scope.row.actif.amount && scope.row.actif.amount[1])
+                      | fixedNum
+                  }}
                 </div>
               </div>
-              <div v-else :class="classFilter(scope.$index, tables.ACTIF.row2)">
+              <div
+                v-else
+                :class="classFilter(scope.$index, tables.ACTIF.row2)"
+                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+              >
                 {{
-                  scope.row.actif &&
-                  scope.row.actif.amount &&
-                  scope.row.actif.amount[1]
+                  (scope.row.actif &&
+                    scope.row.actif.amount &&
+                    scope.row.actif.amount[1]) | fixedNum
                 }}
               </div>
             </template>
           </el-table-column>
 
-          <el-table-column label="PASSIF">
+          <el-table-column :label="isFR ? 'PASSIF' : 'LIABILITIES & EQUITY'">
             <template slot-scope="scope">
               <div
                 v-if="
@@ -142,22 +158,27 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
+                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 10" class="empty">empty</div>
 
                 <div :class="classFilter(scope.$index, tables.PASSIF.row2)">
-                  {{ scope.row.passif.amount && scope.row.passif.amount[0] }}
+                  {{
+                    (scope.row.passif.amount && scope.row.passif.amount[0])
+                      | fixedNum
+                  }}
                 </div>
               </div>
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
+                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
               >
                 {{
-                  scope.row.passif &&
-                  scope.row.passif.amount &&
-                  scope.row.passif.amount[0]
+                  (scope.row.passif &&
+                    scope.row.passif.amount &&
+                    scope.row.passif.amount[0]) | fixedNum
                 }}
               </div>
             </template>
@@ -174,22 +195,27 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
+                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 10" class="empty">empty</div>
 
                 <div :class="classFilter(scope.$index, tables.PASSIF.row2)">
-                  {{ scope.row.passif.amount && scope.row.passif.amount[1] }}
+                  {{
+                    (scope.row.passif.amount && scope.row.passif.amount[1])
+                      | fixedNum
+                  }}
                 </div>
               </div>
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
+                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
               >
                 {{
-                  scope.row.passif &&
-                  scope.row.passif.amount &&
-                  scope.row.passif.amount[1]
+                  (scope.row.passif &&
+                    scope.row.passif.amount &&
+                    scope.row.passif.amount[1]) | fixedNum
                 }}
               </div>
             </template>
@@ -205,17 +231,32 @@ import SubHeader from '@/components/SubHeader'
 import api from '@/api'
 import windowResizeMixin from '@/mixins/windowResizeMixin'
 import { FR, EN, CN } from '@/constant/accountType'
-import { monthOptions, BALANCE_SHEET } from '@/constant/generalLedgerKey'
+import {
+  monthOptions,
+  BALANCE_SHEET,
+  GL_SINGLE
+} from '@/constant/generalLedgerKey'
 import moment from 'moment'
 
 export default {
   components: {
     SubHeader
   },
+  filters: {
+    fixedNum(num) {
+      if (typeof num !== 'number') {
+        return num
+      }
+      if (!num) {
+        return num
+      }
+      return num.toFixed(2)
+    }
+  },
   mixins: [windowResizeMixin],
   data() {
     return {
-      balanceSheetData: [],
+      balanceSheetData: {},
       selectedDate: '',
       isGettingData: true,
       tables: {
@@ -228,6 +269,26 @@ export default {
             link: []
           },
           row2: {
+            click: [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ],
             italic: [1, 2, 4, 5, 7, 8],
             separate: [0, 10],
             bold: [9, 18, 20],
@@ -240,6 +301,28 @@ export default {
             bold: [7, 18, 20]
           },
           row2: {
+            toPL: 4,
+            click: [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
             bold: [7, 18, 20],
             link: [
               0,
@@ -276,6 +359,7 @@ export default {
         passif.splice(11, 0, {})
       }
       let actif = this.balanceSheetData.ACTIF
+      console.log(actif, 'actif')
       if (actif) {
         // todo 对passif做处理
         actif.forEach((item, index) => {
@@ -303,6 +387,9 @@ export default {
       const year = moment(date).year()
       const day = moment(date).date()
       return `${day}/${this.formatMonth(date)}/${year}`
+    },
+    isFR() {
+      return this.currentCompany.current_region === FR
     }
   },
   created() {
@@ -338,17 +425,21 @@ export default {
       }
     },
     classFilter(rowIndex, tables) {
-      const { italic, bold, link } = tables
+      const { italic, bold, link, click } = tables
+      let other = ''
+      if (click && click.includes(rowIndex)) {
+        other = ' click'
+      }
       if (italic && italic.includes(rowIndex)) {
-        return 'italic'
+        return 'italic' + other
       }
       if (bold && bold.includes(rowIndex)) {
-        return 'bold'
+        return 'bold' + other
       }
       if (link && link.includes(rowIndex)) {
-        return 'link'
+        return 'link' + other
       }
-      return 'normal'
+      return 'normal' + other
     },
     formatMonth(date) {
       const monthIndex = moment(date).month()
@@ -372,8 +463,42 @@ export default {
       )
       this.isGettingData = false
       if (res.data.error_code === 0) {
-        this.balanceSheetData = res.data.data
+        if (res.data.data['ASSETS'] && res.data.data['LIABILITIES & EQUITY']) {
+          console.log(1)
+          this.$set(this.balanceSheetData, 'ACTIF', res.data.data['ASSETS'])
+          this.$set(
+            this.balanceSheetData,
+            'PASSIF',
+            res.data.data['LIABILITIES & EQUITY']
+          )
+        } else {
+          this.balanceSheetData = res.data.data
+        }
       }
+    },
+    goToTrialBalance(rowIndex, tableRow) {
+      if (!tableRow.click || !tableRow.click.includes(rowIndex)) {
+        return
+      }
+      if (tableRow.toPL && tableRow.toPL === rowIndex) {
+        this.goToProfitAndLoss()
+        return
+      }
+      this.$router.push({
+        name: 'TrialBalance',
+        params: {
+          monthRange: [this.selectedDate, this.selectedDate],
+          devise: GL_SINGLE
+        }
+      })
+    },
+    goToProfitAndLoss() {
+      this.$router.push({
+        name: 'ProfitAndLoss',
+        query: {
+          date: moment(this.selectedDate).format('yyyy-MM')
+        }
+      })
     }
   }
 }
@@ -426,6 +551,9 @@ export default {
       }
       .normal {
         color: #303133;
+      }
+      .click {
+        cursor: pointer;
       }
     }
   }

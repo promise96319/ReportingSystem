@@ -186,7 +186,11 @@
           style="width: 100%;"
         >
           <el-table-column
-            :label="isFR ? 'Cumul période devise originale' : 'Period'"
+            :label="
+              isFR
+                ? 'Cumul période devise originale'
+                : 'Accumulated of the period in original currency'
+            "
             header-align="center"
           >
             <el-table-column
@@ -224,7 +228,11 @@
           </el-table-column>
 
           <el-table-column
-            :label="isFR ? 'Cumul période devise locale' : 'Period'"
+            :label="
+              isFR
+                ? 'Cumul période devise locale'
+                : 'Accumulated of the period in local currency'
+            "
             header-align="center"
           >
             <el-table-column
@@ -288,7 +296,9 @@
 
           <el-table-column
             header-align="center"
-            :label="isFR ? 'Solde N devise originale' : 'Balance N'"
+            :label="
+              isFR ? 'Solde N devise originale' : 'Balance N original currency'
+            "
           >
             <el-table-column
               :label="isFR ? 'Débiteur' : 'Debit'"
@@ -326,7 +336,7 @@
 
           <el-table-column
             header-align="center"
-            :label="isFR ? 'Solde N devise locale' : 'Balance N'"
+            :label="isFR ? 'Solde N devise locale' : 'Balance N local currency'"
           >
             <el-table-column
               :label="isFR ? 'Débiteur' : 'Debit'"
@@ -364,7 +374,11 @@
 
           <el-table-column
             header-align="center"
-            :label="isFR ? 'Solde N-1 devise originale' : 'Balance N-1'"
+            :label="
+              isFR
+                ? 'Solde N-1 devise originale'
+                : 'Balance N-1 original currency'
+            "
           >
             <el-table-column
               :label="isFR ? 'Débiteur' : 'Debit'"
@@ -402,7 +416,9 @@
 
           <el-table-column
             header-align="center"
-            :label="isFR ? 'Solde N-1 devise locale' : 'Balance N-1'"
+            :label="
+              isFR ? 'Solde N-1 devise locale' : 'Balance N-1 local currency'
+            "
           >
             <el-table-column
               :label="isFR ? 'Débiteur' : 'Debit'"
@@ -669,6 +685,10 @@ export default {
         background-color: #ededed;
         font-weight: bold;
         color: #303133;
+        .cell {
+          word-wrap: break-word;
+          word-break: normal;
+        }
       }
     }
     .content {
