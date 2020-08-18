@@ -455,7 +455,12 @@
                 <div class="bold">
                   {{ scope.row.actif.name.split('\n')[0] }}
                 </div>
-                <div :class="classFilter(scope.$index, tables.ACTIF.row1)">
+                <div
+                  :class="[
+                    classFilter(scope.$index, tables.ACTIF.row1),
+                    scope.$index === 0 ? 'italic' : ''
+                  ]"
+                >
                   {{ scope.row.actif.name.split('\n')[1] }}
                 </div>
               </div>
@@ -479,7 +484,12 @@
                 @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
               >
                 <div class="empty">empty</div>
-                <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
+                <div
+                  :class="[
+                    classFilter(scope.$index, tables.ACTIF.row2),
+                    scope.$index === 0 ? 'italic' : ''
+                  ]"
+                >
                   {{
                     (scope.row.actif.amount && scope.row.actif.amount[0])
                       | fixedNum
@@ -514,7 +524,12 @@
                 @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
               >
                 <div class="empty">empty</div>
-                <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
+                <div
+                  :class="[
+                    classFilter(scope.$index, tables.ACTIF.row2),
+                    scope.$index === 0 ? 'italic' : ''
+                  ]"
+                >
                   {{
                     (scope.row.actif.amount && scope.row.actif.amount[1])
                       | fixedNum
@@ -1008,50 +1023,23 @@ export default {
                   6,
                   7,
                   8,
-                  10,
+                  9,
                   11,
                   12,
                   13,
                   14,
-                  15,
                   16,
                   17,
-                  18
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23
                 ],
                 italic: [13, 14],
                 bold: [10, 24, 25],
                 normal: [],
-                link: [10, 11, 12, 13, 14, 15, 16, 17, 19]
-              }
-            },
-            PASSIF: {
-              row1: {
-                bold: [10, 15, 16, 24, 25]
-              },
-              row2: {
-                toPL: 4,
-                click: [
-                  0,
-                  1,
-                  2,
-                  3,
-                  4,
-                  5,
-                  6,
-                  8,
-                  9,
-                  10,
-                  11,
-                  12,
-                  13,
-                  14,
-                  15,
-                  16,
-                  17,
-                  18,
-                  19
-                ],
-                bold: [10, 16, 17, 24, 25],
                 link: [
                   0,
                   1,
@@ -1060,17 +1048,76 @@ export default {
                   4,
                   5,
                   6,
+                  7,
                   8,
                   9,
-                  10,
                   11,
                   12,
                   13,
                   14,
-                  15,
                   16,
                   17,
-                  19
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23
+                ]
+              }
+            },
+            PASSIF: {
+              row1: {
+                bold: [10, 15, 16, 24, 25]
+              },
+              row2: {
+                toPL: 22,
+                click: [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  11,
+                  12,
+                  13,
+                  14,
+                  17,
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23
+                ],
+                bold: [10, 15, 16, 24, 25],
+                link: [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  11,
+                  12,
+                  13,
+                  14,
+                  17,
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23
                 ]
               }
             }
@@ -1085,30 +1132,11 @@ export default {
                 link: []
               },
               row2: {
-                click: [
-                  0,
-                  1,
-                  2,
-                  3,
-                  4,
-                  5,
-                  6,
-                  7,
-                  8,
-                  10,
-                  11,
-                  12,
-                  13,
-                  14,
-                  15,
-                  16,
-                  17,
-                  18
-                ],
+                click: [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 13, 14, 15],
                 italic: [9, 10],
                 bold: [6, 16, 17],
                 normal: [],
-                link: [10, 11, 12, 13, 14, 15, 16, 17, 19]
+                link: [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 13, 14, 15]
               }
             },
             PASSIF: {
@@ -1116,49 +1144,10 @@ export default {
                 bold: [4, 9, 10, 16, 17]
               },
               row2: {
-                toPL: 4,
-                click: [
-                  0,
-                  1,
-                  2,
-                  3,
-                  4,
-                  5,
-                  6,
-                  8,
-                  9,
-                  10,
-                  11,
-                  12,
-                  13,
-                  14,
-                  15,
-                  16,
-                  17,
-                  18,
-                  19
-                ],
+                toPL: 14,
+                click: [0, 1, 2, 3, 5, 6, 7, 8, 11, 12, 13, 14, 15],
                 bold: [4, 9, 10, 16, 17],
-                link: [
-                  0,
-                  1,
-                  2,
-                  3,
-                  4,
-                  5,
-                  6,
-                  8,
-                  9,
-                  10,
-                  11,
-                  12,
-                  13,
-                  14,
-                  15,
-                  16,
-                  17,
-                  19
-                ]
+                link: [0, 1, 2, 3, 5, 6, 7, 8, 11, 12, 13, 14, 15]
               }
             }
           }
@@ -1172,30 +1161,11 @@ export default {
                 link: []
               },
               row2: {
-                click: [
-                  0,
-                  1,
-                  2,
-                  3,
-                  4,
-                  5,
-                  6,
-                  7,
-                  8,
-                  10,
-                  11,
-                  12,
-                  13,
-                  14,
-                  15,
-                  16,
-                  17,
-                  18
-                ],
+                click: [0, 1, 3, 4, 5, 7, 8, 9, 11, 13, 14, 15, 16, 17],
                 italic: [1, 4, 5, 8, 9],
                 bold: [12, 18, 19],
                 normal: [3, 6],
-                link: [10, 11, 12, 13, 14, 15, 16, 17, 19]
+                link: [0, 1, 3, 4, 5, 7, 8, 9, 11, 13, 14, 15, 16, 17]
               }
             },
             PASSIF: {
@@ -1203,49 +1173,10 @@ export default {
                 bold: [5, 10, 17, 18, 19]
               },
               row2: {
-                toPL: 4,
-                click: [
-                  0,
-                  1,
-                  2,
-                  3,
-                  4,
-                  5,
-                  6,
-                  8,
-                  9,
-                  10,
-                  11,
-                  12,
-                  13,
-                  14,
-                  15,
-                  16,
-                  17,
-                  18,
-                  19
-                ],
+                toPL: 3,
+                click: [0, 1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17],
                 bold: [5, 10, 17, 18, 19],
-                link: [
-                  0,
-                  1,
-                  2,
-                  3,
-                  4,
-                  5,
-                  6,
-                  8,
-                  9,
-                  10,
-                  11,
-                  12,
-                  13,
-                  14,
-                  15,
-                  16,
-                  17,
-                  19
-                ]
+                link: [0, 1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17]
               }
             }
           }
@@ -1492,18 +1423,19 @@ export default {
       const { italic, bold, link, click } = tables
       let other = ''
       if (click && click.includes(rowIndex)) {
-        other = ' click'
-      }
-      if (italic && italic.includes(rowIndex)) {
-        return 'italic' + other
-      }
-      if (bold && bold.includes(rowIndex)) {
-        return 'bold' + other
+        other += ' click'
       }
       if (link && link.includes(rowIndex)) {
-        return 'link' + other
+        other += ' link'
       }
-      return 'normal' + other
+      if (italic && italic.includes(rowIndex)) {
+        other += ' italic'
+      }
+      if (bold && bold.includes(rowIndex)) {
+        other += ' bold'
+      }
+
+      return 'normal ' + other
     },
     formatMonth(date) {
       const monthIndex = moment(date).month()
@@ -1596,6 +1528,9 @@ export default {
           border-color: #ccc;
         }
       }
+      .normal {
+        color: #303133;
+      }
       .empty {
         visibility: hidden;
       }
@@ -1611,9 +1546,7 @@ export default {
       .link {
         color: #409eff;
       }
-      .normal {
-        color: #303133;
-      }
+
       .click {
         cursor: pointer;
       }

@@ -9,7 +9,6 @@ const HOST = 'http://106.13.82.152:5000'
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
