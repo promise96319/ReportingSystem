@@ -295,7 +295,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="goToReport">Confirm</el-button>
-        <el-button @click="isPeriodDialogShow = false">Cancel</el-button>
+        <el-button @click="isFilterDialogShow = false">Cancel</el-button>
       </span>
     </el-dialog>
   </div>
@@ -308,6 +308,7 @@ import { YEAR_OPTIONS, MONTH_OPTIONS } from '@/constant/dateOptions'
 import { GL_SINGLE, GL_MULTIPLE } from '@/constant/generalLedgerKey'
 import { accountingItemsKey } from '@/constant/accountingEntriesKey'
 import api from '@/api'
+import moment from 'moment'
 export default {
   components: {
     SubHeader,
@@ -394,13 +395,23 @@ export default {
   },
   created() {
     this.getAccountList()
-  },
-  mounted() {
-    const today = new Date()
-    this.currentYear = today.getFullYear()
-    this.currentMonth = this.MONTH_OPTIONS[11 - today.getMonth()]
+    this.getEntries()
   },
   methods: {
+    async getEntries() {
+      const res = await api.getEntries(this.currentCompany.id)
+      if (res.data.error_code === 0) {
+        let latestDate = moment().add(-10, 'year')
+        this.accountingEntriesData = res.data.data.forEach((item) => {
+          if (moment(item.date).isAfter(moment(latestDate))) {
+            latestDate = item.date
+          }
+        })
+        latestDate = latestDate ? moment(latestDate) : moment()
+        this.currentYear = latestDate.year()
+        this.currentMonth = this.MONTH_OPTIONS[11 - latestDate.month()]
+      }
+    },
     // 获取Account列表
     async getAccountList() {
       const res = await api.getAccountList(this.currentCompany.id)

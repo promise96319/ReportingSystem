@@ -528,7 +528,7 @@ export default {
 
       if (
         this.filterCondition.accountTypeName &&
-        this.filterCondition.accountTypeName
+        this.filterCondition.accountTypeName.length > 0
       ) {
         filterData = filterData.filter((item) => {
           return this.filterCondition.accountTypeName.includes(
@@ -563,48 +563,57 @@ export default {
           if (!item.multiple_total || !item.multiple_balance) {
             return
           }
-          let rmbItem = {
-            type: 'italic',
-            ...item,
-            account_no: '',
-            paramsAccountNo: item.account_no,
-            account_description: 'CNY',
-            original_total_debit: item.multiple_total.RMB.original.total_debit,
-            original_total_credit:
-              item.multiple_total.RMB.original.total_credit,
-            local_total_debit: item.multiple_total.RMB.local.total_debit,
-            local_total_credit: item.multiple_total.RMB.local.total_credit,
-            original_debit_n: item.multiple_balance.RMB.original_n.debit,
-            original_credit_n: item.multiple_balance.RMB.original_n.credit,
-            original_debit_n_1: item.multiple_balance.RMB.original_n_1.debit,
-            original_credit_n_1: item.multiple_balance.RMB.original_n_1.credit,
-            local_debit_n: item.multiple_balance.RMB.local_n.debit,
-            local_credit_n: item.multiple_balance.RMB.local_n.credit,
-            local_debit_n_1: item.multiple_balance.RMB.local_n_1.debit,
-            local_credit_n_1: item.multiple_balance.RMB.local_n_1.credit
+          if (item.currency === 'RMB') {
+            let rmbItem = {
+              type: 'italic',
+              ...item,
+              account_no: '',
+              paramsAccountNo: item.account_no,
+              account_description: 'CNY',
+              original_total_debit:
+                item.multiple_total.RMB.original.total_debit,
+              original_total_credit:
+                item.multiple_total.RMB.original.total_credit,
+              local_total_debit: item.multiple_total.RMB.local.total_debit,
+              local_total_credit: item.multiple_total.RMB.local.total_credit,
+              original_debit_n: item.multiple_balance.RMB.original_n.debit,
+              original_credit_n: item.multiple_balance.RMB.original_n.credit,
+              original_debit_n_1: item.multiple_balance.RMB.original_n_1.debit,
+              original_credit_n_1:
+                item.multiple_balance.RMB.original_n_1.credit,
+              local_debit_n: item.multiple_balance.RMB.local_n.debit,
+              local_credit_n: item.multiple_balance.RMB.local_n.credit,
+              local_debit_n_1: item.multiple_balance.RMB.local_n_1.debit,
+              local_credit_n_1: item.multiple_balance.RMB.local_n_1.credit
+            }
+            newData.push(rmbItem)
           }
-          newData.push(rmbItem)
-          let usdItem = {
-            type: 'italic',
-            ...item,
-            account_no: '',
-            paramsAccountNo: item.account_no,
-            account_description: 'USD',
-            original_total_debit: item.multiple_total.USD.original.total_debit,
-            original_total_credit:
-              item.multiple_total.USD.original.total_credit,
-            local_total_debit: item.multiple_total.USD.local.total_debit,
-            local_total_credit: item.multiple_total.USD.local.total_credit,
-            original_debit_n: item.multiple_balance.USD.original_n.debit,
-            original_credit_n: item.multiple_balance.USD.original_n.credit,
-            original_debit_n_1: item.multiple_balance.USD.original_n_1.debit,
-            original_credit_n_1: item.multiple_balance.USD.original_n_1.credit,
-            local_debit_n: item.multiple_balance.USD.local_n.debit,
-            local_credit_n: item.multiple_balance.USD.local_n.credit,
-            local_debit_n_1: item.multiple_balance.USD.local_n_1.debit,
-            local_credit_n_1: item.multiple_balance.USD.local_n_1.credit
+
+          if (item.currency === 'USD') {
+            let usdItem = {
+              type: 'italic',
+              ...item,
+              account_no: '',
+              paramsAccountNo: item.account_no,
+              account_description: 'USD',
+              original_total_debit:
+                item.multiple_total.USD.original.total_debit,
+              original_total_credit:
+                item.multiple_total.USD.original.total_credit,
+              local_total_debit: item.multiple_total.USD.local.total_debit,
+              local_total_credit: item.multiple_total.USD.local.total_credit,
+              original_debit_n: item.multiple_balance.USD.original_n.debit,
+              original_credit_n: item.multiple_balance.USD.original_n.credit,
+              original_debit_n_1: item.multiple_balance.USD.original_n_1.debit,
+              original_credit_n_1:
+                item.multiple_balance.USD.original_n_1.credit,
+              local_debit_n: item.multiple_balance.USD.local_n.debit,
+              local_credit_n: item.multiple_balance.USD.local_n.credit,
+              local_debit_n_1: item.multiple_balance.USD.local_n_1.debit,
+              local_credit_n_1: item.multiple_balance.USD.local_n_1.credit
+            }
+            newData.push(usdItem)
           }
-          newData.push(usdItem)
         })
         filterData = newData
       }
