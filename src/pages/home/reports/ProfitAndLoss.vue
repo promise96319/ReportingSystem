@@ -42,60 +42,132 @@
               <div v-else>{{ scope.row.name }}</div>
             </template>
           </el-table-column>
+
           <el-table-column align="right" header-align="center" width="160">
             <template slot="header" slot-scope="scope">
               <div class="link">{{ currentMonth }}</div>
             </template>
             <template slot-scope="scope">
               <div v-if="scope.row.add_index" class="bold">
-                {{ scope.row.amount && scope.row.amount[0] }}
+                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
               </div>
               <div v-else-if="scope.row.name.includes('\n')">
                 <div class="empty">empty</div>
-                <div class="link" @click="goToTrialBalance">
-                  {{ scope.row.amount && scope.row.amount[0] }}
+                <div
+                  class="link"
+                  @click="
+                    goToTrialBalance(
+                      scope.row.account_type_name,
+                      moment(selectedDate).format('yyyy-MM'),
+                      moment(selectedDate).format('yyyy-MM')
+                    )
+                  "
+                >
+                  {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
                 </div>
               </div>
-              <div v-else class="link" @click="goToTrialBalance">
-                {{ scope.row.amount && scope.row.amount[0] }}
+              <div
+                v-else
+                class="link"
+                @click="
+                  goToTrialBalance(
+                    scope.row.account_type_name,
+                    moment(selectedDate).format('yyyy-MM'),
+                    moment(selectedDate).format('yyyy-MM')
+                  )
+                "
+              >
+                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
               </div>
             </template>
           </el-table-column>
+
           <el-table-column align="right" header-align="center" width="160">
             <template slot="header" slot-scope="scope">
               <div class="link">{{ currentYear }}</div>
             </template>
             <template slot-scope="scope">
               <div v-if="scope.row.add_index" class="bold">
-                {{ scope.row.amount && scope.row.amount[0] }}
+                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
               </div>
               <div v-else-if="scope.row.name.includes('\n')">
                 <div class="empty">empty</div>
-                <div class="link" @click="goToTrialBalance">
-                  {{ scope.row.amount && scope.row.amount[0] }}
+                <div
+                  class="link"
+                  @click="
+                    goToTrialBalance(
+                      scope.row.account_type_name,
+                      moment(selectedDate).startOf('year').format('yyyy-MM'),
+                      moment(selectedDate).format('yyyy-MM')
+                    )
+                  "
+                >
+                  {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
                 </div>
               </div>
-              <div v-else class="link" @click="goToTrialBalance">
-                {{ scope.row.amount && scope.row.amount[0] }}
+              <div
+                v-else
+                class="link"
+                @click="
+                  goToTrialBalance(
+                    scope.row.account_type_name,
+                    moment(selectedDate).startOf('year').format('yyyy-MM'),
+                    moment(selectedDate).format('yyyy-MM')
+                  )
+                "
+              >
+                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
               </div>
             </template>
           </el-table-column>
+
           <el-table-column align="right" header-align="center" width="160">
             <template slot="header" slot-scope="scope">
               <div class="link">{{ lastYear }}</div>
             </template>
             <template slot-scope="scope">
               <div v-if="scope.row.add_index" class="bold">
-                {{ scope.row.amount && scope.row.amount[0] }}
+                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
               </div>
               <div v-else-if="scope.row.name.includes('\n')">
                 <div class="empty">empty</div>
-                <div class="link" @click="goToTrialBalance">
-                  {{ scope.row.amount && scope.row.amount[0] }}
+                <div
+                  class="link"
+                  @click="
+                    goToTrialBalance(
+                      scope.row.account_type_name,
+                      moment(selectedDate)
+                        .add(-1, 'year')
+                        .startOf('year')
+                        .format('yyyy-MM'),
+                      moment(selectedDate)
+                        .add(-1, 'year')
+                        .endOf('year')
+                        .format('yyyy-MM')
+                    )
+                  "
+                >
+                  {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
                 </div>
               </div>
-              <div v-else class="link" @click="goToTrialBalance">
-                {{ scope.row.amount && scope.row.amount[0] }}
+              <div
+                v-else
+                class="link"
+                @click="
+                  goToTrialBalance(
+                    scope.row.account_type_name,
+                    moment(selectedDate)
+                      .add(-1, 'year')
+                      .startOf('year')
+                      .format('yyyy-MM'),
+                    moment(selectedDate)
+                      .add(-1, 'year')
+                      .endOf('year')
+                      .format('yyyy-MM')
+                  )
+                "
+              >
+                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
               </div>
             </template>
           </el-table-column>
@@ -120,6 +192,17 @@ import moment from 'moment'
 export default {
   components: {
     SubHeader
+  },
+  filters: {
+    fixedNum(num) {
+      if (typeof num !== 'number') {
+        return num
+      }
+      if (!num) {
+        return num
+      }
+      return num.toFixed(2)
+    }
   },
   mixins: [windowResizeMixin],
   data() {
@@ -175,6 +258,9 @@ export default {
     this.getProfitAndLoss()
   },
   methods: {
+    moment(time) {
+      return moment(time)
+    },
     async getProfitAndLoss() {
       this.isGettingData = true
       const res = await api.getGeneralLedger(
@@ -188,11 +274,15 @@ export default {
         this.profitAndLossData = res.data.data
       }
     },
-    goToTrialBalance() {
+    goToTrialBalance(accountTypeName, accountsFrom, accountsTo) {
+      const name = accountTypeName.join(',')
       this.$router.push({
         name: 'TrialBalance',
+        query: {
+          accountTypeName: name
+        },
         params: {
-          monthRange: [this.selectedDate, this.selectedDate],
+          monthRange: [accountsFrom, accountsTo],
           devise: GL_SINGLE
         }
       })

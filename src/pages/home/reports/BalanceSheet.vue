@@ -60,7 +60,13 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
@@ -73,7 +79,13 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.ACTIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type
+                  )
+                "
               >
                 {{
                   (scope.row.actif &&
@@ -95,7 +107,14 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type,
+                    true
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
@@ -108,7 +127,14 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.ACTIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type,
+                    true
+                  )
+                "
               >
                 {{
                   (scope.row.actif &&
@@ -158,7 +184,13 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 10" class="empty">empty</div>
@@ -173,7 +205,13 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type
+                  )
+                "
               >
                 {{
                   (scope.row.passif &&
@@ -195,7 +233,14 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type,
+                    true
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 10" class="empty">empty</div>
@@ -210,7 +255,14 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type,
+                    true
+                  )
+                "
               >
                 {{
                   (scope.row.passif &&
@@ -266,7 +318,13 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
@@ -279,7 +337,13 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.ACTIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type
+                  )
+                "
               >
                 {{
                   (scope.row.actif &&
@@ -301,7 +365,14 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type,
+                    true
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
@@ -314,7 +385,14 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.ACTIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type,
+                    true
+                  )
+                "
               >
                 {{
                   (scope.row.actif &&
@@ -368,7 +446,13 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 17" class="empty">empty</div>
@@ -383,7 +467,13 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type
+                  )
+                "
               >
                 {{
                   (scope.row.passif &&
@@ -405,7 +495,14 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type,
+                    true
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 17" class="empty">empty</div>
@@ -420,7 +517,14 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type,
+                    true
+                  )
+                "
               >
                 {{
                   (scope.row.passif &&
@@ -481,7 +585,13 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div
@@ -499,7 +609,13 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.ACTIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type
+                  )
+                "
               >
                 {{
                   (scope.row.actif &&
@@ -521,7 +637,14 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type,
+                    true
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div
@@ -539,7 +662,14 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.ACTIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type,
+                    true
+                  )
+                "
               >
                 {{
                   (scope.row.actif &&
@@ -593,7 +723,13 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 17" class="empty">empty</div>
@@ -608,7 +744,13 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type
+                  )
+                "
               >
                 {{
                   (scope.row.passif &&
@@ -630,7 +772,14 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type,
+                    true
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 17" class="empty">empty</div>
@@ -645,7 +794,14 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type,
+                    true
+                  )
+                "
               >
                 {{
                   (scope.row.passif &&
@@ -701,7 +857,13 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
@@ -714,7 +876,13 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.ACTIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type
+                  )
+                "
               >
                 {{
                   (scope.row.actif &&
@@ -736,7 +904,14 @@
                   scope.row.actif.name &&
                   scope.row.actif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type,
+                    true
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div :class="classFilter(scope.$index, tables.ACTIF.row2)">
@@ -749,7 +924,14 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.ACTIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.ACTIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.ACTIF.row2,
+                    scope.row.actif.account_name_type,
+                    true
+                  )
+                "
               >
                 {{
                   (scope.row.actif &&
@@ -803,7 +985,13 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 17" class="empty">empty</div>
@@ -818,7 +1006,13 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type
+                  )
+                "
               >
                 {{
                   (scope.row.passif &&
@@ -840,7 +1034,14 @@
                   scope.row.passif.name &&
                   scope.row.passif.name.includes('\n')
                 "
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type,
+                    true
+                  )
+                "
               >
                 <div class="empty">empty</div>
                 <div v-if="scope.$index === 17" class="empty">empty</div>
@@ -855,7 +1056,14 @@
               <div
                 v-else
                 :class="classFilter(scope.$index, tables.PASSIF.row2)"
-                @click="goToTrialBalance(scope.$index, tables.PASSIF.row2)"
+                @click="
+                  goToTrialBalance(
+                    scope.$index,
+                    tables.PASSIF.row2,
+                    scope.row.passif.account_name_type,
+                    true
+                  )
+                "
               >
                 {{
                   (scope.row.passif &&
@@ -1307,6 +1515,9 @@ export default {
     this.getProfitAndLoss()
   },
   methods: {
+    moment(time) {
+      return moment(time)
+    },
     spanMethod({ rowIndex, columnIndex }) {
       switch (this.currentCompany.current_region) {
         case FR:
@@ -1470,7 +1681,7 @@ export default {
         }
       }
     },
-    goToTrialBalance(rowIndex, tableRow) {
+    goToTrialBalance(rowIndex, tableRow, accountTypeName, isRowTwo) {
       if (!tableRow.click || !tableRow.click.includes(rowIndex)) {
         return
       }
@@ -1478,10 +1689,28 @@ export default {
         this.goToProfitAndLoss()
         return
       }
+      console.log('accountTypeName', accountTypeName)
+      const name = (accountTypeName || []).join(',')
+      const accountsFrom = isRowTwo
+        ? moment(this.selectedDate)
+            .add(-1, 'year')
+            .startOf('year')
+            .format('yyyy-MM')
+        : moment(this.selectedDate).startOf('year').format('yyyy-MM')
+      const accountsTo = isRowTwo
+        ? moment(this.selectedDate)
+            .add(-1, 'year')
+            .endOf('year')
+            .format('yyyy-MM')
+        : moment(this.selectedDate).format('yyyy-MM')
+
       this.$router.push({
         name: 'TrialBalance',
+        query: {
+          accountTypeName: name
+        },
         params: {
-          monthRange: [this.selectedDate, this.selectedDate],
+          monthRange: [accountsFrom, accountsTo],
           devise: GL_SINGLE
         }
       })

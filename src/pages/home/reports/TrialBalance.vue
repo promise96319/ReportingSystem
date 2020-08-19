@@ -500,7 +500,8 @@ export default {
         date: [],
         devise: GL_MULTIPLE,
         analyticalItems: [],
-        accountRange: []
+        accountRange: [],
+        accountTypeName: []
       },
       trialBalanceData: [],
 
@@ -526,6 +527,17 @@ export default {
       }
 
       if (
+        this.filterCondition.accountTypeName &&
+        this.filterCondition.accountTypeName
+      ) {
+        filterData = filterData.filter((item) => {
+          return this.filterCondition.accountTypeName.includes(
+            item.account_type_name
+          )
+        })
+      }
+
+      if (
         this.filterCondition.analyticalItems &&
         this.filterCondition.analyticalItems.length > 0
       ) {
@@ -540,6 +552,7 @@ export default {
         // 整理数据
         let newData = []
         filterData.forEach((item) => {
+          item.paramsAccountNo = item.account_no
           item.local_total_credit = item.total_credit
           item.local_total_debit = item.total_debit
           item.local_debit_n = item.debit_n
@@ -554,6 +567,7 @@ export default {
             type: 'italic',
             ...item,
             account_no: '',
+            paramsAccountNo: item.account_no,
             account_description: 'CNY',
             original_total_debit: item.multiple_total.RMB.original.total_debit,
             original_total_credit:
@@ -574,6 +588,7 @@ export default {
             type: 'italic',
             ...item,
             account_no: '',
+            paramsAccountNo: item.account_no,
             account_description: 'USD',
             original_total_debit: item.multiple_total.USD.original.total_debit,
             original_total_credit:
@@ -608,11 +623,17 @@ export default {
         moment(params.monthRange[1])
       ]
     } else {
-      this.filterCondition.date = [moment().add(-12, 'month'), moment()]
+      this.filterCondition.date = [moment(), moment()]
     }
     this.filterCondition.analyticalItems = query.analyticalItems
       ? query.analyticalItems.toLocaleLowerCase().replace(' ', '_').split(',')
       : []
+    if (query.accountTypeName) {
+      const names = query.accountTypeName.split(',')
+      if (names.length > 0 && names[0]) {
+        this.filterCondition.accountTypeName = names
+      }
+    }
     this.getTrialBalance()
   },
   methods: {
@@ -656,7 +677,8 @@ export default {
         query: {
           accountsFrom: this.filterCondition.accountsFrom,
           accountsTo: this.filterCondition.accountsTo,
-          analyticalItems: this.filterCondition.analyticalItems.join(',')
+          analyticalItems: this.filterCondition.analyticalItems.join(','),
+          accountNo: row.paramsAccountNo
         },
         params: {
           monthRange: this.filterCondition.date,

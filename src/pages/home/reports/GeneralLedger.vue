@@ -284,7 +284,8 @@ export default {
         date: [],
         devise: GL_SINGLE,
         analyticalItems: [],
-        accountRange: []
+        accountRange: [],
+        accountNo: ''
       },
 
       // 当前数据
@@ -320,8 +321,12 @@ export default {
     formatGenralLedger() {
       // 过滤数据
       let filterData = this.generalLedgerData.filter((item) => {
-        return this.filterCondition.accountRange.includes(
-          item.entries[0].account_no
+        const accountNo = item.entries[0].account_no
+        const isCheckedNo =
+          !this.filterCondition.accountNo ||
+          this.filterCondition.accountNo === accountNo
+        return (
+          isCheckedNo && this.filterCondition.accountRange.includes(accountNo)
         )
       })
 
@@ -386,6 +391,8 @@ export default {
     this.filterCondition.analyticalItems = query.analyticalItems
       ? query.analyticalItems.toLocaleLowerCase().replace(' ', '_').split(',')
       : []
+
+    this.filterCondition.accountNo = query.accountNo || ''
 
     // 默认本月
     this.getGeneralLedger()
