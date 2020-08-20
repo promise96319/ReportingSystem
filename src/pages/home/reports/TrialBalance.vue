@@ -548,11 +548,14 @@ export default {
         })
       }
 
+      filterData.forEach((item) => {
+        item.paramsAccountNo = item.account_no
+      })
+
       if (this.filterCondition.devise === GL_MULTIPLE) {
         // 整理数据
         let newData = []
         filterData.forEach((item) => {
-          item.paramsAccountNo = item.account_no
           item.local_total_credit = item.total_credit
           item.local_total_debit = item.total_debit
           item.local_debit_n = item.debit_n

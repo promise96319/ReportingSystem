@@ -218,7 +218,7 @@
               >
                 <el-option
                   v-for="(item, index) in accountList"
-                  :key="item.no + item.name"
+                  :key="item.no + item.name + index"
                   :label="item.no + '  ' + item.name"
                   :value="index"
                 ></el-option>
