@@ -88,7 +88,7 @@
             </template>
             <template slot-scope="scope">
               <div v-if="scope.row.add_index" class="bold">
-                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
+                {{ (scope.row.amount && scope.row.amount[1]) | fixedNum }}
               </div>
               <div v-else-if="scope.row.name.includes('\n')">
                 <div class="empty">empty</div>
@@ -102,7 +102,7 @@
                     )
                   "
                 >
-                  {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
+                  {{ (scope.row.amount && scope.row.amount[1]) | fixedNum }}
                 </div>
               </div>
               <div
@@ -116,7 +116,7 @@
                   )
                 "
               >
-                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
+                {{ (scope.row.amount && scope.row.amount[1]) | fixedNum }}
               </div>
             </template>
           </el-table-column>
@@ -127,7 +127,7 @@
             </template>
             <template slot-scope="scope">
               <div v-if="scope.row.add_index" class="bold">
-                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
+                {{ (scope.row.amount && scope.row.amount[2]) | fixedNum }}
               </div>
               <div v-else-if="scope.row.name.includes('\n')">
                 <div class="empty">empty</div>
@@ -147,7 +147,7 @@
                     )
                   "
                 >
-                  {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
+                  {{ (scope.row.amount && scope.row.amount[2]) | fixedNum }}
                 </div>
               </div>
               <div
@@ -167,7 +167,7 @@
                   )
                 "
               >
-                {{ (scope.row.amount && scope.row.amount[0]) | fixedNum }}
+                {{ (scope.row.amount && scope.row.amount[2]) | fixedNum }}
               </div>
             </template>
           </el-table-column>
