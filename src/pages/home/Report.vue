@@ -283,10 +283,11 @@
       >
         <el-col :span="6" class="label">Analytical item:</el-col>
         <el-col :span="18">
-          <el-checkbox-group v-model="filterCondition.analyticalItems">
+          <el-checkbox-group v-model="filterCondition.analyticalItems" :max="1">
             <el-checkbox
               v-for="item in accountingItemsKey"
               :key="item.key"
+              class="checkbox-item"
               :label="item.key"
             ></el-checkbox>
           </el-checkbox-group>
@@ -385,7 +386,8 @@ export default {
         monthRange: [],
         devise: GL_SINGLE,
         analyticalItems: []
-      }
+      },
+      accountingEntriesData: []
     }
   },
   computed: {
@@ -393,8 +395,7 @@ export default {
       return this.$store.getters.currentCompany
     }
   },
-  created() {
-    this.getAccountList()
+  async created() {
     this.getEntries()
   },
   methods: {
@@ -402,7 +403,8 @@ export default {
       const res = await api.getEntries(this.currentCompany.id)
       if (res.data.error_code === 0) {
         let latestDate = moment().add(-10, 'year')
-        this.accountingEntriesData = res.data.data.forEach((item) => {
+        this.accountingEntriesData = res.data.data
+        res.data.data.forEach((item) => {
           if (moment(item.date).isAfter(moment(latestDate))) {
             latestDate = item.date
           }
@@ -411,12 +413,20 @@ export default {
         this.currentYear = latestDate.year()
         this.currentMonth = this.MONTH_OPTIONS[11 - latestDate.month()]
       }
+      this.getAccountList()
     },
     // 获取Account列表
     async getAccountList() {
       const res = await api.getAccountList(this.currentCompany.id)
       if (res.data.error_code === 0) {
-        this.accountList = res.data.data
+        this.accountList = res.data.data.filter((accountItem) => {
+          return this.accountingEntriesData.some((item) => {
+            return (
+              item.account_no === accountItem.no &&
+              item.account_description === accountItem.name
+            )
+          })
+        })
       }
     },
     showPeriodDialog(title) {
@@ -434,12 +444,16 @@ export default {
       this.currentMonth = e
     },
     goToReport() {
+      const year = moment().year()
+      const month = moment().month() + 1
       switch (this.currentTitle) {
         case this.moduleOptions[0]:
           this.$router.push({
             name: 'BalanceSheet',
             query: {
-              date: `${this.currentYear}-${this.currentMonth.key}`
+              date: `${this.currentYear || year}-${
+                this.currentMonth.key || month
+              }`
             }
           })
           break
@@ -447,7 +461,9 @@ export default {
           this.$router.push({
             name: 'ProfitAndLoss',
             query: {
-              date: `${this.currentYear}-${this.currentMonth.key}`
+              date: `${this.currentYear || year}-${
+                this.currentMonth.key || month
+              }`
             }
           })
           break
@@ -696,6 +712,10 @@ $gap: 10px;
 
 .search-item {
   margin-bottom: 16px;
+  .checkbox-item {
+    width: 120px;
+    margin-bottom: 8px;
+  }
   .label {
     font-weight: 600;
   }

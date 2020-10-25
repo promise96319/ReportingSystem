@@ -37,6 +37,8 @@ import {
   Loading,
   Checkbox,
   CheckboxGroup,
+  Radio,
+  RadioGroup,
   Popover
 } from 'element-ui'
 
@@ -70,6 +72,8 @@ Vue.use(Button)
   .use(Loading)
   .use(Checkbox)
   .use(CheckboxGroup)
+  .use(Radio)
+  .use(RadioGroup)
   .use(Popover)
 
 Vue.use(Loading.directive)

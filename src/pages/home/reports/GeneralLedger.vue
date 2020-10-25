@@ -98,7 +98,19 @@
                   </div>
                 </template>
                 <template v-else>
-                  {{ scope.row[item.key] }}
+                  <template
+                    v-if="scope.row.is_first && item.key === 'voucher_no'"
+                  >
+                    <div
+                      v-for="(_item, _index) in scope.row[item.key]"
+                      :key="_index"
+                    >
+                      {{ _item }}
+                    </div>
+                  </template>
+                  <template v-else>
+                    {{ scope.row[item.key] }}
+                  </template>
                 </template>
               </template>
             </el-table-column>
@@ -347,9 +359,12 @@ export default {
       }
 
       return filterData.map((item) => {
-        let name = item.account.name
+        const prev = item.entries[0].account_no + item.account.name
+        let name = []
         if (item.analyticalItems && item.analyticalItems.length > 0) {
-          name = name + '/' + item.analyticalItems.join('/')
+          item.analyticalItems.forEach((item) => {
+            name.push(`${prev}/${item}`)
+          })
         }
         item.entries = [
           {
@@ -511,7 +526,7 @@ export default {
       }
     }
     .content {
-      overflow: scroll;
+      overflow: overlay;
       .el-table {
         border-bottom: 1px solid #000;
         color: #303133;
