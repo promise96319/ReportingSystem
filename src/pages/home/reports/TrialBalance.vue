@@ -66,10 +66,10 @@
                   :class="[row.type === 'italic' ? 'italic' : '', 'link']"
                   @click="total_debit(row)"
                 >
-                  {{ row.local_debit_n_1 | fixedNum }}
+                  {{ row.total_debit | fixedNum }}
                 </div>
-              </template></el-table-column
-            >
+              </template>
+            </el-table-column>
             <el-table-column
               :label="isFR ? 'Créditeur' : 'Credit'"
               align="right"

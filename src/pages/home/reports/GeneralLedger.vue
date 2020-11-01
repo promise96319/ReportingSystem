@@ -160,12 +160,10 @@
                 <template v-if="item.key === 'date'">
                   {{ scope.row[item.key] | filterDateInTable }}
                 </template>
-                <template
-                  v-else-if="
-                    item.key === 'balance_originale' ||
-                    item.key === 'balance_locale'
-                  "
-                >
+                <template v-else-if="item.key === 'balance_originale'">
+                  {{ scope.row.original_balance }}
+                </template>
+                <template v-else-if="item.key === 'balance_locale'">
                   {{ scope.row.balance }}
                 </template>
                 <template
@@ -374,7 +372,8 @@ export default {
             is_first: true,
             invoice_no: item.entries[0].account_no,
             voucher_no: name,
-            balance: item.balance
+            balance: item.balance,
+            original_balance: item.original_balance
           },
           ...item.entries,
           {
